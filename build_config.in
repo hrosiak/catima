@@ -1,0 +1,6 @@
+#ifndef BUILD_CONFIG_H
+#define BUILD_CONFIG_H
+
+#cmakedefine THIN_TARGET_APPROXIMATION
+
+#endif

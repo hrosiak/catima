@@ -1,0 +1,16 @@
+from distutils.core import setup
+from distutils.extension import Extension
+from Cython.Build import cythonize
+
+setup(
+    ext_modules = cythonize(
+	    [Extension("catima", ["catima.pyx"], 
+		language="c++",
+		#libraries=[${EXTRA_PYTHON_LIBS}],
+		include_dirs=["${CMAKE_CURRENT_BINARY_DIR}/include"],
+		extra_objects=["${CATIMA_LIB}"],
+		extra_compile_args=["-std=c++14"],
+		extra_link_args=["-std=c++14"]
+		),
+	    ])
+)
