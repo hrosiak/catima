@@ -3,7 +3,7 @@
 #include "storage.h"
 namespace catima {
     Data _storage;
-    
+    EnergyTable<max_datapoints> energy_table(logEmin,logEmax);
     
     bool operator==(const DataPoint &a, const DataPoint &b){
 	if( (a.m == b.m) && (a.p == b.p) && (a.config == b.config)){

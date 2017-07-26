@@ -34,7 +34,7 @@ extern "C" {
             mat.add_element(ta,tz,1.0);
         }
 
-        catima::angular_straggling_from_E(p,Tin,Tout,mat);
+        return catima::angular_straggling_from_E(p,Tin,Tout,mat);
     }
 
     double catima_energy_straggling_from_E(double pa, int pz, double Tin, double Tout,double ta, double tz){
@@ -46,7 +46,7 @@ extern "C" {
         else{
             mat.add_element(ta,tz,1.0);
         }
-        catima::energy_straggling_from_E(p,Tin,Tout,mat);
+        return catima::energy_straggling_from_E(p,Tin,Tout,mat);
     }
 
 }

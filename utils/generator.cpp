@@ -46,7 +46,8 @@ int main(){
     file<<"constexpr double logEmin = "<<logEmin_forLS<<";\n";
     file<<"constexpr double logEmax = "<<logEmax_forLS<<";\n";
     file<<"// energy points array in MeV/u \n";
-    file<<"constexpr EnergyTable<"<<num_LS_datapoints<<"> ls_energy_table("<<logEmin_forLS<<","<<logEmax_forLS<<");\n";
+    //file<<"constexpr EnergyTable<"<<num_LS_datapoints<<"> ls_energy_table("<<logEmin_forLS<<","<<logEmax_forLS<<");\n";
+    file<<"EnergyTable<"<<num_LS_datapoints<<"> ls_energy_table("<<logEmin_forLS<<","<<logEmax_forLS<<");\n";
      
 /*
     file<<"double ls_energy_points["<<num_LS_datapoints<<"]={";
