@@ -60,8 +60,8 @@ namespace catima{
 	double EnergyTable_interpolate(const EnergyTable<N> &table, double xval, double *y){
 	    double r;
 	    double lxval = log(xval)/M_LN10;
-	    if(lxval<table.values[0] || lxval>table.values[table.num-1])return 0.0;
-	    if(lxval==table.values[table.num-1])return y[table.num-1];
+	    if(xval<table.values[0] || xval>table.values[table.num-1])return 0.0;
+	    if(xval==table.values[table.num-1])return y[table.num-1];
 	    int i = (int)(lxval/table.step);
 		double linstep = table.values[i+1] - table.values[i];
 	    double x = 1.0 - ((xval - table.values[i])/linstep);
