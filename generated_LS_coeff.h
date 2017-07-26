@@ -13,7 +13,8 @@ constexpr double a_rel_increase=0.05;
 constexpr double logEmin = 0;
 constexpr double logEmax = 5;
 // energy points array in MeV/u 
-constexpr EnergyTable<200> ls_energy_table(0,5);
+//constexpr EnergyTable<200> ls_energy_table(0,5);
+EnergyTable<200> ls_energy_table(0,5);
 
 //arrays dimensions are [z][energy], z=1 starts from index=0
 

@@ -92,6 +92,7 @@ Layers operator+(const Layers &a, const Material &m){
         res.add(e);
     }
     res.add(m);
+    return res;
 }
 
 
