@@ -188,7 +188,7 @@ double bethek_lindhard(const Projectile &p){
                 std::complex<double> cexis_den (-sk,-eta);
                 std::complex<double> cexis = std::sqrt(cexir_n/cexis_den);
                 std::complex<double> cpimske(0.0,(M_PI*(l+sk)/2.0) - lngamma(cmsketa).imag());
-                std::complex<double> ceds = cexir*std::exp(cpimske);
+                std::complex<double> ceds = cexis*std::exp(cpimske);
                 std::complex<double> cmbeta_gamma_R(0,-beta_gamma_R);
                 std::complex<double> c2beta_gamma_R(0,2.0*beta_gamma_R);
                 std::complex<double> c2sk_1 (2.0*sk+1,0);
@@ -307,7 +307,7 @@ double bethek_lindhard_X(const Projectile &p){
                 std::complex<double> cexis_den (-sk,-eta);
                 std::complex<double> cexis = std::sqrt(cexir_n/cexis_den);
                 std::complex<double> cpimske(0.0,(M_PI*(l+sk)/2.0) - lngamma(cmsketa).imag());
-                std::complex<double> ceds = cexir*std::exp(cpimske);
+                std::complex<double> ceds = cexis*std::exp(cpimske);
                 std::complex<double> cmbeta_gamma_R(0,-beta_gamma_R);
                 std::complex<double> c2beta_gamma_R(0,2.0*beta_gamma_R);
                 std::complex<double> c2sk_1 (2.0*sk+1,0);
