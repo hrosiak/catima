@@ -588,15 +588,15 @@ double radiation_length(int z, int m){
     return lr;
 }
 
+
 double precalculated_lindhard(const Projectile &p){
     double T = p.T;
     int z = (int)p.Z ;
     if(z>LS_MAX_Z)z=LS_MAX_Z;
-    //if(p.T<ls_coefficients::ls_energy_points[0])T=ls_coefficients::ls_energy_points[0];
     if(p.T<ls_coefficients::ls_energy_table(0))T=ls_coefficients::ls_energy_table(0);
+    
     double da = (p.A - element_atomic_weight(z))/element_atomic_weight(z);
     z = z-1;
-    
     //catima::Interpolator ls_a(ls_coefficients::ls_energy_points,ls_coefficients::ls_coefficients_a[z],LS_NUM_ENERGY_POINTS,interpolation_t::linear);
     //catima::Interpolator ls_ahi(ls_coefficients::ls_energy_points,ls_coefficients::ls_coefficients_ahi[z],LS_NUM_ENERGY_POINTS,interpolation_t::linear);
     //catima::Interpolator ls_a(ls_coefficients::ls_energy_table.values,ls_coefficients::ls_coefficients_a[z],LS_NUM_ENERGY_POINTS,interpolation_t::cspline);
