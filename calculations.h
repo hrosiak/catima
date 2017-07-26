@@ -65,17 +65,31 @@ namespace catima{
 
     /**
       * returns linhard correction (L) calulated from tabulated precalculated data
+      * if energy is less than minimal calculated energy the LS coefficient of at  minimal 
+      * calculated energy is returned and similar for highest caclulated energy limit
       */
     double precalculated_lindhard(const Projectile &p);
 
     /**
       * returns linhard energy loss straggling correction (X) calulated from tabulated precalculated data
+      * if energy is less than minimal calculated energy the X coefficient of at  minimal 
+      * calculated energy is returned and similar for highest caclulated energy limit
       */
     double precalculated_lindhard_X(const Projectile &p);
 
+    /**
+      * this function is not used and is not tested 
+      */
     double energy_straggling_firsov(double z1,double energy, double z2, double m2);
     
+    /**
+      * electronic energy loss for low energy, should be like SRIM
+      */ 
     double sezi_dedx_e(const Projectile &p, const Target &t);
+    
+    /**
+      * electronic energy loss of protons for low energy, should be like SRIM
+      */ 
     double sezi_p_se(double energy,const Target &t);
     
 
