@@ -59,6 +59,8 @@ namespace catima{
 	double operator()(int i)const{return values[i];}
 	double values[N];
 	double step;
+	double* begin(){return values;}
+	double* end(){return &values[num-1];}
 	std::size_t num;
     };
 

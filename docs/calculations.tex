@@ -29,11 +29,41 @@ The range spline precision is checked via calculating dE/dx from inverse derivat
 \end{figure}	
 
 
+\section{Lindhard-Soerensen}
+The Lindhard-Soerensen (LS) corrections to energy loss and energy loss straggling can be calculated directly or from precalculated values, which is useful when performance is needed. The precalculated LS coefficients are calculated at predefined log distributed energies. Below and above the energy limits the functions returns the value at minimal or maximal precalculated value. The take into account the different masses the Ls coefficients are precalculated for 2 different masses and final coefficients are estimated using a linear interpolation between the two calculations.
+
+
+The calculated LS coefficients are plotted in Fig. \ref{ls}. 
+For the comparison and check of precalculated LS coefficients the LS coefficients and relative difference to directly calculated coefficients for different masses and charges are plotted in Figures \ref{ls_prec} amd \ref{lsX_prec}.
+
+\begin{figure}
+\centering
+\includegraphics[width=6.5cm]{plots/ls.png}
+\includegraphics[width=6.5cm]{plots/lsX.png}
+\caption{LS corrections for energy loss and energy loss straggling for different energies and projectile}
+\label{ls}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=12cm]{plots/ls_precision.png}
+\caption{LS corrections for energy loss directly calculated and calculated from the tabulated values for different Z and A. On the right the relative differences are plotted. The lowest energy for precalculation was set to 1 MeV/u.}
+\label{ls_prec}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=12cm]{plots/lsX_precision.png}
+\caption{LS corrections for energy loss directly calculated and calculated from the tabulated values for different Z and A. On the right the relative differences are plotted. The lowest energy for precalculation was set to 1 MeV/u.}
+\label{lsX_prec}
+\end{figure}
+
+
+
 
 \section{Benchmarks}
 \subsection{Thin Target Approximation}
 test: projectile: 238U@700MeV/u - 30GeV/u, material: C(1mg/cm2), 30000 calculation in loop.
-
 reults: with thin target pproximation: 2.4s, without: 2.4s
 	
 \end{document}

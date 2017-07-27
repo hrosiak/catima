@@ -1,4 +1,4 @@
-PROGRAMS=simple example2 materials
+PROGRAMS=simple example2 materials ls_coefficients
 
 GCC=g++ -Wall -std=c++14
 INCDIR=-I$(CATIMAPATH)/include
