@@ -1,16 +1,27 @@
+"""
+    catima python module
+    ~~~~~~~~~~~
+    This module provides interface to the catima c++ library
+    :copyright: (c) 2017 by Andrej Prochazka
+    :licence: GNU Affero General Public License, see LICENCE for more details
+"""
+
 cimport catimac
 from enum import IntEnum
 import numpy
 
 cdef class Material:
     cdef catimac.Material cbase
-    def __cinit__(self, elements):
+    def __cinit__(self, elements=None):
         self.cbase = catimac.Material()
-        if(elements and isinstance(elements[0],int)):
+        if(elements and (isinstance(elements[0],float) or isinstance(elements[0],int))):
             self.cbase.add_element(elements[0],elements[1],elements[2])
         if(elements and isinstance(elements[0],list)):
             for e in elements:
                 self.cbase.add_element(e[0],e[1],e[2])
+
+    cdef from_c(self, catimac.Material &other):
+        self.cbase = other
 
     def add_element(self, a, z , s):
         self.cbase.add_element(a, z, s)
@@ -36,6 +47,35 @@ cdef class Material:
         else:
             return self.cbase.thickness(val)
 
+class material(IntEnum):
+            PLASTIC = 201
+            AIR = 202
+            CH2 = 203
+            LH2 = 204
+            LD2 = 205
+            WATER = 206
+            DIAMOND = 207
+            GLASS = 208
+            ALMG3 = 209
+            ARCO2_30 = 210
+            CF4 = 211
+            ISOBUTANE = 212
+            KAPTON = 213
+            MYLAR = 214
+            NAF = 215
+            P10 = 216
+            POLYOLEFIN = 217
+            CMO2 = 218
+            SUPRASIL = 219
+            HAVAR = 220
+
+def get_material(int matid):
+    res = Material()
+    cdef catimac.Material cres = catimac.get_material(matid);
+    res.from_c(cres)
+    return res
+
+
 cdef class Target:
     cdef catimac.Target cbase
 
@@ -50,10 +90,10 @@ cdef class Target:
 
 cdef class Layers:
     cdef catimac.Layers cbase
-    
-    def __cinit__(self):
-        self.cbase = catimac.Layers()
-        self.materials = []
+    cdef public:
+        materials
+    def __init__(self):
+        self.materials=[]
         
     def add(self,Material m):
         self.cbase.add(m.cbase)
@@ -61,22 +101,31 @@ cdef class Layers:
         
     def num(self):
         return self.cbase.num()
+
+    def get(self, key):
+        cdef catimac.Material cmat = self.cbase[key]
+        res = Material()
+        res.from_c(cmat)
+        return res
         
     def __getitem__(self, key):
-        if(isinstance(key,int)):
-            return self.materials[key]
+        if(isinstance(key,int) and key<self.num()):
+            return self.get(key)
+        return None
 
 cdef class Projectile:
     cdef catimac.Projectile cbase
-    def __cinit__(self, a, z, t=None,q=None):
-        self.cbase.A = a
-        self.cbase.Z = z
-        self.cbase.Q = z
-        if(q):
-            self.cbase.Q = q
-        if(t):
-            self.cbase.T = t
-    def T(self,val):
+    def __cinit__(self, A, Z, Q=None,T=None):
+        self.cbase.A = A
+        self.cbase.Z = Z
+        self.cbase.Q = Z
+        if(Q):
+            self.cbase.Q = Q
+        if(T):
+            self.cbase.T = T
+    def T(self,val=None):
+        if(val is None):
+            return self.cbase.T
         self.cbase.T = val;
     def __call__(self,val=None):
         if(val is None):
@@ -88,6 +137,8 @@ cdef class Projectile:
         return self.cbase.A
     def Z(self):
         return self.cbase.Z
+    def Q(self):
+        return self.cbase.Q
 
 cdef class Result:
     cdef public double Ein
@@ -112,6 +163,19 @@ cdef class Result:
         self.sigma_r=0.0
         self.tof=0.0
 
+    def get_dict(self):
+        return {"Ein":self.Ein,
+                "Eout":self.Eout,
+                "Eloss":self.Eloss,
+                "range":self.range,
+                "dEdxi":self.dEdxi,
+                "dEdxo":self.dEdxo,
+                "sigma_E":self.sigma_E,
+                "sigma_a":self.sigma_a,
+                "sigma_r":self.sigma_r,
+                "tof":self.tof,
+                }
+
     cdef setc(self,catimac.Result &val):
         self.Ein=val.Ein
         self.Eout=val.Eout
@@ -123,6 +187,15 @@ cdef class Result:
         self.sigma_a=val.sigma_a
         self.sigma_r=val.sigma_r
         self.tof=val.tof
+
+cdef class MultiResult:
+    def __init__(self):
+        self.total_result = Result()
+        self.results = []
+    cdef setc(self, catimac.MultiResult &val):
+        self.total_result.setc(val.total_result)
+        for e in val.results:
+            self.results.append(e)
 
 class z_eff_type(IntEnum):
     none = 0,
@@ -175,6 +248,15 @@ def calculate(Projectile projectile, Material material, energy = None, Config co
     res = Result()
     res.setc(cres)
     return res
+
+def calculate(Projectile projectile, Layers layers, energy = None,  Config config = default_config):
+    if(not energy is None):
+        projectile.T(energy)
+    cdef catimac.MultiResult cres = catimac.calculate(projectile.cbase, layers.cbase, config.cbase)
+    res = MultiResult()
+    res.setc(cres)
+    return res
+    
 
 def range(Projectile projectile, Material material, energy = None, Config config = default_config):  
     if(isinstance(energy,numpy.ndarray)):

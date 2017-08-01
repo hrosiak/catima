@@ -1,5 +1,13 @@
+"""
+    catima cython
+    ~~~~~~~~~~~~~~~~~
+    :copyright: (c) 2017 by Andrej Prochazka
+    :licence: GNU Affero General Public License, see LICENCE for more details
+"""
+
 from libcpp.pair cimport pair
 from libcpp.vector cimport vector
+from libcpp cimport bool
 
 cdef extern from "catima/structures.h" namespace "catima":
     cdef struct Target:
@@ -24,12 +32,14 @@ cdef extern from "catima/structures.h" namespace "catima":
         double sigma_r
         double tof
 
-    cdef cppclass MultiResult
+    cdef cppclass MultiResult:
+        vector[Result] results
+        Result total_result
 
     cdef cppclass Material:
         Material() except +
         void add_element(double , int , double )
-        pair[Target,double] getElement(int) 
+        pair[Target,double] get_element(int) 
         int ncomponents()
         double M()
         double density()
@@ -44,6 +54,9 @@ cdef extern from "catima/structures.h" namespace "catima":
         int num()const
         Material& operator[](int i)
         Layers& operator=(const Layers& other)
+
+cdef extern from "catima/material_database.h" namespace "catima":
+    cdef Material get_material(int)
 
 cdef extern from "catima/config.h" namespace "catima":
     cdef struct Config:
