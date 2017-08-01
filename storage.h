@@ -59,6 +59,8 @@ namespace catima{
 	double operator()(int i)const{return values[i];}
 	double values[N];
 	double step;
+	double* begin(){return values;}
+	double* end(){return &values[num-1];}
 	std::size_t num;
     };
 
@@ -66,10 +68,9 @@ namespace catima{
 
 	template<int N>
 	int EnergyTable_index(const EnergyTable<N> &table, double val){
-		val = log(val)/M_LN10;
+        double lxval = log(val)/M_LN10;
 		if(val<table.values[0] || val>table.values[table.num-1])return -1;
-		int i = (int)val/table.step;
-		//double x = 1.0 - ((val - table.valuesp[i])/table.step);
+		int i = (int)lxval/table.step;
 		return i;
 	}
 	

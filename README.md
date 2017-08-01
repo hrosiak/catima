@@ -26,6 +26,8 @@ available options:
   * TESTS - build tests
   * EXAMPLES - build examples
   * DOCS - prepare doxygen documentation (after cmake, __make docs__ needs to be executed)
+  * GENERATE_DATA - makes program to re-generate precalculated tables (ie precalculated LS coefficients), default:OFF
+  * THIN_TARGET_APPROXIMATION - compile the library with thin target approximation, default: ON
 
 ie:
 > cmake -DCATIMA_PYTHON=ON -DEXAMPLES=ON ../
