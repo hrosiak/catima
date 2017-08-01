@@ -12,16 +12,30 @@ import numpy
 
 cdef class Material:
     cdef catimac.Material cbase
-    def __cinit__(self, elements=None):
+    def __cinit__(self, elements=None, thickness=None, density=None):
         self.cbase = catimac.Material()
         if(elements and (isinstance(elements[0],float) or isinstance(elements[0],int))):
             self.cbase.add_element(elements[0],elements[1],elements[2])
         if(elements and isinstance(elements[0],list)):
             for e in elements:
                 self.cbase.add_element(e[0],e[1],e[2])
+        if(not thickness is None):
+            self.thickness(thickness)
+        if(not density is None):
+            self.density(density)
 
     cdef from_c(self, catimac.Material &other):
         self.cbase = other
+    
+    cdef catimac.Material getc(self):
+        cdef catimac.Material res
+        res = self.cbase 
+        return res
+    
+    def copy(self):
+        res = Material()
+        res.cbase = self.cbase
+        return res
 
     def add_element(self, a, z , s):
         self.cbase.add_element(a, z, s)
@@ -89,29 +103,42 @@ cdef class Target:
         return self.cbase.Z
 
 cdef class Layers:
-    cdef catimac.Layers cbase
     cdef public:
         materials
     def __init__(self):
         self.materials=[]
         
     def add(self,Material m):
-        self.cbase.add(m.cbase)
-        self.materials.append(m)
+        self.materials.append(m.copy())
         
     def num(self):
-        return self.cbase.num()
+        return len(self.materials)
 
     def get(self, key):
-        cdef catimac.Material cmat = self.cbase[key]
-        res = Material()
-        res.from_c(cmat)
-        return res
+        return self.materials[key]
         
     def __getitem__(self, key):
         if(isinstance(key,int) and key<self.num()):
             return self.get(key)
         return None
+    
+    def __add__(self, other):
+        res = Layers()
+        for e in self.materials:
+            res.add(e)
+            
+        if(isinstance(other,Layers)):
+            for e in other.materials:
+                res.add(e)
+        if(isinstance(other,Material)):
+            res.add(other.copy())
+        return res
+    
+    cdef catimac.Layers getc(self):
+        cdef catimac.Layers res
+        #for l in self.materials:
+        #    res.add(l.getc())
+        return res
 
 cdef class Projectile:
     cdef catimac.Projectile cbase
@@ -176,6 +203,11 @@ cdef class Result:
                 "tof":self.tof,
                 }
 
+    def __getitem__(self,key):
+        d = self.get_dict()
+        if(key in d):
+            return d[key]
+
     cdef setc(self,catimac.Result &val):
         self.Ein=val.Ein
         self.Eout=val.Eout
@@ -189,13 +221,27 @@ cdef class Result:
         self.tof=val.tof
 
 cdef class MultiResult:
+    cdef public Result total_result
+    cdef public results
+    cdef public total
+
     def __init__(self):
         self.total_result = Result()
         self.results = []
+        self.total = {}
+
     cdef setc(self, catimac.MultiResult &val):
         self.total_result.setc(val.total_result)
         for e in val.results:
             self.results.append(e)
+        self.total = self.total_result.get_dict()
+
+    def __getitem__(self,key):
+        if(isinstance(key,int) and key<len(self.results)):
+            return self.results[key]
+        if(isinstance(key,str) and key in self.total):
+            return self.total[key]
+        return None
 
 class z_eff_type(IntEnum):
     none = 0,
@@ -249,14 +295,29 @@ def calculate(Projectile projectile, Material material, energy = None, Config co
     res.setc(cres)
     return res
 
-def calculate(Projectile projectile, Layers layers, energy = None,  Config config = default_config):
+cdef catimac.Layers get_clayers(Layers layers):
+    cdef catimac.Layers res
+    cdef catimac.Material m
+    for l in layers.materials:
+        m = get_cmaterial(l)
+        res.add(m)
+    return res
+
+cdef catimac.Material get_cmaterial(Material material):
+    cdef catimac.Material res
+    res = material.cbase
+    return res
+
+def calculate_layers(Projectile projectile, Layers layers, energy = None,  Config config = default_config):
+    cdef catimac.Layers clayers
+    clayers = catimac.Layers()
+    clayers = get_clayers(layers)
     if(not energy is None):
         projectile.T(energy)
-    cdef catimac.MultiResult cres = catimac.calculate(projectile.cbase, layers.cbase, config.cbase)
+    cdef catimac.MultiResult cres = catimac.calculate(projectile.cbase, clayers, config.cbase)
     res = MultiResult()
     res.setc(cres)
     return res
-    
 
 def range(Projectile projectile, Material material, energy = None, Config config = default_config):  
     if(isinstance(energy,numpy.ndarray)):
