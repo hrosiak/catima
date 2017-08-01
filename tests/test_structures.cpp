@@ -49,7 +49,7 @@ const lest::test specification[] =
                 EXPECT(water2.M()==18);
             }
             SECTION("equal operator check"){
-              EXPECT(water==water);
+              EXPECT(water==water2);
               EXPECT(!(water==graphite));
             }
         }
