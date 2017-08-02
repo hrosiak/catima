@@ -4,17 +4,7 @@ using namespace std;
 
 #include "catima/catima.h"   
 #include "catima/storage.h"   
-
-bool rcompare(double a, double b,double eps){
-    if(fabs((a-b)/fabs(b))<eps){
-      return true;
-    }
-    else{
-      std::cout<<"\033[1;31m"<<a<<" == "<<b<<"\033[0m"<<std::endl;
-      return false;
-    }
-      
-}
+#include "catima/material_database.h"
 
 const lest::test specification[] =
 {
@@ -70,6 +60,11 @@ const lest::test specification[] =
       
       catima::_storage.Add(p,graphite);
       EXPECT(catima::_storage.get_index()==2);
+    },
+    CASE("storage limit"){
+      for(int i=0;i<100;i++){
+        auto m = catima::get_material(i);
+      }
     },
     CASE("energy table"){
       double step = (catima::logEmax - catima::logEmin)/(catima::max_datapoints-1);
