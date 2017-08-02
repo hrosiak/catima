@@ -242,6 +242,17 @@ cdef class MultiResult:
         if(isinstance(key,str) and key in self.total):
             return self.total[key]
         return None
+    
+    def getJSON(self):
+        res = {}
+        res["total"] = self.total
+        res["partial"] = []
+        for r in self.results:
+            #print(r)
+            #temp = Result()
+            #temp.setc(r)
+            res["partial"].append(r)
+        return res
 
 class z_eff_type(IntEnum):
     none = 0,
@@ -287,11 +298,30 @@ cdef class Config:
 
 default_config = Config()
 
-def calculate(Projectile projectile, Material material, energy = None, Config config = default_config):
+def calculate(Projectile projectile, material, energy = None, config=default_config):
+    if(not energy is None):
+        projectile.T(energy)
+    if(isinstance(material,Material)):
+        return calculate_material(projectile, material, config = config)
+    if(isinstance(material,Layers)):
+        return calculate_layers(projectile, material, config = config) 
+
+def calculate_material(Projectile projectile, Material material, energy = None, Config config = default_config):
     if(not energy is None):
         projectile.T(energy)
     cdef catimac.Result cres = catimac.calculate(projectile.cbase,material.cbase,config.cbase)
     res = Result()
+    res.setc(cres)
+    return res
+
+def calculate_layers(Projectile projectile, Layers layers, energy = None,  Config config = default_config):
+    cdef catimac.Layers clayers
+    clayers = catimac.Layers()
+    clayers = get_clayers(layers)
+    if(not energy is None):
+        projectile.T(energy)
+    cdef catimac.MultiResult cres = catimac.calculate(projectile.cbase, clayers, config.cbase)
+    res = MultiResult()
     res.setc(cres)
     return res
 
@@ -306,17 +336,6 @@ cdef catimac.Layers get_clayers(Layers layers):
 cdef catimac.Material get_cmaterial(Material material):
     cdef catimac.Material res
     res = material.cbase
-    return res
-
-def calculate_layers(Projectile projectile, Layers layers, energy = None,  Config config = default_config):
-    cdef catimac.Layers clayers
-    clayers = catimac.Layers()
-    clayers = get_clayers(layers)
-    if(not energy is None):
-        projectile.T(energy)
-    cdef catimac.MultiResult cres = catimac.calculate(projectile.cbase, clayers, config.cbase)
-    res = MultiResult()
-    res.setc(cres)
     return res
 
 def range(Projectile projectile, Material material, energy = None, Config config = default_config):  
