@@ -25,6 +25,12 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
     set(warnings "-Wall -Wextra -Werror")
 endif()
 
+if(APPLE)
+  set(RPATH_VARIABLE "DYLD_LIBRARY_PATH")
+else()
+  set(RPATH_VARIABLE "LD_LIBRARY_PATH")
+endif()
+
 ############# Requirements ##################
 find_package(GSL REQUIRED)
 
