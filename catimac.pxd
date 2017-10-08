@@ -86,9 +86,25 @@ cdef extern from "catima/calculations.h" namespace "catima":
     cdef double z_eff_Pierce_Blann(double z, double beta);
 
 cdef extern from "catima/constants.h" namespace "catima":        
-    cdef int max_datapoints;
+    int max_datapoints "catima::max_datapoints"
+    int logEmin "catima::logEmin"
+    int logEmax "catima::logEmax"
     
 cdef extern from "catima/storage.h" namespace "catima":
     cdef cppclass Interpolator:
+        Interpolator(const double *x, const double *y, int num) except +
         double eval(double)
         double derivative(double)
+        
+    cdef cppclass DataPoint:
+        vector[double] range
+        vector[double] range_straggling
+        vector[double] angular_variance
+    
+    cdef cppclass EnergyTableType "catima::EnergyTable[max_datapoints]":
+        size_t num;
+        double operator()(int i)
+        
+        
+    cdef EnergyTableType energy_table;        
+    cdef DataPoint& get_data(const Projectile &p, const Material &t, Config c);
