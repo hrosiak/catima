@@ -75,6 +75,11 @@ class TestStructures(unittest.TestCase):
         self.assertAlmostEqual(m2.molar_mass(),18,1)
         self.assertAlmostEqual(m2.density(),1.0,1)
 
+        m3 = catima.get_material(301)
+        self.assertEqual(m3.ncomponents(),0)
+        self.assertAlmostEqual(m3.molar_mass(),0,1)
+        self.assertAlmostEqual(m3.density(),0.0,1)
+
     def test_layers(self):
         graphite = catima.get_material(6)
         graphite.thickness(0.5)
