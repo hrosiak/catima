@@ -338,7 +338,7 @@ cdef catimac.Material get_cmaterial(Material material):
     res = material.cbase
     return res
 
-def range(Projectile projectile, Material material, energy = None, Config config = default_config):  
+def projectile_range(Projectile projectile, Material material, energy = None, Config config = default_config):  
     if(isinstance(energy,numpy.ndarray)):
         res = numpy.empty(energy.size)
         for i,e in enumerate(energy):
@@ -403,3 +403,20 @@ def z_effective(Projectile p, Target t, Config c = default_config):
 
 def z_eff_Pierce_Blann(double z, double beta):
     return catimac.z_eff_Pierce_Blann(z,beta)
+
+
+def get_data(Projectile projectile, Material material, Config config = default_config):
+    data = catimac.get_data(projectile.cbase, material.cbase, config.cbase)
+    return [data.range,data.range_straggling,data.angular_variance]
+
+max_datapoints = catimac.max_datapoints
+
+def energy_table(unsigned int i):
+    if(i<catimac.energy_table.num):
+        return catimac.energy_table(i)
+    else:
+        return -1.0
+
+def get_energy_table():
+    r = [catimac.energy_table(x) for x in range(catimac.energy_table.num)]
+    return r

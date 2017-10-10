@@ -2,6 +2,7 @@ import sys
 sys.path.insert(0,"../build")
 import unittest
 import catima
+import math
 
 class TestStructures(unittest.TestCase):
 
@@ -152,6 +153,11 @@ class TestStructures(unittest.TestCase):
         res = catima.calculate(p(9),water)
         res = catima.calculate(p(9),water)
         self.assertAlmostEqual(res.dEdxi,51.17,1)
+        
+        p(900000)
+        res = catima.calculate(p,water)
+        res2 = catima.dedx_from_range(p,water)
+        self.assertAlmostEqual(res.dEdxi,res2,3)
     
     def test_eout(self):
         graphite = catima.get_material(6)
@@ -188,6 +194,51 @@ class TestStructures(unittest.TestCase):
         self.assertAlmostEqual(res[1]["sigma_a"],0.000774,4)
         self.assertAlmostEqual(res[0]["range"],107.1,0)
         self.assertAlmostEqual(res[1]["range"],110.7,0)
+    
+    def test_energy_table(self):
+        table = catima.get_energy_table()
+        self.assertEqual(table[0],catima.energy_table(0))
+        self.assertEqual(table[10],catima.energy_table(10))
+        self.assertEqual(len(table),catima.max_datapoints)
+        
+    def test_storage(self):
+        p = catima.Projectile(12,6)
+        water = catima.get_material(catima.material.WATER)
+        water.thickness(10.0)
+        graphite = catima.get_material(6)
+        graphite.thickness(1.0)
+        
+        data = catima.get_data(p, water)
+        print(data[1])
+        et = catima.get_energy_table()
+        
+        self.assertEqual(len(data),3)
+        self.assertEqual(len(data[0]),len(et))
+        
+        res = catima.calculate(p(et[10]),water)
+        self.assertAlmostEqual(res.range,data[0][10],6)
+        self.assertAlmostEqual(catima.projectile_range(p,water),data[0][10],6)
+        self.assertAlmostEqual(catima.domega2de(p,water),data[1][10],6)
+        
+        res = catima.calculate(p(et[100]),water)
+        self.assertAlmostEqual(res.range,data[0][100],6)
+        self.assertAlmostEqual(catima.projectile_range(p,water),data[0][100],6)
+        self.assertAlmostEqual(catima.domega2de(p,water),data[1][100],6)
+        
+        res = catima.calculate(p(et[200]),water)
+        self.assertAlmostEqual(res.range,data[0][200],6)
+        self.assertAlmostEqual(catima.projectile_range(p,water),data[0][200],6)
+        self.assertAlmostEqual(catima.domega2de(p,water),data[1][200],6)
+        
+        res = catima.calculate(p(et[401]),water)
+        self.assertAlmostEqual(res.range,data[0][401],6)
+        self.assertAlmostEqual(catima.projectile_range(p,water),data[0][401],6)
+        self.assertAlmostEqual(catima.domega2de(p,water),data[1][401],6)
+        
+        
+        
+        #self.assertAlmostEqual(catima.da2de(p,water,et[100]),data[2][100],6)
+        #self.assertAlmostEqual(catima.da2de(p,water,et[400]),data[2][400],6)
 
 if __name__ == "__main__":
     unittest.main()
