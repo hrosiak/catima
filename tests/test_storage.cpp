@@ -4,7 +4,17 @@ using namespace std;
 
 #include "catima/catima.h"   
 #include "catima/storage.h"   
-#include "catima/material_database.h"
+
+bool rcompare(double a, double b,double eps){
+    if(fabs((a-b)/fabs(b))<eps){
+      return true;
+    }
+    else{
+      std::cout<<"\033[1;31m"<<a<<" == "<<b<<"\033[0m"<<std::endl;
+      return false;
+    }
+      
+}
 
 const lest::test specification[] =
 {
@@ -61,10 +71,33 @@ const lest::test specification[] =
       catima::_storage.Add(p,graphite);
       EXPECT(catima::_storage.get_index()==2);
     },
-    CASE("storage limit"){
-      for(int i=0;i<100;i++){
-        auto m = catima::get_material(i);
+    CASE("test maximum storage"){ // this test assumes max storage = 50
+      catima::Projectile p{12,6,6,1000};
+      catima::Material water({
+                {1,1,2},
+                {16,8,1}
+                });
+                
+      catima::Material graphite({
+                {12,6,1}
+                });
+      catima::_storage.Reset();      
+      EXPECT(catima::_storage.get_index()==0);
+      for(int i=1;i<51;i++){
+          catima::Projectile p1{2*i,i,i,1000};
+          catima::_storage.Add(p1,graphite);
+          EXPECT(catima::_storage.get_index()==i);
+          EXPECT(catima::_storage.GetN()==50);
       }
+      EXPECT(catima::_storage.get_index()==50);
+      for(int i=1;i<49;i++){
+          catima::Projectile p1{2*i,i,i,1000};
+          catima::_storage.Add(p1,water);
+          EXPECT(catima::_storage.get_index()==i);
+          EXPECT(catima::_storage.GetN()==50);
+      }
+
+  
     },
     CASE("energy table"){
       double step = (catima::logEmax - catima::logEmin)/(catima::max_datapoints-1);
