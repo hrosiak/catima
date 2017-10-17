@@ -122,7 +122,7 @@ namespace catima{
 	~Data();
 	void Add(const Projectile &p, const Material &t, Config c=default_config);
 	int GetN() const {return storage.size();};
-	void Reset(){storage.clear();storage.resize(max_storage_data);};
+	void Reset(){storage.clear();storage.resize(max_storage_data);index=storage.begin();};
 	DataPoint& Get(const Projectile &p, const Material &t, Config c=default_config);
 	int get_index() {return std::distance(storage.begin(),index);}
 	private:
