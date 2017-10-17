@@ -245,12 +245,9 @@ cdef class MultiResult:
     
     def getJSON(self):
         res = {}
-        res["total"] = self.total
+        res["result"] = self.total
         res["partial"] = []
         for r in self.results:
-            #print(r)
-            #temp = Result()
-            #temp.setc(r)
             res["partial"].append(r)
         return res
 
