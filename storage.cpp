@@ -19,7 +19,7 @@ namespace catima {
     }
     
     Data::Data(){
-        //storage.reserve(max_storage_data);
+        //storage.reserve(max_storage_data); // disabled because of "circular" storage
         storage.resize(max_storage_data);
         index = storage.begin();
     }

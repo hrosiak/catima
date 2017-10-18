@@ -406,7 +406,9 @@ def get_data(Projectile projectile, Material material, Config config = default_c
     data = catimac.get_data(projectile.cbase, material.cbase, config.cbase)
     return [data.range,data.range_straggling,data.angular_variance]
 
+# constants
 max_datapoints = catimac.max_datapoints
+max_storage_data = catimac.max_storage_data
 
 def energy_table(unsigned int i):
     if(i<catimac.energy_table.num):
@@ -417,3 +419,15 @@ def energy_table(unsigned int i):
 def get_energy_table():
     r = [catimac.energy_table(x) for x in range(catimac.energy_table.num)]
     return r
+
+def print_storage():
+    res = []
+    for i in range(catimac.max_storage_data):
+        data = catimac._storage.Get(i)
+        if(data.p.A>0 and data.p.Z>0 and data.m.ncomponents()>0):
+            matter = []
+            for j in range(data.m.ncomponents()):
+                e = data.m.get_element(j)
+                matter.append([e.first.A,e.first.Z,e.second])
+            res.append({"projectile":[data.p.A,data.p.Z],"matter":matter})
+    return res

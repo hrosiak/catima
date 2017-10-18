@@ -214,7 +214,6 @@ class TestStructures(unittest.TestCase):
         graphite.thickness(1.0)
         
         data = catima.get_data(p, water)
-        print(data[1])
         et = catima.get_energy_table()
         
         self.assertEqual(len(data),3)
@@ -223,24 +222,34 @@ class TestStructures(unittest.TestCase):
         res = catima.calculate(p(et[10]),water)
         self.assertAlmostEqual(res.range,data[0][10],6)
         self.assertAlmostEqual(catima.projectile_range(p,water),data[0][10],6)
-        self.assertAlmostEqual(catima.domega2de(p,water),data[1][10],6)
+        #self.assertAlmostEqual(catima.domega2de(p,water),data[1][10],6)
         
         res = catima.calculate(p(et[100]),water)
         self.assertAlmostEqual(res.range,data[0][100],6)
         self.assertAlmostEqual(catima.projectile_range(p,water),data[0][100],6)
-        self.assertAlmostEqual(catima.domega2de(p,water),data[1][100],6)
+        #self.assertAlmostEqual(catima.domega2de(p,water),data[1][100],6)
         
         res = catima.calculate(p(et[200]),water)
         self.assertAlmostEqual(res.range,data[0][200],6)
         self.assertAlmostEqual(catima.projectile_range(p,water),data[0][200],6)
-        self.assertAlmostEqual(catima.domega2de(p,water),data[1][200],6)
+        #self.assertAlmostEqual(catima.domega2de(p,water),data[1][200],6)
         
         res = catima.calculate(p(et[401]),water)
         self.assertAlmostEqual(res.range,data[0][401],6)
         self.assertAlmostEqual(catima.projectile_range(p,water),data[0][401],6)
-        self.assertAlmostEqual(catima.domega2de(p,water),data[1][401],6)
+        #self.assertAlmostEqual(catima.domega2de(p,water),data[1][401],6)
         
+    def test_python_storage_access(self):
         
+        p = catima.Projectile(12,6)
+        water = catima.get_material(catima.material.WATER)
+        water.thickness(10.0)
+        graphite = catima.get_material(6)
+        graphite.thickness(1.0)
+        data = catima.get_data(p, water)
+        self.assertEqual(catima.max_storage_data,50) # assuming 50, this has to be changed manually
+        r = catima.print_storage()
+        print(r)
         
         #self.assertAlmostEqual(catima.da2de(p,water,et[100]),data[2][100],6)
         #self.assertAlmostEqual(catima.da2de(p,water,et[400]),data[2][400],6)
