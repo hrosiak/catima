@@ -87,6 +87,7 @@ cdef extern from "catima/calculations.h" namespace "catima":
 
 cdef extern from "catima/constants.h" namespace "catima":        
     int max_datapoints "catima::max_datapoints"
+    int max_storage_data "catima::max_storage_data"
     int logEmin "catima::logEmin"
     int logEmax "catima::logEmax"
     
@@ -97,14 +98,23 @@ cdef extern from "catima/storage.h" namespace "catima":
         double derivative(double)
         
     cdef cppclass DataPoint:
+        Projectile p
+        Material m
+        Config config
         vector[double] range
         vector[double] range_straggling
         vector[double] angular_variance
+    
+    cdef cppclass Data:
+        Data() except +
+        DataPoint& Get(unsigned int i)
+        int GetN()
+    
     
     cdef cppclass EnergyTableType "catima::EnergyTable[max_datapoints]":
         size_t num;
         double operator()(int i)
         
-        
-    cdef EnergyTableType energy_table;        
+    cdef EnergyTableType energy_table;
+    cdef Data _storage;
     cdef DataPoint& get_data(const Projectile &p, const Material &t, Config c);
