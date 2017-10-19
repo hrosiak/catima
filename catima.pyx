@@ -420,7 +420,7 @@ def get_energy_table():
     r = [catimac.energy_table(x) for x in range(catimac.energy_table.num)]
     return r
 
-def print_storage():
+def storage_info():
     res = []
     for i in range(catimac.max_storage_data):
         data = catimac._storage.Get(i)
