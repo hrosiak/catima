@@ -139,7 +139,7 @@ const lest::test specification[] =
         p.T = 2794.4822;
         EXPECT( rcompare( f(), 1.768018, 0.02) );
     },
-    CASE("dEdx for compunds"){
+    CASE("dEdx for compounds"){
         catima::Projectile p{1,1,1,1000};
         catima::Material water({
                 {1.00794,1,2},
@@ -327,6 +327,15 @@ const lest::test specification[] =
         EXPECT(res0.sigma_r == res.results[0].sigma_r);
         EXPECT(res0.tof == res.results[0].tof);
 
+    },
+    CASE("default material calculations"){
+        catima::Projectile p{12,6,6,350};
+        auto air = catima::get_material(catima::material::AIR);
+        air.thickness(0.500);
+        auto res = catima::calculate(p(350),air);
+        EXPECT(res.Eout == approx(345.6).epsilon(1e-2));
+        EXPECT(res.sigma_a == approx(0.0013).epsilon(1e-2));
+        EXPECT(res.sigma_E == approx(0.12).epsilon(1e-2));
     }
     
 };

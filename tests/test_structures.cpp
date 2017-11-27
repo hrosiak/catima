@@ -181,6 +181,25 @@ const lest::test specification[] =
         mat5.add_element(12,6,1);
         EXPECT(mat5.ncomponents()==mat6.ncomponents()+1);
 
+    },
+    CASE("int and double stn check"){
+      catima::Projectile p{1,1,1,1000};
+      catima::Material mat1({
+                        {12.01, 6, 1},
+                        {16.00, 8, 1}
+                        });
+      catima::Material mat2({
+                        {12.01, 6, 0.5},
+                        {16.00, 8, 0.5}
+                        });
+      mat1.thickness(1.0);
+      mat2.thickness(1.0);
+      auto res1 = catima::calculate(p(1000),mat1);
+      auto res2 = catima::calculate(p(1000),mat2);
+      EXPECT(res1.dEdxi == res2.dEdxi);
+      EXPECT(res1.range == res2.range);
+      EXPECT(res1.sigma_a == res2.sigma_a);
+      EXPECT(res1.sigma_r == res2.sigma_r);
     }
 };
 
