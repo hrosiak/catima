@@ -25,7 +25,8 @@ namespace catima{
             POLYOLEFIN,
             CMO2,
             SUPRASIL,
-            HAVAR
+            HAVAR,
+            STEEL = 221
         };
     //}
 

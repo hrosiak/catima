@@ -9,7 +9,7 @@ namespace catima{
         }
         switch(id){
             case material::PLASTIC : return Material({{0,1,10},{0,6,9}},1.032);
-            case material::AIR :     return Material({{0,7,4}, {0,8,1}},0.0012);
+            case material::AIR :     return Material({{0,7,0.7810}, {0,8,0.2095},{0,18,0.0095}},0.0012);
             case material::CH2 :     return Material({{0,6,1}, {0,1,2}},0.94);
             case material::LH2 :     return Material({{0,1,1}},0.0708);
             case material::LD2 :     return Material({{2.014,1,1}},0.162);
@@ -28,6 +28,7 @@ namespace catima{
             case material::CMO2:      return Material({{0,96,1},{0,8,2}}, 12.0);
             case material::SUPRASIL :   return Material({{0,14,1},{0,8,2}},2.2 );
             case material::HAVAR :   return Material({{0,27,42},{0,24,40},{0,28,13},{0,26,19},{0,74,1}},8.3);
+            case material::STEEL :   return Material({{0,26,74},{0,24,18},{0,28,8}},8.0);
             default:break;
              }
         return Material();
