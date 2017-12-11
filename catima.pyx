@@ -409,6 +409,8 @@ def get_data(Projectile projectile, Material material, Config config = default_c
 # constants
 max_datapoints = catimac.max_datapoints
 max_storage_data = catimac.max_storage_data
+logEmin = catimac.logEmin
+logEmax = catimac.logEmax
 
 def energy_table(unsigned int i):
     if(i<catimac.energy_table.num):
@@ -431,3 +433,9 @@ def storage_info():
                 matter.append([e.first.A,e.first.Z,e.second])
             res.append({"projectile":[data.p.A,data.p.Z],"matter":matter})
     return res
+
+def catima_info():
+    print("CATIMA version = 1.0")
+    print("number of energy points = %g"%max_datapoints)
+    print("min energy point = 10^%g MeV/u"%logEmin)
+    print("max energy point = 10^%g MeV/u"%logEmax)
