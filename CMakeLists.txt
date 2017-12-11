@@ -11,9 +11,9 @@ option(THIN_TARGET_APPROXIMATION "thin target approximation" ON)
 option(DOCS "build documentation (requires doxygen)" OFF)
 
 ######## build type ############
-#set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+set(CMAKE_BUILD_TYPE Release)
+#set(CMAKE_BUILD_TYPE Debug)
+#set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 ################################
 
 ######### compiler flags ###########
