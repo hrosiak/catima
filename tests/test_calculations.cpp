@@ -330,7 +330,7 @@ const lest::test specification[] =
     },
     CASE("default material calculations"){
         catima::Projectile p{12,6,6,350};
-        auto air = catima::get_material(catima::material::AIR);
+        auto air = catima::get_material(catima::material::Air);
         air.thickness(0.500);
         auto res = catima::calculate(p(350),air);
         EXPECT(res.Eout == approx(345.6).epsilon(1e-2));
