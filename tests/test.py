@@ -248,7 +248,7 @@ class TestStructures(unittest.TestCase):
         graphite.thickness(1.0)
         data = catima.get_data(p, water)
         self.assertEqual(catima.max_storage_data,50) # assuming 50, this has to be changed manually
-        r = catima.print_storage()
+        r = catima.storage_info()
         print(r)
         
         #self.assertAlmostEqual(catima.da2de(p,water,et[100]),data[2][100],6)
