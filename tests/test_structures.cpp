@@ -70,7 +70,7 @@ const lest::test specification[] =
         EXPECT(m.density() == 2.0);
         EXPECT(m.M() == 12.0107);
 
-        m = catima::get_material(catima::material::WATER);
+        m = catima::get_material(catima::material::Water);
         EXPECT(m.get_element(0).first.A == 1.00794);
         EXPECT(m.get_element(0).first.Z == 1);
         EXPECT(m.get_element(1).first.A == 15.9994);
