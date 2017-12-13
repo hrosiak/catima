@@ -25,8 +25,7 @@ namespace catima{
 		 CmO2 = 218,
 		 Suprasil = 219,
 		 HAVAR = 220,
-		 Steel = 221,
-		 CH4 = 222
+		 Steel = 221
         };
 
       Material get_compound(material m);
