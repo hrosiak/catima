@@ -384,6 +384,16 @@ def dedx(Projectile projectile, Material material, energy = None, Config config 
     if(energy is None):
         energy = projectile.T()
     return catimac.dedx(projectile.cbase, energy, material.cbase, config.cbase)
+    
+def domega2dx(Projectile projectile, Material material, energy = None, Config config = default_config):
+    if(isinstance(energy,numpy.ndarray)):
+        res = numpy.empty(energy.size)
+        for i,e in enumerate(energy):
+            res[i] = catimac.domega2dx(projectile.cbase, e, material.cbase, config.cbase)
+        return res    
+    if(energy is None):
+        energy = projectile.T()
+    return catimac.domega2dx(projectile.cbase, energy, material.cbase, config.cbase)
 
 def energy_out(Projectile projectile, Material material, energy = None, Config config = default_config):
     if(isinstance(energy,numpy.ndarray)):
