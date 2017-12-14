@@ -49,7 +49,7 @@ double domega2dx(Projectile &p, double T, const Material &mat, const Config &c){
         t = res.first;  //struct of target 
         w = res.second; //number of atoms of the element
         p.T = T;
-        sum += t.A*w*dedx_rms(p,t);
+        sum += t.A*w*dedx_variance(p,t);
     }
     return sum/mat.M();
 }
