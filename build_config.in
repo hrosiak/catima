@@ -2,5 +2,7 @@
 #define BUILD_CONFIG_H
 
 #cmakedefine THIN_TARGET_APPROXIMATION
+#cmakedefine GSL_INTEGRATION
+
 
 #endif

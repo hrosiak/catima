@@ -631,7 +631,7 @@ double precalculated_lindhard_X(const Projectile &p){
     return v1+(dif*da/ls_coefficients::a_rel_increase);
 }
 
-double dedx_rms(Projectile &p, Target &t, const Config &c){
+double dedx_variance(Projectile &p, Target &t, const Config &c){
     double zp_eff = z_effective(p,t,c);
     double gamma = gamma_from_T(p.T);
     double f = domega2dx_constant*pow(zp_eff,2)*t.Z*gamma*gamma;

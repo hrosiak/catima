@@ -21,11 +21,12 @@ namespace catima{
 		 Mylar = 214,
 		 NaF = 215,
 		 P10 = 216,
-		 PolyOlefin = 217,
+		 Polyolefin = 217,
 		 CmO2 = 218,
 		 Suprasil = 219,
 		 HAVAR = 220,
-		 Steel = 221
+		 Steel = 221,
+		 CH4 = 222
         };
 
       Material get_compound(material m);
