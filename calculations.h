@@ -40,7 +40,7 @@ namespace catima{
     /**
       * returns energy loss straggling
       */
-    double dedx_rms(Projectile &p, Target &t, const Config &c=default_config);
+    double dedx_variance(Projectile &p, Target &t, const Config &c=default_config);
 
     /**
       * returns reduced energy loss unit for projectile-target combination

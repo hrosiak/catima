@@ -49,7 +49,7 @@ double domega2dx(Projectile &p, double T, const Material &mat, const Config &c){
         t = res.first;  //struct of target 
         w = res.second; //number of atoms of the element
         p.T = T;
-        sum += t.A*w*dedx_rms(p,t);
+        sum += t.A*w*dedx_variance(p,t);
     }
     return sum/mat.M();
 }
@@ -253,12 +253,12 @@ std::vector<double> calculate_range(Projectile p, const Material &t, const Confi
     auto fdedx = [&](double x)->double{return 1.0/dedx(p,x,t);};
     
     //calculate 1st point to have i-1 element ready for loop
-    res = integratorGSL.Integrate(fdedx,Ezero,energy_table(0),int_eps_range,false);
+    res = integrator.integrate(fdedx,Ezero,energy_table(0));
     res = p.A*res;
     values.push_back(res);
     
     for(int i=1;i<max_datapoints;i++){
-        res = integratorGSL.Integrate(fdedx,energy_table(i-1),energy_table(i),int_eps_range,false);
+        res = integrator.integrate(fdedx,energy_table(i-1),energy_table(i));
         res = p.A*res;
         res += values[i-1];
         values.push_back(res);
@@ -278,11 +278,11 @@ std::vector<double> calculate_range_straggling(Projectile p, const Material &t, 
                 //return 1.0*domega2dx(p,x,t)/(de*de*de);
                 //};
     //calculate 1st point to have i-1 element ready for loop
-    res = integratorGSL.Integrate(function,Ezero,energy_table(0),int_eps_range_str,false);
+    res = integrator.integrate(function,Ezero,energy_table(0));
     res = p.A*res;
     values.push_back(res);
     for(int i=1;i<max_datapoints;i++){
-        res = integratorGSL.Integrate(function,energy_table(i-1),energy_table(i),int_eps_range_str,false);
+        res = integrator.integrate(function,energy_table(i-1),energy_table(i));
         res = p.A*res;
         res += values[i-1];
         values.push_back(res);
@@ -297,11 +297,11 @@ std::vector<double> calculate_da2dx(Projectile p, const Material &t, const Confi
     values.reserve(max_datapoints);
     //auto function = [&](double x)->double{return p.A*da2dx(p,x,t)/dedx(p,x,t);};
     auto function = [&](double x)->double{return 1.0/dedx(p,x,t);};
-    res = integratorGSL.Integrate(function,Ezero,energy_table(0),int_eps_ang_str,false);
+    res = integrator.integrate(function,Ezero,energy_table(0));
     res = p.A*da2dx(p,energy_table(0),t)*res;
     values.push_back(res);
     for(int i=1;i<max_datapoints;i++){
-        res = integratorGSL.Integrate(function,energy_table(i-1),energy_table(i),int_eps_ang_str,false);
+        res = integrator.integrate(function,energy_table(i-1),energy_table(i));
         res = p.A*da2dx(p,energy_table(i),t)*res;
         res += values[i-1];
         values.push_back(res);
@@ -314,11 +314,11 @@ std::vector<double> calculate_tof(Projectile p, const Material &t, const Config 
     std::vector<double> values;
     values.reserve(max_datapoints);
     auto function = [&](double x)->double{return 1.0/(dedx(p,x,t)*beta_from_T(x));};
-    res = integratorGSL.Integrate(function,Ezero,energy_table(0),int_eps_tof,false);
+    res = integrator.integrate(function,Ezero,energy_table(0));
     res = res*10.0*p.A/(c_light*t.density());
     values.push_back(res);
     for(int i=1;i<max_datapoints;i++){
-        res = integratorGSL.Integrate(function,energy_table(i-1),energy_table(i),int_eps_tof,false);
+        res = integrator.integrate(function,energy_table(i-1),energy_table(i));
         res = res*10.0*p.A/(c_light*t.density());
         res += values[i-1];
         values.push_back(res);
@@ -328,13 +328,9 @@ std::vector<double> calculate_tof(Projectile p, const Material &t, const Config 
 
 DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
     DataPoint dp(p,t,c);
-    std::vector<double>range_values;
-    range_values.reserve(max_datapoints);
-    std::vector<double>range_straggling_values;
-    range_straggling_values.reserve(max_datapoints);
-    std::vector<double>angular_straggling_values;
-    angular_straggling_values.reserve(max_datapoints);
-
+    dp.range.resize(max_datapoints);
+    dp.range_straggling.resize(max_datapoints);
+    dp.angular_variance.resize(max_datapoints);
     double dedxval;
     auto fdedx = [&](double x)->double{
             return 1.0/dedx(p,x,t);    
@@ -346,32 +342,28 @@ DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
 
     double res;
     //calculate 1st point to have i-1 element ready for loop
-    res = integratorGSL.Integrate(fdedx,Ezero,energy_table(0),int_eps_range,false);
+    res = integrator.integrate(fdedx,Ezero,energy_table(0));
     res = p.A*res;
-    range_values.push_back(res);
+    dp.range[0] = res;
     res = da2dx(p,energy_table(0),t)*res;
-    angular_straggling_values.push_back(res);
+    dp.angular_variance[0] = res;
     
-    res = integratorGSL.Integrate(fomega,Ezero,energy_table(0),int_eps_range_str,false);
+    res = integrator.integrate(fomega,Ezero,energy_table(0));
     res = p.A*res;
-    range_straggling_values.push_back(res);
+    dp.range_straggling[0]=res;
 
     for(int i=1;i<max_datapoints;i++){
-        res = p.A*integratorGSL.Integrate(fdedx,energy_table(i-1),energy_table(i),int_eps_range,false);
-        range_values.push_back(res + range_values[i-1]);
+        res = p.A*integrator.integrate(fdedx,energy_table(i-1),energy_table(i));
+        dp.range[i] = res + dp.range[i-1];
 
         res = da2dx(p,energy_table(i),t)*res;
-        angular_straggling_values.push_back(res + angular_straggling_values[i-1]);
+        dp.angular_variance[i] = res + dp.angular_variance[i-1];
     
-        res = integratorGSL.Integrate(fomega,energy_table(i-1),energy_table(i),int_eps_range_str,false);
+        res = integrator.integrate(fomega,energy_table(i-1),energy_table(i));
+        //res = integratorGSL.integrate(fomega,energy_table(i-1),energy_table(i));
         res = p.A*res;
-        res += range_straggling_values[i-1];
-        range_straggling_values.push_back(res);
+        dp.range_straggling[i] = res + dp.range_straggling[i-1];
     }
-
-    dp.range = range_values;
-    dp.range_straggling = range_straggling_values;
-    dp.angular_variance = angular_straggling_values;
     return dp;
 }
 
@@ -380,7 +372,7 @@ double calculate_tof_from_E(Projectile p, double Eout, const Material &t, const 
     //double beta_in = beta_from_T(p.T);
     //double beta_out = beta_from_T(Eout);
     auto function = [&](double x)->double{return 1.0/(dedx(p,x,t)*beta_from_T(x));};
-    res = integratorGSL.Integrate(function,Eout,p.T,int_eps_tof,false);
+    res = integrator.integrate(function,Eout,p.T);
     res = res*10.0*p.A/(c_light*t.density());
     return res;
 }

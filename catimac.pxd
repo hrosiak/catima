@@ -66,6 +66,7 @@ cdef extern from "catima/config.h" namespace "catima":
 
 cdef extern from "catima/catima.h" namespace "catima":
     cdef double dedx(Projectile &p, double T, const Material &t,const Config &c)
+    cdef double domega2dx(Projectile &p, double T, const Material &mat, const Config &c)
     cdef double range(Projectile &p, double T, const Material &t, const Config &c);
     cdef double dedx_from_range(Projectile &p, double T, const Material &t, const Config &c);
     cdef double energy_out(Projectile &p, double T, const Material &t, const Config &c);
@@ -75,7 +76,6 @@ cdef extern from "catima/catima.h" namespace "catima":
 
     cdef double range_straggling(Projectile &p, double T, const Material &t, const Config &c);
     cdef double da2dx(Projectile &p, double T, const Material &t, const Config &c);
-    cdef double dedx_rms(Projectile &p, Target &t, const Config &c);
     cdef double angular_variance(Projectile &p, double T, const Material &t, const  Config& c);
 
     cdef Result calculate(Projectile &p, const Material &t, const Config &c);

@@ -29,25 +29,6 @@ namespace catima{
 
 	enum interpolation_t {cspline, linear};
 
-    //inline double energy_function( int i ) { return exp(M_LN10*(logEmin + ((double)i)*(logEmax-logEmin)/(max_datapoints - 1.0))); }
-  
-    //enum DataType{TYPE_RANGE,TYPE_LS};
-    /*
-    template<int N>
-    struct EnergyTable{
-	constexpr EnergyTable(double logmin, double logmax):values(),step(0.0),num(N){
-		step = (logmax-logmin)/(N - 1.0);
-	    for(auto i=0;i<N;i++){
-		values[i]=exp(M_LN10*(logmin + ((double)i)*step));
-		}
-	    }
-	double operator()(int i)const{return values[i];}
-	double values[N];
-	double step;
-	std::size_t num;
-    };
-	*/
-
 	template<int N>
     struct EnergyTable{
 		EnergyTable(double logmin, double logmax):values(),step(0.0),num(N){
