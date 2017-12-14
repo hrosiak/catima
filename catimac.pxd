@@ -5,7 +5,6 @@
     :licence: GNU Affero General Public License, see LICENCE for more details
 """
 
-from libcpp.pair cimport pair
 from libcpp.vector cimport vector
 from libcpp cimport bool
 
@@ -13,6 +12,7 @@ cdef extern from "catima/structures.h" namespace "catima":
     cdef struct Target:
         double A
         int Z
+        double stn
     
     cdef struct Projectile:
         double A
@@ -39,13 +39,14 @@ cdef extern from "catima/structures.h" namespace "catima":
     cdef cppclass Material:
         Material() except +
         void add_element(double , int , double )
-        pair[Target,double] get_element(int) 
+        Target get_element(int) 
         int ncomponents()
         double M()
         double density()
         void density(double val)
         double thickness()
         void thickness(double val)
+        void calculate()
     
     cdef cppclass Layers:
         Layers() except +

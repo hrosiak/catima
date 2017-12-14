@@ -26,47 +26,41 @@ bool operator==(const Config &a, const Config&b){
 
 double dedx(Projectile &p, double T, const Material &mat, const  Config &c){
     double sum = 0;
-    Target t;
     double w=0;
     if(T<=0)return 0.0;
     for(int i=0;i<mat.ncomponents();i++){
-        auto res = mat.get_element(i);
-        t = res.first;  //struct of target 
-        w = res.second; //number of atoms of the element
+        auto t = mat.get_element(i);
+        w = mat.weight_fraction(i);
         p.T = T;
-        sum += t.A*w*dedx(p,t);
+        sum += w*dedx(p,t);
     }
-    return sum/mat.M();
+    return sum;
 }
 
 double domega2dx(Projectile &p, double T, const Material &mat, const Config &c){
     double sum = 0;
-    Target t;
     double w=0;
     
     for(int i=0;i<mat.ncomponents();i++){
-        auto res = mat.get_element(i);
-        t = res.first;  //struct of target 
-        w = res.second; //number of atoms of the element
+        auto t= mat.get_element(i);
+        w = mat.weight_fraction(i);
         p.T = T;
-        sum += t.A*w*dedx_variance(p,t);
+        sum += w*dedx_variance(p,t);
     }
-    return sum/mat.M();
+    return sum;
 }
 
 double da2dx(Projectile &p, double T, const Material &mat, const Config &c){
     double sum = 0;
-    Target t;
     double w=0;
     
     for(int i=0;i<mat.ncomponents();i++){
-        auto res = mat.get_element(i);
-        t = res.first;  //struct of target 
-        w = res.second; //number of atoms of the element
+        auto t = mat.get_element(i);
+        w = mat.weight_fraction(i);
         p.T = T;
-        sum += t.A*w*angular_scattering_variance(p,t);
+        sum += w*angular_scattering_variance(p,t);
     }
-    return sum/mat.M();
+    return sum;
 }
 
 

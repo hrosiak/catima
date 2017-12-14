@@ -1,6 +1,8 @@
 #include "lest.hpp"
+#include "testutils.h"
 #include <math.h>
 using namespace std;
+using catima::approx;
 
 #include "catima/catima.h"
 #include "catima/material_database.h"
@@ -57,28 +59,25 @@ const lest::test specification[] =
     CASE("Material automatic atomic weight"){
         catima::Material water({{0,1,2},{0,8,1}});
         catima::Material graphite(0,6);
-        EXPECT(water.get_element(0).first.A == 1.00794);
-        EXPECT(water.get_element(1).first.A == 15.9994);
-        EXPECT(graphite.get_element(0).first.A == 12.0107);
+        EXPECT(water.get_element(0).A == 1.00794);
+        EXPECT(water.get_element(1).A == 15.9994);
+        EXPECT(graphite.get_element(0).A == 12.0107);
         EXPECT(water.M()>16);
         EXPECT(graphite.M()>12);
     },
     CASE("default materials"){
         catima::Material m = catima::get_material(6);
-        EXPECT(m.get_element(0).first.A == 12.0107);
-        EXPECT(m.get_element(0).first.Z == 6);
+        EXPECT(m.get_element(0).A == 12.0107);
+        EXPECT(m.get_element(0).Z == 6);
         EXPECT(m.density() == 2.0);
         EXPECT(m.M() == 12.0107);
 
         m = catima::get_material(catima::material::Water);
-        EXPECT(m.get_element(0).first.A == 1.00794);
-        EXPECT(m.get_element(0).first.Z == 1);
-        EXPECT(m.get_element(1).first.A == 15.9994);
-        EXPECT(m.get_element(1).first.Z == 8);
+        EXPECT(m.get_element(0).A == 1.00794);
+        EXPECT(m.get_element(0).Z == 1);
+        EXPECT(m.get_element(1).A == 15.9994);
+        EXPECT(m.get_element(1).Z == 8);
         EXPECT(m.density() == 1.0);
-        EXPECT(m.M() > 16.0);
-
-
     },
     CASE("Layers"){
         catima::Material water2;
@@ -102,10 +101,10 @@ const lest::test specification[] =
         EXPECT(detector1[0].thickness()==1.0);
         EXPECT(detector1[1].density()==1.0);
         EXPECT(detector1[1].thickness()==2.0);
-        EXPECT(detector1[0].get_element(0).first.Z == 6);
-        EXPECT(detector1[0].get_element(0).first.A == 12);
-        EXPECT(detector1[1].get_element(0).first.A == 1);
-        EXPECT(detector1[1].get_element(0).first.Z == 1);
+        EXPECT(detector1[0].get_element(0).Z == 6);
+        EXPECT(detector1[0].get_element(0).A == 12);
+        EXPECT(detector1[1].get_element(0).A == 1);
+        EXPECT(detector1[1].get_element(0).Z == 1);
         EXPECT(detector1[2].density() == 1.8);
         detector1[1].density(1.2);
         EXPECT(detector1[1].density()==1.2);
@@ -163,43 +162,62 @@ const lest::test specification[] =
                         });
         EXPECT(mat2.ncomponents()==1);
         EXPECT(mat3.ncomponents()==1);
-        EXPECT(mat3.get_element(0).first.A==12.01);
+        EXPECT(mat3.get_element(0).A==12.01);
         EXPECT(mat4.ncomponents()==1);
-        EXPECT(mat4.get_element(0).first.A==12.01);
+        EXPECT(mat4.get_element(0).A==12.01);
         EXPECT(mat5.ncomponents()==2);
-        EXPECT(mat5.get_element(0).first.A==12.01);
-        EXPECT(mat5.get_element(0).first.Z==6);
-        EXPECT(mat5.get_element(1).first.A==16.0);
-        EXPECT(mat5.get_element(1).second==2);
+        EXPECT(mat5.get_element(0).A==12.01);
+        EXPECT(mat5.get_element(0).Z==6);
+        EXPECT(mat5.get_element(1).A==16.0);
+        EXPECT(mat5.get_element(1).stn==2);
         
         catima::Material mat6;
         mat6 = mat5;
         EXPECT(mat5==mat6);
         EXPECT(mat5.ncomponents()==mat6.ncomponents());
-        EXPECT(mat5.get_element(0).first.A==mat6.get_element(0).first.A);
-        EXPECT(mat5.get_element(1).first.A==mat6.get_element(1).first.A);
+        EXPECT(mat5.get_element(0).A==mat6.get_element(0).A);
+        EXPECT(mat5.get_element(1).A==mat6.get_element(1).A);
         mat5.add_element(12,6,1);
         EXPECT(mat5.ncomponents()==mat6.ncomponents()+1);
 
     },
-    CASE("int and double stn check"){
-      catima::Projectile p{1,1,1,1000};
-      catima::Material mat1({
-                        {12.01, 6, 1},
-                        {16.00, 8, 1}
+    CASE("fraction vs stn init"){
+      catima::Projectile p{12,6};
+      catima::Material water1({
+                        {0, 1, 0.111894},
+                        {0, 8, 0.888106}
                         });
-      catima::Material mat2({
-                        {12.01, 6, 0.5},
-                        {16.00, 8, 0.5}
+      catima::Material water2({
+                        {0, 1, 2},
+                        {0, 8, 1}
                         });
-      mat1.thickness(1.0);
-      mat2.thickness(1.0);
-      auto res1 = catima::calculate(p(1000),mat1);
-      auto res2 = catima::calculate(p(1000),mat2);
-      EXPECT(res1.dEdxi == res2.dEdxi);
-      EXPECT(res1.range == res2.range);
-      EXPECT(res1.sigma_a == res2.sigma_a);
-      EXPECT(res1.sigma_r == res2.sigma_r);
+      water1.thickness(1.0);
+      water2.thickness(1.0);
+      auto res1 = catima::calculate(p(600),water1);
+      auto res2 = catima::calculate(p(600),water2);
+      EXPECT(res1.dEdxi == approx(res2.dEdxi,0.001));
+      EXPECT(res1.range == approx(res2.range).R(1e-2));
+      EXPECT(res1.sigma_a == approx(res2.sigma_a).R(1e-2));
+      EXPECT(res1.sigma_r == approx(res2.sigma_r).R(1e-2));
+    },
+    CASE("fraction calculation"){
+        catima::Material water1({
+                        {0, 1, 0.111894},
+                        {0, 8, 0.888106}
+                        });
+        catima::Material water2({
+                        {0, 1, 2},
+                        {0, 8, 1}
+                        });
+
+        EXPECT(water1.weight_fraction(0)==0.111894);
+        EXPECT(water2.weight_fraction(0)==approx(water1.weight_fraction(0)).R(1e-3));
+        EXPECT(water1.weight_fraction(1)==0.888106);
+        EXPECT(water2.weight_fraction(1)==approx(water1.weight_fraction(1)).R(1e-3));
+        EXPECT(water2.M()==approx(18).epsilon(0.1));
+
+        EXPECT(water1.M()==approx(6.0,0.1));
+        EXPECT(water2.M()==approx(18,0.1));
     }
 };
 
