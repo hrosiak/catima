@@ -13,7 +13,7 @@ namespace catima{
     }
 
     IntegratorGSL::IntegratorGSL(bool adapt):adaptive(adapt){
-        //gsl_set_error_handler_off();
+        gsl_set_error_handler_off();
         if(adaptive){
             w=gsl_integration_workspace_alloc(100);
         }
