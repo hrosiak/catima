@@ -44,8 +44,8 @@ double rdif(double v1, double v2){
 void comp_dedx(catima::Projectile p, catima::Material t, double epsilon = 0.001, bool fout=false, const char* fname=""){
     double dif;
     //struct atima_results results;
-    int tz = t.get_element(0).first.Z;
-    double ta = t.get_element(0).first.A;
+    int tz = t.get_element(0).Z;
+    double ta = t.get_element(0).A;
     bool res;
     cout<<"-----------------------------"<<endl;
     cout<<"projectile: A = "<<p.A<<", Z = "<<p.Z<<endl;

@@ -19,6 +19,7 @@ cdef class Material:
         if(elements and isinstance(elements[0],list)):
             for e in elements:
                 self.cbase.add_element(e[0],e[1],e[2])
+        self.cbase.calculate()
         if(not thickness is None):
             self.thickness(thickness)
         if(not density is None):
@@ -82,6 +83,8 @@ class material(IntEnum):
             CMO2 = 218
             SUPRASIL = 219
             HAVAR = 220
+            STEEL = 221
+            METHANE = 222
 
 def get_material(int matid):
     res = Material()
@@ -93,14 +96,17 @@ def get_material(int matid):
 cdef class Target:
     cdef catimac.Target cbase
 
-    def __cinit__(self,a,z):
+    def __cinit__(self,a,z,stn):
         self.cbase.A = a
         self.cbase.Z = z
+        self.cbase.stn = stn
     
     def A(self):
         return self.cbase.A
     def Z(self):
         return self.cbase.Z
+    def stn(self):
+        return self.cbase.stn
 
 cdef class Layers:
     cdef public:
@@ -440,7 +446,7 @@ def storage_info():
             matter = []
             for j in range(data.m.ncomponents()):
                 e = data.m.get_element(j)
-                matter.append([e.first.A,e.first.Z,e.second])
+                matter.append([e.A,e.Z,e.stn])
             res.append({"projectile":[data.p.A,data.p.Z],"matter":matter})
     return res
 

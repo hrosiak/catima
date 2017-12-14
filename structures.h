@@ -51,6 +51,7 @@ namespace catima{
     struct Target{
         double A=0;
         int Z=0;
+        double stn=1.0;
     };
 
     /**
@@ -65,7 +66,6 @@ namespace catima{
             double th=0;
             double molar_mass=0;
             std::vector<Target>atoms;
-            std::vector<double>stn;
 
         public:
             Material(){};
@@ -91,6 +91,9 @@ namespace catima{
             Material(std::initializer_list<std::array<double,3>>list,double _density=0.0);
             //Material(const std::array<double,2> &list);
             
+            /**
+             * calculates internal variables if needed
+             */
             void calculate();
             
             /**
@@ -104,14 +107,20 @@ namespace catima{
             /**
              * returns i-th element of the Material as a std::pair of Target and corresponding stoichiometric number
              * @param i - index of element to return
-             * @return std::pair of Target and corresponding stoichiometric number
+             * @return Target class
              */
-            std::pair<Target,double> get_element(int i) const;
+            Target get_element(int i) const {return atoms[i];};
+
+            /**
+             * return weight fraction of i-th element
+             * @return weight fraction
+             */
+            double weight_fraction(int i) const {return (atoms[i].stn<1.0)?atoms[i].stn:atoms[i].stn*atoms[i].A/M();};
 
             /**
               * @return number of components in Material
               */
-            int ncomponents() const {return stn.size();}
+            int ncomponents() const {return atoms.size();}
 
             /**
               * @return returns Molar Mass of the Material

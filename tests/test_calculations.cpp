@@ -1,9 +1,9 @@
 #include "lest.hpp"
+#include "testutils.h"
 #include <math.h>
 using namespace std;
-
+using catima::approx;
 #include "catima/catima.h"
-using lest::approx;
 bool rcompare(double a, double b,double eps){
     if(fabs((a-b)/fabs(b))<eps){
       return true;
@@ -333,9 +333,13 @@ const lest::test specification[] =
         auto air = catima::get_material(catima::material::Air);
         air.thickness(0.500);
         auto res = catima::calculate(p(350),air);
-        EXPECT(res.Eout == approx(345.6).epsilon(1e-2));
-        EXPECT(res.sigma_a == approx(0.0013).epsilon(1e-2));
-        EXPECT(res.sigma_E == approx(0.12).epsilon(1e-2));
+        EXPECT(res.Eout == approx(345.6).epsilon(1.0));
+        EXPECT(res.sigma_a == approx(0.0013).epsilon(1e-4));
+        EXPECT(res.sigma_E == approx(0.12).epsilon(1e-3));
+        
+        auto water = catima::get_material(catima::material::Water);
+        auto res2 = catima::calculate(p(600),water,600);
+        EXPECT(res2.dEdxi == approx(92.5).epsilon(2));
     }
     
 };

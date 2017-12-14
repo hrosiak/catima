@@ -1,5 +1,6 @@
 #include "structures.h"
 #include "catima/nucdata.h"
+#include <algorithm>
 
 
 namespace catima{
@@ -17,7 +18,7 @@ bool operator==(const Material &a, const Material&b){
     if(a.density() != b.density())return false;
     if(a.ncomponents() != b.ncomponents())return false;
     for(int i=0;i<a.ncomponents();i++){
-        if(a.stn[i] != b.stn[i])return false;
+        if(a.atoms[i].stn != b.atoms[i].stn)return false;
         if(a.atoms[i].A != b.atoms[i].A)return false;
         if(a.atoms[i].Z != b.atoms[i].Z)return false;
     }
@@ -31,9 +32,13 @@ Material::Material(const std::array<double,2> &list){
 */
 Material::Material(std::initializer_list<std::array<double,3>>list,double _density):rho(_density){
     std::initializer_list<std::array<double,3>>::iterator it;
+    atoms.reserve(list.size());
     for ( it=list.begin(); it!=list.end(); ++it){
-        add_element( (*it)[0],(*it)[1],(*it)[2]);
+        add_element((*it)[0],(*it)[1],(*it)[2]);
     }
+
+    calculate(); // calculate if needed, ie average molar mass
+    
 }
 
 Material::Material(double _a, int _z, double _rho, double _th):rho(_rho),th(_th){
@@ -42,24 +47,20 @@ Material::Material(double _a, int _z, double _rho, double _th):rho(_rho),th(_th)
 
 void Material::add_element(double _a, int _z, double _stn){
     double a = (_a>0)?_a:element_atomic_weight(_z);
-    stn.push_back(_stn);
-    atoms.push_back({a,_z});
+    atoms.push_back({a,_z,_stn});
     molar_mass += _stn*a;
 }
 
-
-std::pair<Target,double> Material::get_element(int i) const{
-    return std::pair<Target,double>(atoms[i],stn[i]);
-}
-
-/*
 void Material::calculate(){
-    molar_mass = 0;
-    for(int i=0;i<ncomponents();i++){
-        molar_mass += stn[i]*a[i];
+    if(std::all_of(atoms.begin(),atoms.end(),[](const Target &t){return t.stn<1.0;})){
+        double sum = 0;
+        for(auto& e: atoms){
+            sum+= e.stn/e.A;
+        }
+        molar_mass = 1.0/sum;
     }
 }
-*/
+
 
 Layers& Layers::operator=(const Layers& other){
     

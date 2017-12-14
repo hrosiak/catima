@@ -2,7 +2,7 @@
 #define CONSTANTS_H
 
 namespace catima {
-    
+
 constexpr double Ezero = 9E-4; // lowest E to calculate, below taken as 0
 constexpr double logEmin = -3; // log of minimum energy
 constexpr double logEmax = 5.0;  // log of max energy
@@ -10,10 +10,12 @@ constexpr int max_datapoints = 500; // how many datapoints between logEmin and l
 constexpr int max_storage_data = 50; // number of datapoints which can be stored in cache
 
 /// required integration precision (relative units)
-constexpr double int_eps_range = 0.01;
-constexpr double int_eps_range_str = 0.01;
+/*
+constexpr double int_eps_range = 0.001;
+constexpr double int_eps_range_str = 0.001;
 constexpr double int_eps_ang_str = 0.01;
 constexpr double int_eps_tof = 0.01;
+*/
 
 constexpr double thin_target_limit = 1 - 1e-3;
 

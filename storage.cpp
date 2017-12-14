@@ -37,8 +37,8 @@ void Data::Add(const Projectile &p, const Material &t, Config c){
     #if(0)
     *index = dp;
     index->range = calculate_range(p,t,c);
-	index->range_straggling = calculate_range_straggling(p,t,c);
-	index->angular_variance = calculate_angular_variance(p,t,c);
+    index->range_straggling = calculate_range_straggling(p,t,c);
+    index->angular_variance = calculate_angular_variance(p,t,c);
     #else
     *index = calculate_DataPoint(p,t,c);
     #endif
