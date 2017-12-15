@@ -36,8 +36,8 @@ namespace catima{
 		 case material::CO2:	 return Material({{0,6,1},{0,8,2}},0.001842);
 		 case material::CH4:	 return Material({{0,1,4},{0,6,1}},0.0006);
 		 case material::Bakelite:	 return Material({{0,1,0.057441},{0,6,0.774591},{0,8,0.167968}},1.25);
-		 case material::A-150 platics:	 return Material({{0,1,0.101327},{0,6,0.7755},{0,7,0.035057},{0,8,0.0523159},{0,9,0.017422},{0,20,0.018378}},1.127);
-		 case material::B-100 platics:	 return Material({{0,1,0.0654709},{0,6,0.536944},{0,7,0.0215},{0,8,0.032085},{0,9,0.167411},{0,20,0.176589}},1.45);
+		 case material::A_150:	 return Material({{0,1,0.101327},{0,6,0.7755},{0,7,0.035057},{0,8,0.0523159},{0,9,0.017422},{0,20,0.018378}},1.127);
+		 case material::B_100:	 return Material({{0,1,0.0654709},{0,6,0.536944},{0,7,0.0215},{0,8,0.032085},{0,9,0.167411},{0,20,0.176589}},1.45);
 		 case material::Adenine:	 return Material({{0,1,5},{0,6,5},{0,7,5}},1.35);
 		 case material::Ammonia:	 return Material({{0,1,3},{0,7,1}},0.000826);
 		 case material::BaF2:	 return Material({{0,9,2},{0,56,1}},4.89);
