@@ -80,7 +80,7 @@ namespace catima{
 		 case material::Chloroform:	 return Material({{0,1,1},{0,6,1},{0,17,3}},1.4832);
 		 case material::Cyclohexane:	 return Material({{0,1,12},{0,6,6}},0.779);
 		 case material::Concrete:	 return Material({{0,1,0.01},{0,6,0.001},{0,8,0.529107},{0,11,0.016},{0,12,0.002},{0,13,0.033872},{0,14,0.337021},{0,19,0.013},{0,20,0.044},{0,26,0.014}},2.3);
-		 case material::Diethyl Ether:	 return Material({{0,1,10},{0,6,4},{0,8,1}},0.71378);
+		 case material::Diethyl_Ether:	 return Material({{0,1,10},{0,6,4},{0,8,1}},0.71378);
 		 case material::Ethane:	 return Material({{0,1,6},{0,6,2}},0.00125324);
 		 case material::Ethanol:	 return Material({{0,1,6},{0,6,2},{0,8,1}},0.7893);
 		 case material::Ethylene:	 return Material({{0,1,4},{0,6,2}},0.00117497);
@@ -140,7 +140,7 @@ namespace catima{
 		 case material::Propane:	 return Material({{0,1,8},{0,6,3}},0.00188);
 		 case material::nPropanol:	 return Material({{0,1,8},{0,6,3},{0,8,1}},0.8035);
 		 case material::PVC:	 return Material({{0,1,3},{0,6,2},{0,17,1}},1.3);
-		 case material::Pyridine::	 return Material({{0,1,5},{0,6,5},{0,7,1}},0.9819);
+		 case material::Pyridine:	 return Material({{0,1,5},{0,6,5},{0,7,1}},0.9819);
 		 case material::SiO2:	 return Material({{0,8,2},{0,14,1}},2.32);
 		 case material::Skin:	 return Material({{0,1,0.100588},{0,6,0.22825},{0,7,0.04642},{0,8,0.619002},{0,11,7e-05},{0,12,6e-05},{0,15,0.00033},{0,16,0.00159},{0,17,0.00267},{0,19,0.00085},{0,20,0.00015},{0,26,1e-05},{0,30,1e-05}},1.1);
 		 case material::Sucrose:	 return Material({{0,1,22},{0,6,12},{0,8,11}},1.587);
@@ -152,6 +152,7 @@ namespace catima{
 		 case material::UC2:	 return Material({{0,6,2},{0,92,1}},11.28);
 		 case material::UC:	 return Material({{0,6,1},{0,92,1}},13.63);
 		 case material::UO2:	 return Material({{0,8,2},{0,92,1}},10.97);
+		 case material::Urea:	 return Material({{0,1,0.067131},{0,6,0.2},{0,7,0.466459},{0,8,0.266411}},1.323);
 		 case material::Valine:	 return Material({{0,1,11},{0,6,5},{0,7,1},{0,8,2}},1.23);
             default:break;
              }

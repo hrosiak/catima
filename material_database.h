@@ -73,7 +73,7 @@ namespace catima{
 		 Chloroform = 266,
 		 Cyclohexane = 267,
 		 Concrete = 268,
-		 Diethyl Ether = 269,
+		 Diethyl_Ether = 269,
 		 Ethane = 270,
 		 Ethanol = 271,
 		 Ethylene = 272,
@@ -133,7 +133,7 @@ namespace catima{
 		 Propane = 326,
 		 nPropanol = 327,
 		 PVC = 328,
-		 Pyridine: = 329,
+		 Pyridine = 329,
 		 SiO2 = 330,
 		 Skin = 331,
 		 Sucrose = 332,
@@ -145,7 +145,8 @@ namespace catima{
 		 UC2 = 338,
 		 UC = 339,
 		 UO2 = 340,
-		 Valine = 341
+		 Urea = 341,
+		 Valine = 342
         };
 
       Material get_compound(material m);
