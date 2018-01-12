@@ -532,8 +532,6 @@ double beta_from_T(double T){
     return sqrt(1.0-1.0/(gamma*gamma));
 }
 
- 
-
 double energy_straggling_firsov(double z1,double energy, double z2, double m2){
     double gamma = gamma_from_T(energy);
     double beta2=1.0-1.0/(gamma*gamma);
@@ -634,10 +632,20 @@ double precalculated_lindhard_X(const Projectile &p){
 double dedx_variance(Projectile &p, Target &t, const Config &c){
     double zp_eff = z_effective(p,t,c);
     double gamma = gamma_from_T(p.T);
-    double f = domega2dx_constant*pow(zp_eff,2)*t.Z*gamma*gamma;
-    //double X = bethek_lindhard_X(p); 
-    double X = precalculated_lindhard_X(p); 
-    return f*X/t.A;
+    double f = domega2dx_constant*pow(zp_eff,2)*t.Z/t.A;
+    double cor;
+    double beta2 = pow(beta_from_T(p.T),2);
+    cor = 24.89 * pow(t.Z,1.2324)/(electron_mass*1e6 * beta2)*
+			log( 2.0*electron_mass*1e6*beta2/(33.05*pow(t.Z,1.6364)));
+	cor = std::max(cor, 0.0 );
+	
+	//double X = bethek_lindhard_X(p);
+    double X = precalculated_lindhard_X(p);
+    X *= gamma*gamma;
+    if(p.T<1.0)
+		return std::min(f*(X+cor), energy_straggling_firsov(p.Z, p.T, t.Z,t.A));
+	else
+		return f*(X+cor);
 }
 
 double z_effective(const Projectile &p,const Target &t, const Config &c){
