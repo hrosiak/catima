@@ -613,8 +613,9 @@ double precalculated_lindhard_X(const Projectile &p){
     double T = p.T;
     int z = (int)p.Z ;
     if(z>LS_MAX_Z)z=LS_MAX_Z;
-    //if(p.T<ls_coefficients::ls_energy_points[0])T=ls_coefficients::ls_energy_points[0];
-    if(p.T<ls_coefficients::ls_energy_table(0))T=ls_coefficients::ls_energy_table(0);
+    //if(p.T<ls_coefficients::ls_energy_table(0))T=ls_coefficients::ls_energy_table(0);
+    if(p.T<ls_coefficients::ls_energy_table(0))
+		return 1.0;
     double da = (p.A - element_atomic_weight(z))/element_atomic_weight(z);
     z = z-1;
     
