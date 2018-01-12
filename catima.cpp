@@ -336,15 +336,16 @@ DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
 
     double res;
     //calculate 1st point to have i-1 element ready for loop
-    res = integrator.integrate(fdedx,Ezero,energy_table(0));
-    res = p.A*res;
-    dp.range[0] = res;
-    res = da2dx(p,energy_table(0),t)*res;
-    dp.angular_variance[0] = res;
+    //res = integrator.integrate(fdedx,Ezero,energy_table(0));
+    //res = p.A*res;
+    dp.range[0] = 0.0;
     
-    res = integrator.integrate(fomega,Ezero,energy_table(0));
-    res = p.A*res;
-    dp.range_straggling[0]=res;
+    //res = da2dx(p,energy_table(0),t)*res;
+    dp.angular_variance[0] = 0.0;
+    
+    //res = integrator.integrate(fomega,Ezero,energy_table(0));
+    //res = p.A*res;
+    dp.range_straggling[0]=0.0;
 
     for(int i=1;i<max_datapoints;i++){
         res = p.A*integrator.integrate(fdedx,energy_table(i-1),energy_table(i));
