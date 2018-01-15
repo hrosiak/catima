@@ -10,6 +10,7 @@ option(GSL_INTEGRATION "use GSL integration" ON)
 option(GENERATE_DATA "make data tables generator" OFF)
 option(THIN_TARGET_APPROXIMATION "thin target approximation" ON)
 option(DOCS "build documentation (requires doxygen)" OFF)
+option(GLOBAL "build with global, sources are required" OFF)
 
 ######## build type ############
 set(CMAKE_BUILD_TYPE Release)
@@ -58,6 +59,10 @@ configure_file("${PROJECT_SOURCE_DIR}/init.sh.in"
 ############### main build ###########################
 
 file(GLOB SOURCES *.cpp)
+if(GLOBAL)
+file(GLOB GLOBAL_SOURCES global/*.c)
+LIST (APPEND SOURCES ${GLOBAL_SOURCES})
+endif(GLOBAL)
 file(GLOB HEADERS *.h)
 add_library(catima SHARED ${SOURCES})
 add_library(catima_static STATIC ${SOURCES})

@@ -14,7 +14,10 @@ namespace catima{
         atima = 1,       // the same as Pierce Blann
         pierce_blann = 1,
         anthony_landorf = 2,
-        hubert = 3
+        hubert = 3,
+        winger = 4,
+        schiwietz = 5,
+        global = 6
     };
 
     /**
