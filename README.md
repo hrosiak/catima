@@ -29,6 +29,7 @@ available options:
   * DOCS - prepare doxygen documentation (after cmake, __make docs__ needs to be executed)
   * GENERATE_DATA - makes program to re-generate precalculated tables (ie precalculated LS coefficients), default:OFF
   * THIN_TARGET_APPROXIMATION - compile the library with thin target approximation, default: ON
+  * GSL_INTEGRATION - use GSL integration functions, otherwise use built-in integrator, default: ON
 
 ie:
 > cmake -DCATIMA_PYTHON=ON -DEXAMPLES=ON ../
