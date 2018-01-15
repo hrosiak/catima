@@ -85,6 +85,13 @@ cdef extern from "catima/catima.h" namespace "catima":
 cdef extern from "catima/calculations.h" namespace "catima":
     cdef double z_effective(const Projectile &p, const  Target &t, const  Config &c);
     cdef double z_eff_Pierce_Blann(double z, double beta);
+    cdef double z_eff_Anthony_Landford(double pz, double beta, double tz);
+    cdef double z_eff_Hubert(double pz, double E, double tz);
+    cdef double z_eff_Winger(double pz, double beta, double tz);
+    cdef double z_eff_global(double pz, double E, double tz);
+    cdef double z_eff_Schiwietz(double pz, double beta, double tz);
+    cdef double gamma_from_T(double T);
+    cdef double beta_from_T(double T);
 
 cdef extern from "catima/constants.h" namespace "catima":        
     int max_datapoints "catima::max_datapoints"

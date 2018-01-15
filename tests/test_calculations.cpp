@@ -4,6 +4,8 @@
 using namespace std;
 using catima::approx;
 #include "catima/catima.h"
+#include "catima/calculations.h"
+
 bool rcompare(double a, double b,double eps){
     if(fabs((a-b)/fabs(b))<eps){
       return true;
@@ -340,6 +342,43 @@ const lest::test specification[] =
         auto water = catima::get_material(catima::material::Water);
         auto res2 = catima::calculate(p(600),water,600);
         EXPECT(res2.dEdxi == approx(92.5).epsilon(2));
+    },
+    CASE("z_eff"){
+        using namespace catima;
+        Projectile p_u(238,92);
+        Target t;
+        t.Z = 13;
+        Config c;
+
+        EXPECT(z_eff_Pierce_Blann(92,beta_from_T(5000.)) == approx(91.8).epsilon(0.2));
+        EXPECT(z_eff_Pierce_Blann(92,beta_from_T(5000.)) == z_effective(p_u(5000.),t,c));
+        
+        EXPECT(z_eff_Winger(92,0.99,6) == approx(91.8).epsilon(0.5));
+        EXPECT(z_eff_Winger(92,beta_from_T(5000.),13) == approx(91.8).epsilon(0.2));
+        c.z_effective = z_eff_type::winger;
+        EXPECT(z_eff_Winger(92,beta_from_T(5000.),13) == z_effective(p_u(5000.),t,c));
+        
+        EXPECT(z_eff_Schiwietz(92,0.99,6) == approx(91.8).epsilon(0.5));
+        c.z_effective = z_eff_type::schiwietz;
+        EXPECT(z_eff_Schiwietz(92,beta_from_T(5000.),13) == z_effective(p_u(5000.),t,c));
+
+        EXPECT(z_eff_Hubert(92,1900,13) == approx(91.88).epsilon(0.1));
+        c.z_effective = z_eff_type::hubert;
+        EXPECT(z_eff_Hubert(92,1900,13) == z_effective(p_u(1900.),t,c));
+
+        #ifdef GLOBAL
+        EXPECT(z_eff_global(92,1900,13) == approx(91.88).epsilon(0.05));
+        c.z_effective = z_eff_type::global;
+        EXPECT(z_eff_global(92,1900,13) == z_effective(p_u(1900.),t,c));
+        EXPECT(z_eff_global(92,1000,13) == approx(91.71).epsilon(0.05));
+        EXPECT(z_eff_global(92,500,13) == approx(91.22).epsilon(0.1));
+        EXPECT(z_eff_global(92,100,6) == approx(89.61).epsilon(0.2));
+        //EXPECT(z_eff_global(92,100,13) == approx(89.42).epsilon(0.1));
+        //EXPECT(z_eff_global(92,100,29) == approx(88.37).epsilon(0.1));
+        //EXPECT(z_eff_global(92,50,13) == approx(85.94).epsilon(0.1));
+        EXPECT(z_eff_global(92,2001,13) == approx(92.0).epsilon(0.01));
+        EXPECT(z_eff_global(92,2000,13) == approx(92.0).epsilon(0.2));
+        #endif
     }
     
 };

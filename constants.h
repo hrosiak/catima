@@ -24,7 +24,9 @@ constexpr double electron_mass = 0.510998928;   // MeV/c^2
 constexpr double atomic_mass_unit = 931.4940954; // MeV/c^2
 constexpr double classical_electron_radius = 2.8179403227; //fm
 constexpr double fine_structure = 1/137.035999139;
+constexpr double fine_structure_inverted = 1/fine_structure;
 constexpr double c_light = 299.792458; //Mm/s
+constexpr double bohr_velocity = 2.19 / c_light; // in c unit
 
 constexpr double dedx_constant = 0.3070749187;  //4*pi*Na*me*c^2*r_e^2  //MeV cm^2
 constexpr double domega2dx_constant = dedx_constant*electron_mass;  //4*pi*Na*me*c^2*r_e^2  //MeV^2 cm^2

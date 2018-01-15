@@ -8,6 +8,13 @@
 #include "catima/generated_LS_coeff.h"
 #include "catima/nucdata.h"
 #include "catima/storage.h"
+#ifdef GLOBAL
+extern "C"
+{
+    #include "global/globallib.h"
+}
+#endif
+
 
 namespace catima{
 
@@ -659,32 +666,43 @@ double z_effective(const Projectile &p,const Target &t, const Config &c){
     if(c.z_effective == z_eff_type::pierce_blann){
         return z_eff_Pierce_Blann(p.Z, beta);
     }
-
-    if(c.z_effective == z_eff_type::anthony_landorf){
+    else if(c.z_effective == z_eff_type::anthony_landorf){
         return z_eff_Anthony_Landford(p.Z, beta, t.Z);
     }
-
-    if(c.z_effective == z_eff_type::hubert){
+    
+    else if(c.z_effective == z_eff_type::hubert){
         return z_eff_Hubert(p.Z, p.T, t.Z);
     }
-
-    return 0.0;
+    else if(c.z_effective == z_eff_type::winger){
+        return z_eff_Winger(p.Z, beta, t.Z);
+    }
+    else if(c.z_effective == z_eff_type::global){
+        return z_eff_global(p.Z, p.T, t.Z);
+    }
+    else if(c.z_effective == z_eff_type::schiwietz){
+        return z_eff_Schiwietz(p.Z, beta, t.Z);
+    }
+    else{
+        return 0.0;
+    }
 }
 
 double z_eff_Pierce_Blann(double z, double beta){
-    return z*(1.0-exp(-130.1842*beta/pow(z,2.0/3.0))); 
+    return z*(1.0-exp(-0.95*fine_structure_inverted*beta/pow(z,2.0/3.0))); 
 }
 
 double z_eff_Anthony_Landford(double pz, double beta, double tz){
     double B = 1.18-tz*(7.5e-03 - 4.53e-05*tz);
     double A = 1.16-tz*(1.91e-03 - 1.26e-05*tz);
-    return pz*(1.0-exp(-137.035999139*B*beta/pow(pz,2.0/3.0))*A); 
+    return pz*(1.0-(A*exp(-fine_structure_inverted*B*beta/pow(pz,2.0/3.0)))); 
 }
 
 double z_eff_Hubert(double pz, double E, double tz){
     double lntz = log(tz);
     double x1,x2,x3,x4;
 
+    if(E<2.5)
+        return 0.0;
     if(tz == 4){
         x1 = 2.045 + 2.0*exp(-0.04369*pz);
         x2 = 7.0;
@@ -703,8 +721,64 @@ double z_eff_Hubert(double pz, double E, double tz){
         x3 = 0.314 + 0.01072*lntz;
         x4 = 0.5218 + 0.02521*lntz;
     }
-
+     
     return pz*(1-x1*exp(-x2*catima::power(E,x3)*catima::power(pz,-x4)));
+}
+
+double z_eff_Winger(double pz, double beta, double tz){
+	double c0,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13;
+	double x, lnz, lnzt, a0,a1,a2,a3,a4; 
+
+	c0 = 0.4662;
+	c1 = 0.5491;
+	c2 = 0.7028;
+	c3 = 0.1089;
+	c4 = 0.001644;
+	c5 = 0.5155;
+	c6 = 0.05633;
+	c7 = 0.005447;
+	c8 = 0.8795;
+	c9 = 1.091;
+	c10= 0.0008261;
+	c11= 2.848;
+	c12= 0.2442;
+	c13= 0.00009293;
+	
+	x = beta /0.012 /pow(pz,0.45);
+	lnz =log(pz);
+	lnzt=log(tz);
+
+	a0 = -c0;
+	a1 = -c1  * exp( c2 *lnz - c3 *lnz*lnz +c4*lnz*lnz*lnz -c5*lnzt + c6 *lnzt*lnzt);
+	a2 =  c7  * exp( c8 *lnz - c9 *lnzt);
+	a3 = -c10 * exp( c11*lnz - c12*lnz*lnz*lnz);
+	a4 = -c13;
+
+    return pz * (1. - exp(a0 +a1*x +a2*x*x +a3*x*x*x +a4*x*x*x*x));	
+	}
+
+double z_eff_global(double pz, double E, double tz){
+    if(E>2000)
+        return pz;
+    else
+        #ifdef GLOBAL
+        return global_qmean(pz, tz, E);
+        #else
+        return -1;
+        #endif
+}
+
+double z_eff_Schiwietz(double pz, double beta, double tz){
+    double scaled_velocity;
+    double c1, c2;
+    double x;
+
+    scaled_velocity = catima::power(pz,-0.543)*beta/bohr_velocity;
+    c1 = 1-0.26*exp(-tz/11.0)*exp(-(tz-pz)*(tz-pz)/9);
+    c2 = 1+0.030*scaled_velocity*log(tz);
+    x = c1*catima::power(scaled_velocity/c2/1.54,1+(1.83/pz));
+    return pz*((8.29*x) + (x*x*x*x))/((0.06/x) + 4 + (7.4*x) + (x*x*x*x) );
+
 }
 
 std::complex<double> hyperg(const std::complex<double> &a,

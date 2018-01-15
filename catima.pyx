@@ -263,6 +263,9 @@ class z_eff_type(IntEnum):
     pierce_blann = 1
     anthony_landorf = 2
     hubert = 3
+    winger = 4
+    schiwietz = 5
+    global_code = 6
 
 class skip_calculation(IntEnum):
     skip_none = 0
@@ -416,7 +419,27 @@ def z_effective(Projectile p, Target t, Config c = default_config):
 
 def z_eff_Pierce_Blann(double z, double beta):
     return catimac.z_eff_Pierce_Blann(z,beta)
+    
+def z_eff_Anthony_Landford(double pz, double beta, double tz):
+    return catimac.z_eff_Anthony_Landford(pz, beta, tz);
 
+def z_eff_Hubert(double pz, double E, double tz):
+    return catimac.z_eff_Hubert(pz, E, tz);
+
+def z_eff_Winger(double pz, double beta, double tz):
+    return catimac.z_eff_Winger(pz, beta, tz);
+
+def z_eff_global(double pz, double E, double tz):
+    return catimac.z_eff_global(pz, E, tz);
+
+def z_eff_Schiwietz(double pz, double beta, double tz):
+    return catimac.z_eff_Schiwietz(pz, beta, tz);
+
+def gamma_from_T(double T):
+    return catimac.gamma_from_T(T);
+
+def beta_from_T(double T):
+    return catimac.beta_from_T(T);
 
 def get_data(Projectile projectile, Material material, Config config = default_config):
     data = catimac.get_data(projectile.cbase, material.cbase, config.cbase)
