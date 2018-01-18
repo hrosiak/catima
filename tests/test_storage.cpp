@@ -1,21 +1,12 @@
 #include "lest.hpp"
 #include <math.h>
+#include "testutils.h"
 using namespace std;
 
 #include "catima/catima.h"   
 #include "catima/storage.h"   
 
-bool rcompare(double a, double b,double eps){
-    if(fabs((a-b)/fabs(b))<eps){
-      return true;
-    }
-    else{
-      std::cout<<"\033[1;31m"<<a<<" == "<<b<<"\033[0m"<<std::endl;
-      return false;
-    }
-      
-}
-
+using catima::approx;
 const lest::test specification[] =
 {
     
@@ -29,16 +20,19 @@ const lest::test specification[] =
       catima::Material graphite({
                 {12,6,1}
                 });
-      
+      catima::Config c2;
+      c2.z_effective = catima::z_eff_type::winger;
       catima::DataPoint a(p,water);
       catima::DataPoint b(p,water);
       catima::DataPoint c(p,graphite);
       catima::DataPoint d;
+      catima::DataPoint e(p,water,c2);
       d = c;
       EXPECT(a == b);
       EXPECT(!(a==c));
       EXPECT(d == c);
       EXPECT(!(d==b));
+      EXPECT(!(e==a));
       d = a;
       EXPECT(!(d==c));
       EXPECT(d==b);
@@ -112,7 +106,7 @@ const lest::test specification[] =
       EXPECT(catima::energy_table.step==step);
       EXPECT(catima::energy_table.values[0]==exp(M_LN10*(catima::logEmin)));
       EXPECT(catima::energy_table.values[1]==exp(M_LN10*(catima::logEmin+step)));
-      EXPECT(catima::energy_table.values[catima::max_datapoints-1]==exp(M_LN10*(catima::logEmax)));
+      EXPECT(catima::energy_table.values[catima::max_datapoints-1]==approx(exp(M_LN10*(catima::logEmax))).epsilon(1e-6));
     }
 };
 
