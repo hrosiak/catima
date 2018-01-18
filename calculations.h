@@ -143,7 +143,7 @@ namespace catima{
       * @return effective charge
       */
     double z_eff_Winger(double pz, double beta, double tz);
-    
+
     /**
       * calculates effective charge
       * @param pz - proton number of projectile
@@ -161,6 +161,15 @@ namespace catima{
       * @return effective charge
       */
     double z_eff_Schiwietz(double pz, double beta, double tz);
+
+    /**
+      * calculates effective charge
+      * @param pz - proton number of projectile
+      * @param beta - velocity of projectile
+      * @param tz - proton number of target material
+      * @return effective charge
+      */
+    double z_eff_atima14(double pz, double beta, double tz);
 
     
 

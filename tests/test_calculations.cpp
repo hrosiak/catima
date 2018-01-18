@@ -378,6 +378,10 @@ const lest::test specification[] =
         //EXPECT(z_eff_global(92,50,13) == approx(85.94).epsilon(0.1));
         EXPECT(z_eff_global(92,2001,13) == approx(92.0).epsilon(0.01));
         EXPECT(z_eff_global(92,2000,13) == approx(92.0).epsilon(0.2));
+
+        EXPECT(z_eff_atima14(92,1900,13) == approx(91.88).epsilon(0.05));
+        c.z_effective = z_eff_type::atima14;
+        EXPECT(z_eff_atima14(92,1900,13) == z_effective(p_u(1900.),t,c));
         #endif
     }
     

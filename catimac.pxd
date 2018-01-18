@@ -64,6 +64,7 @@ cdef extern from "catima/config.h" namespace "catima":
         char z_effective;
         char skip;
         char dedx;
+        char dedx_straggling
 
 cdef extern from "catima/catima.h" namespace "catima":
     cdef double dedx(Projectile &p, double T, const Material &t,const Config &c)
@@ -89,6 +90,7 @@ cdef extern from "catima/calculations.h" namespace "catima":
     cdef double z_eff_Hubert(double pz, double E, double tz);
     cdef double z_eff_Winger(double pz, double beta, double tz);
     cdef double z_eff_global(double pz, double E, double tz);
+    cdef double z_eff_atima14(double pz, double E, double tz);
     cdef double z_eff_Schiwietz(double pz, double beta, double tz);
     cdef double gamma_from_T(double T);
     cdef double beta_from_T(double T);

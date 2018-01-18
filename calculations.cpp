@@ -20,24 +20,22 @@ namespace catima{
 
 double dedx_e(Projectile &p, const Target &t, const Config &c){
     double se = -1;
-
     if(p.T<=10){
         se = sezi_dedx_e(p,t);
     }
     else if(p.T>10 && p.T<30){
         double factor = 0.05 * ( p.T - 10.0 );
-        se = (1-factor)*sezi_dedx_e(p,t) + factor*bethek_dedx_e(p,t);
+        se = (1-factor)*sezi_dedx_e(p,t) + factor*bethek_dedx_e(p,t,c);
     }
     else {
-        se = bethek_dedx_e(p,t);
+        se = bethek_dedx_e(p,t,c);
     }
     return se;
 }
 
 
 double dedx(Projectile &p, const Target &t, const Config &c){
-    
-    return dedx_e(p,t) + dedx_n(p,t);
+    return dedx_e(p,t,c) + dedx_n(p,t);
 }
 
 
@@ -87,13 +85,13 @@ double bethek_dedx_e(Projectile &p, const Target &t, const Config &c){
     double f2 = log(2.0*electron_mass*1000000*beta2/Ipot);
     double eta = beta*gamma;
     if(!(c.dedx&corrections::no_shell_correction) &&  eta>=0.13){ //shell corrections
-        double c = (+0.422377*pow(eta,-2)
+        double cor = (+0.422377*pow(eta,-2)
                     +0.0304043*pow(eta,-4)
                     -0.00038106*pow(eta,-6))*1e-6*pow(Ipot,2) 
                   +(+3.858019*pow(eta,-2) 
                     -0.1667989*(pow(eta,-4))
                     +0.00157955*(pow(eta,-6)))*1.0e-9*pow(Ipot,3); 
-        f2 = f2 -c/t.Z;
+        f2 = f2 -cor/t.Z;
     }
     f2+=2*log(gamma) -beta2;
     
@@ -638,19 +636,23 @@ double precalculated_lindhard_X(const Projectile &p){
 }
 
 double dedx_variance(Projectile &p, Target &t, const Config &c){
-    double zp_eff = z_effective(p,t,c);
     double gamma = gamma_from_T(p.T);
+    double cor=0;
+    double beta = beta_from_T(p.T);
+    double beta2 = beta*beta;
+    //double zp_eff = z_effective(p,t,c);
+    double zp_eff = z_eff_Pierce_Blann(p.Z, beta);
     double f = domega2dx_constant*pow(zp_eff,2)*t.Z/t.A;
-    double cor;
-    double beta2 = pow(beta_from_T(p.T),2);
-    cor = 24.89 * pow(t.Z,1.2324)/(electron_mass*1e6 * beta2)*
+
+    if(c.dedx_straggling == omega::atima){
+        cor = 24.89 * pow(t.Z,1.2324)/(electron_mass*1e6 * beta2)*
 			log( 2.0*electron_mass*1e6*beta2/(33.05*pow(t.Z,1.6364)));
-	cor = std::max(cor, 0.0 );
-	
+	    cor = std::max(cor, 0.0 );
+    }
 	//double X = bethek_lindhard_X(p);
     double X = precalculated_lindhard_X(p);
     X *= gamma*gamma;
-    if(p.T<1.0)
+    if(p.T<30.0)
 		return std::min(f*(X+cor), energy_straggling_firsov(p.Z, p.T, t.Z,t.A));
 	else
 		return f*(X+cor);
@@ -678,6 +680,9 @@ double z_effective(const Projectile &p,const Target &t, const Config &c){
     }
     else if(c.z_effective == z_eff_type::global){
         return z_eff_global(p.Z, p.T, t.Z);
+    }
+    else if(c.z_effective == z_eff_type::atima14){
+        return z_eff_atima14(p.Z, p.T, t.Z);
     }
     else if(c.z_effective == z_eff_type::schiwietz){
         return z_eff_Schiwietz(p.Z, beta, t.Z);
@@ -743,7 +748,13 @@ double z_eff_Winger(double pz, double beta, double tz){
 	c11= 2.848;
 	c12= 0.2442;
 	c13= 0.00009293;
-	
+	// the following is from Helmut to correct winger formula for H and He target
+    if(tz==1){
+        tz = 2.6;
+    }
+    if(tz==2){
+        tz = 2.8;
+    }
 	x = beta /0.012 /pow(pz,0.45);
 	lnz =log(pz);
 	lnzt=log(tz);
@@ -780,6 +791,65 @@ double z_eff_Schiwietz(double pz, double beta, double tz){
     return pz*((8.29*x) + (x*x*x*x))/((0.06/x) + 4 + (7.4*x) + (x*x*x*x) );
 
 }
+
+double z_eff_atima14(double pz, double T, double tz){
+    double qpb;
+    double qhigh,qwinger,qglobal,qmean=0;
+    double c1 = 1.4;
+    double c2 = 0.28;
+    double c3 = 0.04;
+    double beta = beta_from_T(T);
+    double gamma = gamma_from_T(T);
+    double emax, emin;
+    qpb = z_eff_Pierce_Blann(pz,beta);
+    #ifdef GLOBAL
+
+    if(T>30.0 && T<1500.0 && pz>28){
+        qglobal = z_eff_global(pz,T,tz);
+        qglobal = (qglobal - qpb)*c1/catima::power(tz+1,c2)*(1-exp(-c3*T)) + qpb;
+    }
+    
+    emax = 1500.;
+    emin = 1000.;
+    if(T>emax){
+        qhigh = pz * (1.0-exp(-180.0*beta*catima::power(gamma,0.18)*catima::power(pz,-0.82)*catima::power(tz,0.1)));
+        qmean = qhigh;
+    }
+    else if(T>=emin && T<=emax){
+        qhigh = pz * (1.0-exp(-180.0*beta*catima::power(gamma,0.18)*catima::power(pz,-0.82)*catima::power(tz,0.1)));
+        if(pz<=28){
+            qwinger = z_eff_Winger(pz,beta,tz);
+            qmean = ((emax-T)*qwinger + (T-emin)*qhigh)/(emax-emin);
+        }
+        else{
+            qmean = ((emax-T)*qglobal + (T-emin)*qhigh)/(emax-emin);
+        }
+    }
+    else{
+        emax = 70.0;
+        emin = 30.0;
+        if(pz<=28){
+            qwinger = z_eff_Winger(pz,beta,tz);
+            qmean = qwinger;
+        }
+        else{
+            if(T>=emax){
+                qmean = qglobal;
+                }
+            else if(T<emin){
+                qwinger = z_eff_Winger(pz,beta,tz);
+                qmean = qwinger;
+                }
+            else
+                {
+                qwinger = z_eff_Winger(pz,beta,tz);
+                qmean = ((emax-T)*qwinger + (T-emin)*qglobal)/(emax-emin);
+                }
+        }
+    }
+    #endif
+    return qmean;
+    }
 
 std::complex<double> hyperg(const std::complex<double> &a,
                                                 const std::complex<double> &b,
