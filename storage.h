@@ -92,7 +92,7 @@ namespace catima{
 	std::vector<double> angular_variance;
 
 	DataPoint(){};
-	DataPoint(const Projectile _p, const Material _m,Config _c=default_config):p(_p),m(_m),config(_c){};
+	DataPoint(const Projectile _p, const Material _m,const Config &_c=default_config):p(_p),m(_m),config(_c){};
 	~DataPoint();
 	friend bool operator==(const DataPoint &a, const DataPoint &b);
     };
@@ -101,10 +101,10 @@ namespace catima{
 	public:
 	Data();
 	~Data();
-	void Add(const Projectile &p, const Material &t, Config c=default_config);
+	void Add(const Projectile &p, const Material &t, const Config &c=default_config);
 	int GetN() const {return storage.size();};
 	void Reset(){storage.clear();storage.resize(max_storage_data);index=storage.begin();};
-	DataPoint& Get(const Projectile &p, const Material &t, Config c=default_config);
+	DataPoint& Get(const Projectile &p, const Material &t, const Config &c=default_config);
 	DataPoint& Get(unsigned int i){return storage[i];};
 	int get_index() {return std::distance(storage.begin(),index);}
 	private:
@@ -133,7 +133,7 @@ namespace catima{
     
     extern Data _storage;
 	
-	inline DataPoint& get_data(const Projectile &p, const Material &t, Config c=default_config){
+	inline DataPoint& get_data(const Projectile &p, const Material &t, const Config &c=default_config){
 		return _storage.Get(p, t, c);
 	}
 

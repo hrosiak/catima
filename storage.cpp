@@ -28,7 +28,7 @@ namespace catima {
     }
     
 
-void Data::Add(const Projectile &p, const Material &t, Config c){
+void Data::Add(const Projectile &p, const Material &t, const Config &c){
 	DataPoint dp(p,t,c);
 	for(auto &e:storage){
 	    if(e==dp)return; 
@@ -46,7 +46,7 @@ void Data::Add(const Projectile &p, const Material &t, Config c){
     index++;
     }
     
-DataPoint& Data::Get(const Projectile &p, const Material &t, Config c){
+DataPoint& Data::Get(const Projectile &p, const Material &t, const Config &c){
 	for(auto &e:storage){
 	    if( (e.p==p) && (e.m==t) && (e.config==c)){
 		return e;

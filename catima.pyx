@@ -259,13 +259,17 @@ cdef class MultiResult:
 
 class z_eff_type(IntEnum):
     none = 0,
-    atima = 1
     pierce_blann = 1
     anthony_landorf = 2
     hubert = 3
     winger = 4
     schiwietz = 5
     global_code = 6
+    atima14 = 7
+
+class omega_type(IntEnum):
+    atima = 0,
+    bohr = 1
 
 class skip_calculation(IntEnum):
     skip_none = 0
@@ -282,9 +286,10 @@ cdef class Config:
     cdef catimac.Config cbase
     def __cinit__(self):
         #self.cbase = catimac.Config()
-        self.cbase.z_effective = z_eff_type.atima
-        self.cbase.skip = skip_calculation.skip_none
-        self.cbase.dedx = skip_calculation.skip_none
+        self.cbase.z_effective = z_eff_type.pierce_blann
+        self.cbase.skip = 0
+        self.cbase.dedx = 0
+        self.cbase.dedx_straggling = omega_type.atima
     def z_effective(self, val=None):
         if(val is None):
             return self.cbase.z_effective
@@ -300,7 +305,14 @@ cdef class Config:
             return self.cbase.dedx
         else:
             self.cbase.dedx = val
-
+    def dedx_straggling(self, val=None):
+        if(val is None):
+            return self.cbase.dedx_straggling
+        else:
+            self.cbase.dedx_straggling = val
+    def print_info(self):
+        print("z_effective = %s"%z_eff_type(self.cbase.z_effective))
+        print("dedx_straggling = %s"%omega_type(self.cbase.dedx_straggling))
 
 default_config = Config()
 
@@ -431,6 +443,9 @@ def z_eff_Winger(double pz, double beta, double tz):
 
 def z_eff_global(double pz, double E, double tz):
     return catimac.z_eff_global(pz, E, tz);
+
+def z_eff_atima14(double pz, double E, double tz):
+    return catimac.z_eff_atima14(pz, E, tz);
 
 def z_eff_Schiwietz(double pz, double beta, double tz):
     return catimac.z_eff_Schiwietz(pz, beta, tz);

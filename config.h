@@ -11,13 +11,13 @@ namespace catima{
       */
     enum z_eff_type:char {
         none = 0,
-        atima = 1,       // the same as Pierce Blann
         pierce_blann = 1,
         anthony_landorf = 2,
         hubert = 3,
         winger = 4,
         schiwietz = 5,
-        global = 6
+        global = 6,
+        atima14 = 7
     };
 
     /**
@@ -40,6 +40,14 @@ namespace catima{
     };
 
     /**
+      * enum to select which dEdx straggling options
+      */
+    enum omega:char{
+        atima = 0,
+        bohr = 1,
+    };
+
+    /**
       * structure to store calculation configuration
       * each group of options are grouped and enum are suppose to use
       * see catima::z_eff_type, catima::skip_calculation, catima::corrections
@@ -48,9 +56,11 @@ namespace catima{
       * 
       */
     struct Config{
-        char z_effective=z_eff_type::atima;
+        char z_effective=z_eff_type::pierce_blann;
+        //char z_effective=z_eff_type::atima14;
         char skip=skip_none;
         char dedx = 0;
+        char dedx_straggling = omega::atima;
     };
     
     extern Config default_config;

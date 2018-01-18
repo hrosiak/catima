@@ -32,7 +32,7 @@ double dedx(Projectile &p, double T, const Material &mat, const  Config &c){
         auto t = mat.get_element(i);
         w = mat.weight_fraction(i);
         p.T = T;
-        sum += w*dedx(p,t);
+        sum += w*dedx(p,t,c);
     }
     return sum;
 }
@@ -327,11 +327,11 @@ DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
     dp.angular_variance.resize(max_datapoints);
     double dedxval;
     auto fdedx = [&](double x)->double{
-            return 1.0/dedx(p,x,t);    
+            return 1.0/dedx(p,x,t,c);    
             };
     auto fomega = [&](double x)->double{
             //return 1.0*domega2dx(p,x,t)/pow(dedx(p,x,t),3);
-            return domega2dx(p,x,t)/catima::power(dedx(p,x,t),3);
+            return domega2dx(p,x,t,c)/catima::power(dedx(p,x,t,c),3);
             };
 
     double res;
@@ -339,10 +339,10 @@ DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
     //res = integrator.integrate(fdedx,Ezero,energy_table(0));
     //res = p.A*res;
     dp.range[0] = 0.0;
-    
+
     //res = da2dx(p,energy_table(0),t)*res;
     dp.angular_variance[0] = 0.0;
-    
+
     //res = integrator.integrate(fomega,Ezero,energy_table(0));
     //res = p.A*res;
     dp.range_straggling[0]=0.0;
@@ -350,7 +350,6 @@ DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
     for(int i=1;i<max_datapoints;i++){
         res = p.A*integrator.integrate(fdedx,energy_table(i-1),energy_table(i));
         dp.range[i] = res + dp.range[i-1];
-
         res = da2dx(p,energy_table(i),t)*res;
         dp.angular_variance[i] = res + dp.angular_variance[i-1];
     

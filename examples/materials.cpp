@@ -7,7 +7,7 @@ using std::endl;
 
 int main(){
     catima::Material graphite = catima::get_material(6);    
-    catima::Material water = catima::get_material(catima::material::WATER);
+    catima::Material water = catima::get_material(catima::material::Water);
 
     cout<<"Material info"<<endl;
     cout<<"Molar Mass = "<<graphite.M()<<endl;
