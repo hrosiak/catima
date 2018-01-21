@@ -310,6 +310,22 @@ cdef class Config:
             return self.cbase.dedx_straggling
         else:
             self.cbase.dedx_straggling = val
+    def set(self,other):
+        if("z_effective" in other):
+            self.cbase.z_effective = other["z_effective"]
+        if("dedx" in other):
+            self.cbase.dedx = other["dedx"]
+        if("dedx_straggling" in other):
+            self.cbase.dedx_straggling = other["dedx_straggling"]
+	
+    def get(self):
+        res = {}
+        res["z_effective"] = self.cbase.z_effective
+        res["dedx"] = self.cbase.dedx
+        res["dedx_straggling"] = self.cbase.dedx_straggling
+        res["skip"] = self.cbase.skip
+        return res
+
     def print_info(self):
         print("z_effective = %s"%z_eff_type(self.cbase.z_effective))
         print("dedx_straggling = %s"%omega_type(self.cbase.dedx_straggling))
