@@ -485,11 +485,11 @@ def storage_info():
             for j in range(data.m.ncomponents()):
                 e = data.m.get_element(j)
                 matter.append([e.A,e.Z,e.stn])
-            res.append({"projectile":[data.p.A,data.p.Z],"matter":matter})
+            res.append({"projectile":[data.p.A,data.p.Z],"matter":matter, "config":data.config})
     return res
 
 def catima_info():
-    print("CATIMA version = 1.0")
+    print("CATIMA version = 1.1")
     print("number of energy points = %g"%max_datapoints)
     print("min energy point = 10^%g MeV/u"%logEmin)
     print("max energy point = 10^%g MeV/u"%logEmax)

@@ -107,7 +107,6 @@ double bethek_dedx_e(Projectile &p, const Target &t, const Config &c){
         //double LS = bethek_lindhard(p);
         LS = precalculated_lindhard(p);
         }
-    
     double result  = (f2)*barkas + LS - delta/2.;
     result *=f1;
     
