@@ -167,7 +167,7 @@ double bethek_lindhard(const Projectile &p){
         double dk[3];
         double dmk = 0;
         double dkm1 = 0;
-        while(n<100){
+        while(n<5000){
             double k0 = n;
             int max = (n==1)?3:2;
             for(int i=0;i<max;i++){
@@ -284,7 +284,7 @@ double bethek_lindhard_X(const Projectile &p){
         double dkm1 = 0;
         double dkm2 = 0;
         
-        while(n<200){
+        while(n<1000){
             double k0 = n;
             //int max = (n==1)?4:2;
             int max = 4;
