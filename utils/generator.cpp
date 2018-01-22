@@ -63,8 +63,8 @@ int main(){
     sv2<<"{";
     sx1<<"{";
     sx2<<"{";
-    double beta2;
     for(int z=1;z<ATOMIC_WEIGHT_MAXZ-1;z++){
+        cout<<z<<"/"<<ATOMIC_WEIGHT_MAXZ-2<<endl;
         p.Z = z;
         if(z!=1)sv1<<",";
         if(z!=1)sv2<<",";
@@ -77,8 +77,6 @@ int main(){
         for(int i=0;i<num_LS_datapoints;i++){
             p.T = ls_energy_table(i);
             p.A = element_atomic_weight((int)p.Z);
-            beta2 = catima::beta_from_T(p.T);
-            beta2 = beta2*beta2;
             r = bethek_lindhard(p);
             x1 = bethek_lindhard_X(p);
             

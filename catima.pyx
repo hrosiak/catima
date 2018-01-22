@@ -442,6 +442,12 @@ def energy_out(Projectile projectile, Material material, energy = None, Config c
         energy = projectile.T()
     return catimac.energy_out(projectile.cbase, energy, material.cbase, config.cbase)
 
+def lindhard(Projectile projectile):
+    return catimac.bethek_lindhard(projectile.cbase);
+
+def lindhard_X(Projectile projectile):
+    return catimac.bethek_lindhard_X(projectile.cbase);
+
 def z_effective(Projectile p, Target t, Config c = default_config):
     return catimac.z_effective(p.cbase, t.cbase, c.cbase)
 

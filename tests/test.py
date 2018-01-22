@@ -75,7 +75,7 @@ class TestStructures(unittest.TestCase):
         self.assertAlmostEqual(m2.molar_mass(),18,1)
         self.assertAlmostEqual(m2.density(),1.0,1)
 
-        m3 = catima.get_material(3001)
+        m3 = catima.get_material(301)
         self.assertEqual(m3.ncomponents(),0)
         self.assertAlmostEqual(m3.molar_mass(),0,1)
         self.assertAlmostEqual(m3.density(),0.0,1)
@@ -254,15 +254,5 @@ class TestStructures(unittest.TestCase):
         #self.assertAlmostEqual(catima.da2de(p,water,et[100]),data[2][100],6)
         #self.assertAlmostEqual(catima.da2de(p,water,et[400]),data[2][400],6)
 
-    def test_config(self):
-        c1 = catima.Config()
-        self.assertEqual(c1.z_effective(),catima.z_eff_type.pierce_blann);
-		
-        d = {}
-        d["z_effective"] = catima.z_eff_type.atima14;
-        c1.set(d);
-        self.assertEqual(c1.z_effective(),catima.z_eff_type.atima14);
-		
-		
 if __name__ == "__main__":
     unittest.main()

@@ -84,6 +84,8 @@ cdef extern from "catima/catima.h" namespace "catima":
     cdef MultiResult calculate(Projectile &p, const Layers &layers, const Config &c);
 
 cdef extern from "catima/calculations.h" namespace "catima":
+    cdef double bethek_lindhard(const Projectile &p);
+    cdef double bethek_lindhard_X(const Projectile &p);
     cdef double z_effective(const Projectile &p, const  Target &t, const  Config &c);
     cdef double z_eff_Pierce_Blann(double z, double beta);
     cdef double z_eff_Anthony_Landford(double pz, double beta, double tz);

@@ -1,21 +1,11 @@
 #include "lest.hpp"
 #include "testutils.h"
 #include <math.h>
-using namespace std;
-using catima::approx;
 #include "catima/catima.h"
 #include "catima/calculations.h"
 
-bool rcompare(double a, double b,double eps){
-    if(fabs((a-b)/fabs(b))<eps){
-      return true;
-    }
-    else{
-      std::cout<<"\033[1;31m"<<a<<" == "<<b<<"\033[0m"<<std::endl;
-      return false;
-    }
-      
-}
+using namespace std;
+using catima::approx;
 
 const lest::test specification[] =
 {
@@ -93,53 +83,57 @@ const lest::test specification[] =
         
         // He projectile case
         p.T = 1;
-        EXPECT( rcompare( catima::dedx(p,carbon), 922.06, 0.0001) );
+        EXPECT( catima::dedx(p,carbon) == approx(922.06).R(0.0001) );
         p.T = 3;
-        EXPECT( rcompare( catima::dedx(p,carbon), 433.09, 0.0001) );
+        EXPECT( catima::dedx(p,carbon) == approx(433.09).R(0.0001) );
         
         // C projectile case
         p.A = 12;
         p.Z = 6;
         p.T = 1;
-        EXPECT( rcompare( catima::dedx(p,carbon), 5792.52, 0.0001) );
+        EXPECT( catima::dedx(p,carbon) == approx( 5792.52).R(0.0001) );
         p.T = 9.9;
-        EXPECT( rcompare( catima::dedx(p,carbon), 1485.36, 0.0001) );
+        EXPECT( catima::dedx(p,carbon) == approx(1485.36).R(0.0001) );
         
     },
     CASE("LS check: deltaL values"){
         catima::Projectile p{238,92,92,1};
-        catima::Target carbon{12.0107,6}; 
         
         p.T = 93.1494;
-        EXPECT( rcompare( catima::bethek_lindhard(p), -0.5688, 0.01) );
+        EXPECT(catima::bethek_lindhard(p)== approx(-0.5688,0.0001));
         
         p.T = 380.9932;
-        EXPECT( rcompare( catima::bethek_lindhard(p), 0.549199, 0.02) );
+        EXPECT(catima::bethek_lindhard(p)== approx(0.549199,0.0001));
         
-        p.T = 996.9855;
-        EXPECT( rcompare( catima::bethek_lindhard(p), 1.0732, 0.03) );
+        p.T = 995.368987;
+        EXPECT(catima::bethek_lindhard(p)== approx(1.106649).R(0.001) );
         
-        p.T = 2794.4822;
-        EXPECT( rcompare( catima::bethek_lindhard(p), 1.358964, 0.02) );
+        p.T = 2640.032566;
+        EXPECT(catima::bethek_lindhard(p)== approx(1.35314).R(0.001) );
+
+        p.T = 6091.392448;
+        EXPECT(catima::bethek_lindhard(p)== approx(1.365643).R(0.001) );
+
+        p.T = 37277.695445;
+        EXPECT(catima::bethek_lindhard(p)== approx(0.689662).R(0.001) );
     },
     
     CASE("LS check: straggling values"){
         catima::Projectile p{238,92,92,1};
-        catima::Target carbon{12.0107,6}; 
         
         auto f = [&](){return catima::bethek_lindhard_X(p);};
         
         p.T = 93.1494;
-        EXPECT( rcompare( f(), 1.56898, 0.01) );
+        EXPECT( f() == approx(1.56898).R(0.01) );
         
         p.T = 380.9932;
-        EXPECT( rcompare( f(), 1.836008, 0.01) );
+        EXPECT( f() == approx(1.836008).R(0.01) );
         
         p.T = 996.9855;
-        EXPECT( rcompare( f(), 1.836528, 0.03) );
+        EXPECT( f() == approx(1.836528).R(0.01) );
         
         p.T = 2794.4822;
-        EXPECT( rcompare( f(), 1.768018, 0.02) );
+        EXPECT( f()== approx(1.768018).R(0.01) );
     },
     CASE("dEdx for compounds"){
         catima::Projectile p{1,1,1,1000};
@@ -310,17 +304,17 @@ const lest::test specification[] =
         mat.add(graphite);
         
         auto res = catima::calculate(p(1000),mat);
-        EXPECT(rcompare(res.total_result.Eout,926.3,0.01));
-        EXPECT(rcompare(res.total_result.sigma_a,0.00269,0.1));
-        EXPECT(rcompare(res.total_result.tof,0.402,0.01));
-        EXPECT(rcompare(res.total_result.Eloss,884.218,0.01));
+        EXPECT(res.total_result.Eout == approx(926.3,0.1));
+        EXPECT(res.total_result.sigma_a == approx(0.00269).R(0.05));
+        EXPECT(res.total_result.tof == approx(0.402).R(0.001));
+        EXPECT(res.total_result.Eloss == approx(884.2,1.0));
         //EXPECT(rcompare(res.total_result.sigma_E,0.7067,0.2));
-        EXPECT(rcompare(res.results[0].Eout,932.24,0.01));
-        EXPECT(rcompare(res.results[0].sigma_a,0.00258,0.1));
-        EXPECT(rcompare(res.results[0].range,107.163,0.01));
-        EXPECT(rcompare(res.results[1].Eout,926.3,0.01));
-        EXPECT(rcompare(res.results[1].sigma_a,0.000774,0.1));
-        EXPECT(rcompare(res.results[1].range,110.715,0.01));
+        EXPECT(res.results[0].Eout == approx(932.24,0.1));
+        EXPECT(res.results[0].sigma_a == approx(0.00258).R(0.05));
+        EXPECT(res.results[0].range == approx(107.163,0.1));
+        EXPECT(res.results[1].Eout == approx(926.3,0.1));
+        EXPECT(res.results[1].sigma_a == approx(0.000774).R(0.05));
+        EXPECT(res.results[1].range == approx(110.8,0.1));
 
         auto res0 = catima::calculate(p(1000),water);
         EXPECT(res0.Eout == res.results[0].Eout);
@@ -350,7 +344,6 @@ const lest::test specification[] =
         t.Z = 13;
         Config c;
 
-	c.z_effective = z_eff_type::pierce_blann;
         EXPECT(z_eff_Pierce_Blann(92,beta_from_T(5000.)) == approx(91.8).epsilon(0.2));
         EXPECT(z_eff_Pierce_Blann(92,beta_from_T(5000.)) == z_effective(p_u(5000.),t,c));
         
