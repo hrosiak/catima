@@ -39,41 +39,29 @@ const lest::test specification[] =
         double dif,dif2;
         
         
-        dif = catima::sezi_p_se(1,he) - 283;
-        EXPECT( fabs(dif)< 1);
+        EXPECT( catima::sezi_p_se(1,he) == approx(283,1));
         p.T = 1;
-        dif2 = catima::sezi_p_se(p.T,he) - catima::sezi_dedx_e(p,he);
-        EXPECT( fabs(dif2)< 0.000001);
+        EXPECT( catima::sezi_p_se(p.T,he) == approx(catima::sezi_dedx_e(p,he)).R(1e-6));
         
-        dif = catima::sezi_p_se(10,he) - 45.6;
-        EXPECT( fabs(dif)< 1);
+        EXPECT(catima::sezi_p_se(10,he)==approx(45.6,1));
         p.T = 10;
-        dif2 = catima::sezi_p_se(p.T,he) - catima::sezi_dedx_e(p,he);
-        EXPECT( fabs(dif2)< 0.000001);
+        EXPECT( catima::sezi_p_se(p.T,he) == approx(catima::sezi_dedx_e(p,he)).R(1e-6));
         
-        dif = catima::sezi_p_se(30,he) - 18.38;
-        EXPECT( fabs(dif)< 1);
+        EXPECT(catima::sezi_p_se(30,he) == approx(18.38,1));
         p.T = 30;
-        dif2 = catima::sezi_p_se(p.T,he) - catima::sezi_dedx_e(p,he);
-        EXPECT( fabs(dif2)< 0.000001);
+        EXPECT( catima::sezi_p_se(p.T,he) == approx(catima::sezi_dedx_e(p,he)).R(1e-6));
+  
         
-        dif = catima::sezi_p_se(1,carbon) - 229.5;
-        EXPECT( fabs(dif)< 1);
+        EXPECT( catima::sezi_p_se(1,carbon) == approx(229.5,1));
         p.T = 1;
-        dif2 = catima::sezi_p_se(p.T,he) - catima::sezi_dedx_e(p,he);
-        EXPECT( fabs(dif2)< 0.000001);
+        EXPECT( catima::sezi_p_se(p.T,carbon) == approx(catima::sezi_dedx_e(p,carbon)).R(1e-6));
+
         
-        dif = catima::sezi_p_se(10,carbon) - 40.8;
-        EXPECT( fabs(dif)< 1);
-        p.T = 10;
-        dif2 = catima::sezi_p_se(p.T,he) - catima::sezi_dedx_e(p,he);
-        EXPECT( fabs(dif2)< 0.000001);
+        EXPECT( catima::sezi_p_se(10,carbon) == approx(40.8,1));
         
-        dif = catima::sezi_p_se(30,carbon) - 16.8;
-        EXPECT( fabs(dif)< 1);
+        EXPECT(catima::sezi_p_se(30,carbon) == approx(16.8,1));
         p.T = 30;
-        dif2 = catima::sezi_p_se(p.T,he) - catima::sezi_dedx_e(p,he);
-        EXPECT( fabs(dif2)< 0.000001);
+        EXPECT( catima::sezi_p_se(p.T,carbon) == approx(catima::sezi_dedx_e(p,carbon)).R(1e-6));
     },
     CASE("dedx, low energy, from sezi"){
         catima::Projectile p{4,2,2,1};
@@ -385,5 +373,3 @@ int main( int argc, char * argv[] )
 {
     return lest::run( specification, argc, argv );
 }
-
-
