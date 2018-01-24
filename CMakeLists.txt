@@ -35,7 +35,7 @@ endif()
 
 ############# Requirements ##################
 find_package(GSL REQUIRED)
-
+MESSAGE(STATUS "GSL include dirs: " ${GSL_INCLUDE_DIRS})
 #if(THREADS)
 #    find_package(Threads REQUIRED)
 #    set (EXTRA_LIBS ${EXTRA_LIBS} ${CMAKE_THREAD_LIBS_INIT})
@@ -64,10 +64,22 @@ file(GLOB GLOBAL_SOURCES global/*.c)
 LIST (APPEND SOURCES ${GLOBAL_SOURCES})
 endif(GLOBAL)
 file(GLOB HEADERS *.h)
+
 add_library(catima SHARED ${SOURCES})
 add_library(catima_static STATIC ${SOURCES})
 set_target_properties(catima_static PROPERTIES OUTPUT_NAME catima POSITION_INDEPENDENT_CODE ON)
 target_link_libraries(catima ${EXTRA_LIBS} ${GSL_LIBRARIES} )
+target_link_libraries(catima_static ${EXTRA_LIBS} ${GSL_LIBRARIES})
+
+target_include_directories(catima 
+                           PUBLIC  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+                                   $<BUILD_INTERFACE:${GSL_INCLUDE_DIRS}>
+                          )
+target_include_directories(catima_static
+                           PUBLIC  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+                                   $<BUILD_INTERFACE:${GSL_INCLUDE_DIRS}>
+                          )
+
 FILE(COPY ${HEADERS} DESTINATION ${PROJECT_BINARY_DIR}/include/catima)
 
 # the compiler used for C++ files 
@@ -108,8 +120,6 @@ if(CATIMA_PYTHON)
 endif(CATIMA_PYTHON )
 
 ########## Sub Directories ###########
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories("${PROJECT_BINARY_DIR}/include")
 if(EXAMPLES)
     file(GLOB EXAMPLES examples/*.cpp)
     FILE(COPY ${EXAMPLES} DESTINATION ${PROJECT_BINARY_DIR}/examples)
@@ -146,7 +156,6 @@ install (TARGETS catima catima_static
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib)
 install (FILES ${headers} DESTINATION include/catima)
-
 
 ###### packaging #######
 set(CPACK_PACKAGE_NAME "catima")
