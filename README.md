@@ -30,6 +30,7 @@ available options:
   * GENERATE_DATA - makes program to re-generate precalculated tables (ie precalculated LS coefficients), default:OFF
   * THIN_TARGET_APPROXIMATION - compile the library with thin target approximation, default: ON
   * GSL_INTEGRATION - use GSL integration functions, otherwise use built-in integrator, default: ON
+  * GLOBAL - compile with GLOBAL code (source not included at the moment, needs to be manually added to __global__ directory, default:OFF)
 
 ie:
 > cmake -DCATIMA_PYTHON=ON -DEXAMPLES=ON ../
