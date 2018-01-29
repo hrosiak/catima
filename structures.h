@@ -118,6 +118,12 @@ namespace catima{
             double weight_fraction(int i) const {return (atoms[i].stn<1.0)?atoms[i].stn:atoms[i].stn*atoms[i].A/M();};
 
             /**
+             * return molar fraction of i-th element
+             * @return molar fraction
+             */
+            double molar_fraction(int i) const {return (atoms[i].stn<1.0)?atoms[i].stn*M()/atoms[i].A:atoms[i].stn;};
+
+            /**
               * @return number of components in Material
               */
             int ncomponents() const {return atoms.size();}

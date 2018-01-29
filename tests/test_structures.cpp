@@ -234,26 +234,35 @@ const lest::test specification[] =
     },
     CASE("fraction calculation"){
         catima::Material water1({
-                        {0, 1, 0.111894},
-                        {0, 8, 0.888106}
+                        {0, 1, 0.111898},
+                        {0, 8, 0.888102}
                         });
         catima::Material water2({
                         {0, 1, 2},
                         {0, 8, 1}
                         });
 
-        EXPECT(water1.weight_fraction(0)==0.111894);
-        EXPECT(water2.weight_fraction(0)==approx(water1.weight_fraction(0)).R(1e-3));
-        EXPECT(water1.weight_fraction(1)==0.888106);
-        EXPECT(water2.weight_fraction(1)==approx(water1.weight_fraction(1)).R(1e-3));
+        EXPECT(water1.weight_fraction(0)==0.111898);
+        EXPECT(water2.weight_fraction(0)==approx(water1.weight_fraction(0)).R(1e-5));
+        EXPECT(water1.weight_fraction(1)==0.888102);
+        EXPECT(water2.weight_fraction(1)==approx(water1.weight_fraction(1)).R(1e-5));
         EXPECT(water2.M()==approx(18).epsilon(0.1));
 
         EXPECT(water1.M()==approx(6.0,0.1));
         EXPECT(water2.M()==approx(18,0.1));
 
+        EXPECT(water1.molar_fraction(0)==approx(2.0/3.0).R(1e-5));
+        EXPECT(water2.molar_fraction(0)==approx(2.0).R(1e-5));
+        EXPECT(water1.molar_fraction(1)==approx(1.0/3.0).R(1e-5));
+        EXPECT(water2.molar_fraction(1)==approx(1.0).R(1e-5));
+        EXPECT(water1.molar_fraction(0)/water1.molar_fraction(1)==approx(2.0).R(1e-5));
+        EXPECT(water2.molar_fraction(0)/water2.molar_fraction(1)==approx(2.0).R(1e-5));
+
+
         catima::Material mat({12.0,6,1});
         EXPECT(mat.M()==approx(12.0,0.001));
         EXPECT(mat.weight_fraction(0)==approx(1.0).R(1e-6));
+
     }
 };
 
