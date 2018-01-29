@@ -18,31 +18,22 @@ extern "C"
 
 namespace catima{
 
-double dedx_e(Projectile &p, const Target &t, const Config &c){
-    double se = -1;
-    if(p.T<=10){
-        se = sezi_dedx_e(p,t);
-    }
-    else if(p.T>10 && p.T<30){
-        double factor = 0.05 * ( p.T - 10.0 );
-        se = (1-factor)*sezi_dedx_e(p,t) + factor*bethek_dedx_e(p,t,c);
-    }
-    else {
-        se = bethek_dedx_e(p,t,c);
-    }
-    return se;
-}
-
-
-double dedx(Projectile &p, const Target &t, const Config &c){
-    return dedx_e(p,t,c) + dedx_n(p,t);
-}
-
-
 double reduced_energy_loss_unit(const Projectile &p, const Target &t){
     double zpowers = pow(p.Z,0.23)+pow(t.Z,0.23);
     double asum = p.A + t.A;
     return 32.53*t.A*1000*p.T*p.A/(p.Z*t.Z*asum*zpowers); //projectile energy is converted from MeV/u to keV
+}
+
+
+double dedx_n(const Projectile &p, const Material &mat){
+    double w;
+    double sum=0.0;
+    for(int i=0;i<mat.ncomponents();i++){
+        auto t = mat.get_element(i);
+        w = mat.weight_fraction(i);
+        sum += w*dedx_n(p,t);
+    }
+    return sum;   
 }
 
 double dedx_n(const Projectile &p, const Target &t){
@@ -62,27 +53,32 @@ double dedx_n(const Projectile &p, const Target &t){
     return sn;
 }
 
+double bethek_dedx_e(Projectile &p,const Material &mat, const Config &c){
+    double w;
+    double sum=0.0;
+    for(int i=0;i<mat.ncomponents();i++){
+        auto t = mat.get_element(i);
+        w = mat.weight_fraction(i);
+        sum += w*bethek_dedx_e(p,t,c,mat.I());
+    }
+    return sum;   
+}
 
-double bethek_dedx_e(Projectile &p, const Target &t, const Config &c){
+double bethek_dedx_e(Projectile &p, const Target &t, const Config &c, double I){
     assert(t.Z>0 && p.Z>0);
     assert(t.A>0 && p.A>0);
+    assert(p.T>0.0);
     if(p.T==0)return 0.0;
     double gamma=1.0 + p.T/atomic_mass_unit;
     double beta2=1.0-1.0/(gamma*gamma);
-    assert(beta2>=0);
     double beta = sqrt(beta2);
-    assert(beta>=0 && beta<1);
-    //double zeta = 1.0-exp(-130.0*beta/pow(p.Z,2.0/3.0));
-    //assert(zeta>=0);
-    //double zp_eff = p.Z*zeta;
-    double zp_eff = z_effective(p,t,c);
-    
+    double zp_eff = z_effective(p,t,c);    
     assert(zp_eff>=0);
-    double Ipot = ipot(t.Z);
+    double Ipot = (I>0.0)?I:ipot(t.Z);
     assert(Ipot>0);
     double f1 = dedx_constant*pow(zp_eff,2.0)*t.Z/(beta2*t.A);
-    assert(f1>=0);
     double f2 = log(2.0*electron_mass*1000000*beta2/Ipot);
+
     double eta = beta*gamma;
     if(!(c.dedx&corrections::no_shell_correction) &&  eta>=0.13){ //shell corrections
         double cor = (+0.422377*pow(eta,-2)
@@ -137,7 +133,7 @@ double bethek_barkas(double zp_eff,double eta, double zt){
 
 double bethek_density_effect(double beta, int zt){
     double gamma = 1/sqrt(1-(beta*beta));
-    double x = log(beta * gamma) / 2.302585;
+    double x = log(beta * gamma) / 2.3025851;
     int i = zt-1;
     double del = 0;
     
@@ -525,6 +521,16 @@ double sezi_dedx_e(const Projectile &p, const Target &t){
     }
 };
 
+double sezi_dedx_e(const Projectile &p, const Material &mat){
+    double w;
+    double sum=0.0;
+    for(int i=0;i<mat.ncomponents();i++){
+        auto t = mat.get_element(i);
+        w = mat.weight_fraction(i);
+        sum += w*sezi_dedx_e(p,t);
+    }
+    return sum;
+}
 
 
 double gamma_from_T(double T){

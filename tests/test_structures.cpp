@@ -54,6 +54,9 @@ const lest::test specification[] =
               EXPECT(water==water2);
               EXPECT(!(water==graphite));
             }
+            SECTION("default ionisation potential"){
+              EXPECT(graphite.I()==0.0);
+            }
         }
     },
     CASE("Material automatic atomic weight"){
@@ -191,6 +194,23 @@ const lest::test specification[] =
         EXPECT(mat5.get_element(1).A==mat6.get_element(1).A);
         mat5.add_element(12,6,1);
         EXPECT(mat5.ncomponents()==mat6.ncomponents()+1);
+        
+        // constructor with custom Ipot 
+        catima::Material water1({
+                {1,1,2},
+                {16,8,1}
+                },1.0);
+        catima::Material water2({
+                {1,1,2},
+                {16,8,1}
+                },1.0, 78.0);
+        EXPECT(water1.ncomponents()==2);
+        EXPECT(water2.ncomponents()==2);
+        EXPECT(water1.density()==1.0);
+        EXPECT(water2.density()==1.0); 
+        EXPECT(water1.I()==0.0); 
+        EXPECT(water2.I()==78.0); 
+        EXPECT_NOT(water1==water2); 
 
     },
     CASE("fraction vs stn init"){
@@ -230,6 +250,10 @@ const lest::test specification[] =
 
         EXPECT(water1.M()==approx(6.0,0.1));
         EXPECT(water2.M()==approx(18,0.1));
+
+        catima::Material mat({12.0,6,1});
+        EXPECT(mat.M()==approx(12.0,0.001));
+        EXPECT(mat.weight_fraction(0)==approx(1.0).R(1e-6));
     }
 };
 

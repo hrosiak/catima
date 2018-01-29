@@ -71,17 +71,17 @@ const lest::test specification[] =
         
         // He projectile case
         p.T = 1;
-        EXPECT( catima::dedx(p,carbon) == approx(922.06).R(0.0001) );
+        EXPECT( catima::sezi_dedx_e(p,carbon)+catima::dedx_n(p,carbon) == approx(922.06).R(0.0001) );
         p.T = 3;
-        EXPECT( catima::dedx(p,carbon) == approx(433.09).R(0.0001) );
+        EXPECT( catima::sezi_dedx_e(p,carbon)+catima::dedx_n(p,carbon) == approx(433.09).R(0.0001) );
         
         // C projectile case
         p.A = 12;
         p.Z = 6;
         p.T = 1;
-        EXPECT( catima::dedx(p,carbon) == approx( 5792.52).R(0.0001) );
+        EXPECT( catima::sezi_dedx_e(p,carbon)+catima::dedx_n(p,carbon) == approx( 5792.52).R(0.0001) );
         p.T = 9.9;
-        EXPECT( catima::dedx(p,carbon) == approx(1485.36).R(0.0001) );
+        EXPECT( catima::sezi_dedx_e(p,carbon)+catima::dedx_n(p,carbon) == approx(1485.36).R(0.0001) );
         
     },
     CASE("LS check: deltaL values"){
@@ -130,33 +130,26 @@ const lest::test specification[] =
                 {15.9994,8,1}
                 });
         double dif;
-        dif = catima::dedx(p,1000, water) - 2.23;
-        EXPECT( fabs(dif) < 0.002);
-        
-        dif = catima::dedx(p,500,water) - 2.76;
-        EXPECT( fabs(dif) < 0.005);
-        
-        dif = catima::dedx(p,9,water) - 51.17;
-        EXPECT( fabs(dif) < 0.005);
+
+        EXPECT( catima::dedx(p,1000, water) == approx(2.23).R(5e-3));
+        EXPECT( catima::dedx(p,500, water) == approx(2.76).R(5e-3));
+        EXPECT( catima::dedx(p,9, water) == approx(51.17).R(5e-3));
     },
     CASE("dEdx from spline vs dEdx"){
         catima::Projectile p{238,92,92,1000};
         catima::Material graphite({
                 {12.011,6,1},
                 });
-        
+
         double dif;
         auto res = catima::calculate(p(1000),graphite);
-        dif = (catima::dedx(p,1000, graphite) - res.dEdxi)/res.dEdxi;
-        EXPECT(dif == approx(0).epsilon(0.001) );
+        EXPECT(catima::dedx(p,1000, graphite) == approx(res.dEdxi).R(0.001) );
         
         res = catima::calculate(p,graphite,500);
-        dif = catima::dedx(p,500,graphite) - res.dEdxi;
-        EXPECT(dif/res.dEdxi == approx(0).epsilon(0.001) );
+        EXPECT(catima::dedx(p,500, graphite) == approx(res.dEdxi).R(0.001) );
         
         res = catima::calculate(p,graphite,9);
-        dif = catima::dedx(p,9,graphite) - res.dEdxi;
-        EXPECT(dif/res.dEdxi == approx(0).epsilon(0.001) );
+        EXPECT(catima::dedx(p,9, graphite) == approx(res.dEdxi).R(0.001) );
     },
     
 //    CASE("dOmega2dx Ferisov test"){
@@ -302,7 +295,7 @@ const lest::test specification[] =
         EXPECT(res.results[0].range == approx(107.163,0.1));
         EXPECT(res.results[1].Eout == approx(926.3,0.1));
         EXPECT(res.results[1].sigma_a == approx(0.000774).R(0.05));
-        EXPECT(res.results[1].range == approx(110.8,0.1));
+        EXPECT(res.results[1].range == approx(111.3,0.1));
 
         auto res0 = catima::calculate(p(1000),water);
         EXPECT(res0.Eout == res.results[0].Eout);

@@ -47,6 +47,8 @@ cdef extern from "catima/structures.h" namespace "catima":
         double thickness()
         void thickness(double val)
         void calculate()
+        double I()
+        void I(double val)
     
     cdef cppclass Layers:
         Layers() except +
