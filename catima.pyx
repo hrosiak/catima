@@ -12,7 +12,7 @@ import numpy
 
 cdef class Material:
     cdef catimac.Material cbase
-    def __cinit__(self, elements=None, thickness=None, density=None):
+    def __cinit__(self, elements=None, thickness=None, density=None, i_potential=None):
         self.cbase = catimac.Material()
         if(elements and (isinstance(elements[0],float) or isinstance(elements[0],int))):
             self.cbase.add_element(elements[0],elements[1],elements[2])
@@ -24,6 +24,8 @@ cdef class Material:
             self.thickness(thickness)
         if(not density is None):
             self.density(density)
+        if(not i_potential is None):
+            self.I(i_potential)
 
     cdef from_c(self, catimac.Material &other):
         self.cbase = other
@@ -61,6 +63,11 @@ cdef class Material:
             return self.cbase.thickness()
         else:
             return self.cbase.thickness(val)
+    def I(self, val=None):
+        if(val is None):
+            return self.cbase.I()
+        else:
+            return self.cbase.I(val)
 
 class material(IntEnum):
             PLASTIC = 201

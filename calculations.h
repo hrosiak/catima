@@ -26,16 +26,7 @@ namespace catima{
       * returns nuclear stopping power for projectile-target combination
       */
     double dedx_n(const Projectile &p, const Target &t);
-
-    /**
-      * returns electronic stopping power for projectile-target combination
-      */
-    double dedx_e(Projectile &p, const Target &t, const Config &c=default_config);
-
-    /**
-      * returns total stopping power for projectile-target combination
-      */
-    double dedx(Projectile &p, const Target &t, const Config &c=default_config);    
+    double dedx_n(const Projectile &p, const Material &mat); 
     
     /**
       * returns energy loss straggling
@@ -49,7 +40,8 @@ namespace catima{
     
 
 
-    double bethek_dedx_e(Projectile &p,const Target &t, const Config &c=default_config);
+    double bethek_dedx_e(Projectile &p,const Target &t, const Config &c=default_config, double I=0.0);
+    double bethek_dedx_e(Projectile &p,const Material &mat, const Config &c=default_config);
     double bethek_barkas(double zp_eff,double eta, double zt);
     double bethek_density_effect(double beta, int zt);
     
@@ -86,6 +78,11 @@ namespace catima{
       * electronic energy loss for low energy, should be like SRIM
       */ 
     double sezi_dedx_e(const Projectile &p, const Target &t);
+
+    /**
+      * electronic energy loss for low energy, should be like SRIM
+      */ 
+    double sezi_dedx_e(const Projectile &p, const Material &mat);
     
     /**
       * electronic energy loss of protons for low energy, should be like SRIM

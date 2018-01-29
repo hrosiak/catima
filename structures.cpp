@@ -14,23 +14,20 @@ bool operator==(const Projectile &a, const Projectile&b){
 }
 
 bool operator==(const Material &a, const Material&b){
-    if(a.molar_mass != b.molar_mass)return false;
     if(a.density() != b.density())return false;
     if(a.ncomponents() != b.ncomponents())return false;
+    if(a.I() != b.I())return false;
     for(int i=0;i<a.ncomponents();i++){
         if(a.atoms[i].stn != b.atoms[i].stn)return false;
         if(a.atoms[i].A != b.atoms[i].A)return false;
         if(a.atoms[i].Z != b.atoms[i].Z)return false;
     }
+    if(a.molar_mass != b.molar_mass)return false;
     return true;
 }
 
-/*
-Material::Material(const std::array<double,2> &list){
-    add_element(list[0],list[1],1.0);
-}
-*/
-Material::Material(std::initializer_list<std::array<double,3>>list,double _density):rho(_density){
+
+Material::Material(std::initializer_list<std::array<double,3>>list,double _density, double _ipot):rho(_density),i_potential(_ipot){
     std::initializer_list<std::array<double,3>>::iterator it;
     atoms.reserve(list.size());
     for ( it=list.begin(); it!=list.end(); ++it){

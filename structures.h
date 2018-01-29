@@ -65,6 +65,7 @@ namespace catima{
             double rho=0;
             double th=0;
             double molar_mass=0;
+            double i_potential=0;
             std::vector<Target>atoms;
 
         public:
@@ -88,8 +89,7 @@ namespace catima{
                 });
               * \endcode
               */
-            Material(std::initializer_list<std::array<double,3>>list,double _density=0.0);
-            //Material(const std::array<double,2> &list);
+            Material(std::initializer_list<std::array<double,3>>list,double _density=0.0, double ipot = 0.0);
             
             /**
              * calculates internal variables if needed
@@ -146,6 +146,17 @@ namespace catima{
               * sets thickness in g/cm^2
               */
             Material& thickness(double val){th = val;return *this;};
+
+            /**
+              * set the mean ionization potential, if non elemental I should be used
+              */
+            Material& I(double val){i_potential = val;return *this;};
+            
+            /**
+              * 0 if default elemental potential is used
+              * @return returns ionisation potential in ev
+              */
+            double I() const {return i_potential;};
 
 
             friend bool operator==(const Material &a, const Material&b);

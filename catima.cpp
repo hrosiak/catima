@@ -28,12 +28,23 @@ double dedx(Projectile &p, double T, const Material &mat, const  Config &c){
     double sum = 0;
     double w=0;
     if(T<=0)return 0.0;
-    for(int i=0;i<mat.ncomponents();i++){
-        auto t = mat.get_element(i);
-        w = mat.weight_fraction(i);
-        p.T = T;
-        sum += w*dedx(p,t,c);
+
+    sum += dedx_n(p,mat);
+
+    double se=0;
+    p.T = T;
+    if(p.T<=10){
+        se = sezi_dedx_e(p,mat);
     }
+    else if(p.T>10 && p.T<30){
+        double factor = 0.05 * ( p.T - 10.0 );
+        se = (1-factor)*sezi_dedx_e(p,mat) + factor*bethek_dedx_e(p,mat,c);
+    }
+    else {
+        se = bethek_dedx_e(p,mat,c);
+    }
+    sum+=se;
+
     return sum;
 }
 
@@ -153,6 +164,7 @@ double energy_out(Projectile &p, double T, const Material &t, const Config &c){
 Result calculate(Projectile &p, const Material &t, const Config &c){
     Result res;
     double T = p.T;
+    if(T<catima::Ezero && T<catima::Ezero-catima::numeric_epsilon){return res;}
     auto data = _storage.Get(p,t,c);
 
     Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
@@ -338,9 +350,10 @@ DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
     //calculate 1st point to have i-1 element ready for loop
     //res = integrator.integrate(fdedx,Ezero,energy_table(0));
     //res = p.A*res;
+    //dp.range[0] = res;
     dp.range[0] = 0.0;
 
-    //res = da2dx(p,energy_table(0),t)*res;
+    res = da2dx(p,energy_table(0),t)*res;
     dp.angular_variance[0] = 0.0;
 
     //res = integrator.integrate(fomega,Ezero,energy_table(0));
@@ -354,7 +367,6 @@ DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
         dp.angular_variance[i] = res + dp.angular_variance[i-1];
     
         res = integrator.integrate(fomega,energy_table(i-1),energy_table(i));
-        //res = integratorGSL.integrate(fomega,energy_table(i-1),energy_table(i));
         res = p.A*res;
         dp.range_straggling[i] = res + dp.range_straggling[i-1];
     }

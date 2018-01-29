@@ -53,6 +53,12 @@ class TestStructures(unittest.TestCase):
         self.assertEqual(mat5.thickness(),0.5)
         self.assertEqual(mat5.density(),1.9)
 
+        mat6 = catima.Material([0,6,1],density=1.9, thickness=0.5,i_potential=80.0)
+        self.assertEqual(mat6.ncomponents(),1)
+        self.assertEqual(mat6.thickness(),0.5)
+        self.assertEqual(mat6.density(),1.9)
+        self.assertEqual(mat6.I(),80.0)
+
         # copy
         mat3.density(1.8)
         matc = mat3.copy()
@@ -138,6 +144,8 @@ class TestStructures(unittest.TestCase):
 
     def test_material_calculation(self):
         water = catima.get_material(catima.material.WATER)
+        water2 = catima.get_material(catima.material.WATER)
+        water2.I(78.0)
         p = catima.Projectile(1,1)
         
         p(1000)
@@ -146,10 +154,15 @@ class TestStructures(unittest.TestCase):
         self.assertAlmostEqual(res.dEdxi,2.23,1)
         self.assertAlmostEqual(res["dEdxi"],2.23,1)
         self.assertAlmostEqual(res.dEdxi,res2,3)
+        res3 = catima.calculate(p,water2)
+        self.assertTrue(res.dEdxi>res3.dEdxi)
+
         res = catima.calculate(p(500),water)
         res2 = catima.dedx(p,water)
         self.assertAlmostEqual(res.dEdxi,2.76,1)
         self.assertAlmostEqual(res.dEdxi,res2,3)
+        res3 = catima.calculate(p,water2)
+        self.assertTrue(res.dEdxi>res3.dEdxi)
 
         res = catima.calculate(p(9),water)
         res2 = catima.dedx(p,water)
@@ -180,6 +193,7 @@ class TestStructures(unittest.TestCase):
         water.thickness(10.0)
         graphite = catima.get_material(6)
         graphite.thickness(1.0)
+        graphite.density(2.0)
 
         mat = catima.Layers()
         mat.add(water)
@@ -193,12 +207,12 @@ class TestStructures(unittest.TestCase):
         self.assertAlmostEqual(res["tof"],0.402,2)
         self.assertAlmostEqual(res["Eloss"],884,0)
 
-        self.assertAlmostEqual(res[0]["Eout"],932,0)
-        self.assertAlmostEqual(res[1]["Eout"],926,0)
+        self.assertAlmostEqual(res[0]["Eout"],932.24,0)
+        self.assertAlmostEqual(res[1]["Eout"],926.3,0)
         self.assertAlmostEqual(res[0]["sigma_a"],0.00258,4)
         self.assertAlmostEqual(res[1]["sigma_a"],0.000774,4)
         self.assertAlmostEqual(res[0]["range"],107.1,0)
-        self.assertAlmostEqual(res[1]["range"],110.7,0)
+        self.assertAlmostEqual(res[1]["range"],111.3,0)
     
     def test_energy_table(self):
         table = catima.get_energy_table()
