@@ -190,16 +190,22 @@ the following effective charge calculations are buit in:
 ```
     enum z_eff_type:char {
         none = 0,
-        atima = 1,
-        pierce_blann = 1,  
+        pierce_blann = 1,
         anthony_landorf = 2,
-        hubert = 3
-    };
+        hubert = 3,
+        winger = 4,
+        schiwietz = 5,
+        global = 6,
+        atima14 = 7
+    }; hubert = 3
 ```
   * z_eff_type::none - the provided Projectile Q is used as a charge
   * z_eff_type::pierce_blann - Pierce Blann formula, using function: z_eff_Pierce_Blann()
   * z_eff_type::anthony_landorf - function: z_eff_Anthony_Landorf()
-  * z_eff_type::huber - function: z_eff_Huber()
+  * z_eff_type::hubert - function: z_eff_Hubert()
+  * z_eff_type::winger - function: z_eff_Winger()
+  * z_eff_type::global - function: z_eff_global()
+  * z_eff_type::atima14 - function: z_eff_atima14()
 
 
 
