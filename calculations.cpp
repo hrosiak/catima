@@ -559,7 +559,7 @@ double angular_scattering_variance(Projectile &p, Target &t){
 }
 
 /// radioation lengths are taken frm Particle Data Group 2014
-double radiation_length(int z, int m){
+double radiation_length(int z, double m){
     double lr = 0;
     if(z==1){return 63.04;}
     if(z==2){return 94.32;}

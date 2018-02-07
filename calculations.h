@@ -95,10 +95,11 @@ namespace catima{
     /**
       * returns radiation length of the (M,Z) material
       * for certain z the radiation length is tabulated, otherwise calculated
-      * @param z - proton number of material
+      * @param z - proton number of target
+      * @param m - weight of the target
       * @return radiation length in g/cm^2
       */
-    double radiation_length(int z, int m);
+    double radiation_length(int z, double m);
     
     /** returns effective Z of the projectile
       * @param c - Configuration, the z effective will be calculated according to c.z_effective value

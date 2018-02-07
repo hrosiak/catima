@@ -170,7 +170,7 @@ const lest::test specification[] =
       
       auto res = catima::calculate(p,graphite);
       dif = res.Eout - 997.077;
-      EXPECT( fabs(dif) < 0.01);
+      EXPECT( res.Eout == approx(997.07,01));
     },
   CASE("TOF test"){
       catima::Projectile p{12,6,6,1000};
@@ -295,7 +295,7 @@ const lest::test specification[] =
         EXPECT(res.results[0].range == approx(107.163,0.1));
         EXPECT(res.results[1].Eout == approx(926.3,0.1));
         EXPECT(res.results[1].sigma_a == approx(0.000774).R(0.05));
-        EXPECT(res.results[1].range == approx(110.8,0.1));
+        EXPECT(res.results[1].range == approx(111.3,0.1));
 
         auto res0 = catima::calculate(p(1000),water);
         EXPECT(res0.Eout == res.results[0].Eout);
