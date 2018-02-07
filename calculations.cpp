@@ -406,7 +406,9 @@ double sezi_p_se(double energy,const Target &t){
     double sp = -1;
     double e = 1000*energy; //e in keV/u
     int i = t.Z - 1;
-    
+    if(t.Z>92){
+        i = 91;
+        }
     if(e<=25)e=25;
     //double sl = (proton_stopping_coef[i][0]*pow(e,proton_stopping_coef[i][1])) + (proton_stopping_coef[i][2]*pow(e,proton_stopping_coef[i][3]));
     //double sh = proton_stopping_coef[i][4]/pow(e,proton_stopping_coef[i][5]) * log( (proton_stopping_coef[i][6]/e) + (proton_stopping_coef[i][7]*e));
@@ -454,10 +456,17 @@ double sezi_dedx_e(const Projectile &p, const Target &t){
         double YRmin = 0.130; //  YRmin = VR / ZP**0.67 <= 0.13 OR VR <= 1.0
         double VRmin = 1.0;
         double v=0;
-        double vfermi = atima_vfermi[(int)t.Z-1];
+        double vfermi;
         double yr=0;
         double zeta = 0;
         double se;
+        int i;
+        
+        i = t.Z - 1;
+        if(t.Z>92){
+            i = 91;
+            }
+        vfermi = atima_vfermi[i];
         
         v = sqrt(e/25.0)/vfermi;
         double v2=v*v;
