@@ -27,7 +27,7 @@ const double ionisation_potentials_z[IPOT_ZMAX+1] = {
     40.0,
     63.7,
     76.0,
-    78.0, // C
+    81.0, // C
     82.0,
     95.0,
     115.0,
@@ -121,7 +121,7 @@ const double ionisation_potentials_z[IPOT_ZMAX+1] = {
       940.0,
       950.0,
       960.0,
-     970.0,
+     970.0, //Z = 100
      980.0,
      990.0,
     1000.0,
@@ -131,7 +131,7 @@ const double ionisation_potentials_z[IPOT_ZMAX+1] = {
     1040.0,
     1050.0,
     1060.0,
-    1070.0,
+    1070.0, // Z = 110
     1080.0,
     1090.0,
     1100.0,
