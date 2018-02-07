@@ -134,9 +134,13 @@ double bethek_barkas(double zp_eff,double eta, double zt){
 double bethek_density_effect(double beta, int zt){
     double gamma = 1/sqrt(1-(beta*beta));
     double x = log(beta * gamma) / 2.3025851;
-    int i = zt-1;
+    int i;
     double del = 0;
     
+    if(zt>97){  // check if data are available, if not take highest z data
+        zt=97;
+        }
+    i = zt-1;
     if (x < density_effect::x0[i] ){
         if(density_effect::del_0[i] > 0.)del = density_effect::del_0[i] * pow(10.0,(2.*(x-density_effect::x0[i])));
         }
