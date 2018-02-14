@@ -165,7 +165,7 @@ double energy_out(double T, double thickness, Interpolator &range_spline){
         step = -r*dedx;
         e = e-step;
         if(e<Ezero)return 0.0;
-        dedx = 1.0/range_spline.derivative(T);
+        dedx = 1.0/range_spline.derivative(e);
         counter++;
         if(counter>100){printf("too many iterations finding Eout");return -1;}
     }
