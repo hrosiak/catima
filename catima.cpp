@@ -87,6 +87,23 @@ double dedx_from_range(Projectile &p, double T, const Material &t, const Config 
     return p.A/range_spline.derivative(T);
 }
 
+std::vector<double> dedx_from_range(Projectile &p, const std::vector<double> &T, const Material &t, const Config &c){
+    auto data = _storage.Get(p,t,c);
+    Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
+
+    std::vector<double> dedx;
+    dedx.reserve(T.size());
+    for(auto e:T){
+        if(e<catima::Ezero){
+            dedx.push_back(0.0);
+        }
+        else{
+            dedx.push_back(p.A/range_spline.derivative(e));
+        }
+    }
+    return dedx;
+}
+
 double range_straggling(Projectile &p, double T, const Material &t, const Config &c){
     double r=0;
     auto data = _storage.Get(p,t,c);
@@ -159,6 +176,24 @@ double energy_out(Projectile &p, double T, const Material &t, const Config &c){
     auto data = _storage.Get(p,t,c);
     Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
     return energy_out(T,t.thickness(),range_spline);
+    }
+
+std::vector<double> energy_out(Projectile &p, const std::vector<double> &T, const Material &t, const Config &c){
+    auto data = _storage.Get(p,t,c);
+    Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
+
+    std::vector<double> eout;
+    eout.reserve(T.size());
+    for(auto e:T){
+        if(e<catima::Ezero){
+            eout.push_back(0.0);
+        }
+        else{
+            eout.push_back(energy_out(e,t.thickness(),range_spline));
+        }
+    }
+    
+    return eout;
     }
 
 Result calculate(Projectile &p, const Material &t, const Config &c){

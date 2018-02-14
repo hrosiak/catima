@@ -358,6 +358,34 @@ const lest::test specification[] =
         c.z_effective = z_eff_type::atima14;
         EXPECT(z_eff_atima14(92,1900,13) == z_effective(p_u(1900.),t,c));
         #endif
+    },
+    CASE("vector_inputs"){
+        catima::Projectile p{12,6,6,1000};
+        catima::Material water({
+                {1.00794,1,2},
+                {15.9994,8,1}
+                });
+        catima::Material graphite;
+        graphite.add_element(12,6,1);
+        graphite.density(2.0);
+        graphite.thickness(0.5);
+      
+      auto res = catima::calculate(p,graphite);
+      EXPECT( res.Eout == approx(997.07,01));
+
+      std::vector<double> energies{100,500,1000};
+      auto res2 = catima::energy_out(p,energies, graphite);
+      EXPECT(res2.size()==energies.size());
+      EXPECT(res2[2] == approx(997.07,01));
+      EXPECT(res2[0] == approx(catima::energy_out(p,energies[0],graphite),0.1));
+      EXPECT(res2[1] == approx(catima::energy_out(p,energies[1],graphite),0.1));
+      EXPECT(res2[2] == approx(catima::energy_out(p,energies[2],graphite),0.1));
+
+      auto res3 = catima::dedx_from_range(p,energies,graphite);
+      EXPECT(res3.size()==energies.size());
+      EXPECT(res3[0] == approx(catima::dedx_from_range(p,energies[0],graphite),0.1));
+      EXPECT(res3[1] == approx(catima::dedx_from_range(p,energies[1],graphite),0.1));
+      EXPECT(res3[2] == approx(catima::dedx_from_range(p,energies[2],graphite),0.1));
     }
     
 };

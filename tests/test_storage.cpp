@@ -86,8 +86,7 @@ const lest::test specification[] =
       EXPECT(catima::_storage.get_index()==4);
       
     },
-    CASE("test maximum storage"){
-      auto maxdata = catima::max_storage_data;
+    CASE("test maximum storage"){ // this test assumes max storage = 50
       catima::Projectile p{12,6,6,1000};
       catima::Material water({
                 {1,1,2},
@@ -99,18 +98,18 @@ const lest::test specification[] =
                 });
       catima::_storage.Reset();      
       EXPECT(catima::_storage.get_index()==0);
-      for(int i=1;i<maxdata+1;i++){
+      for(int i=1;i<51;i++){
           catima::Projectile p1{2*i,i,i,1000};
           catima::_storage.Add(p1,graphite);
           EXPECT(catima::_storage.get_index()==i);
-          EXPECT(catima::_storage.GetN()==maxdata);
+          EXPECT(catima::_storage.GetN()==50);
       }
-      EXPECT(catima::_storage.get_index()==maxdata);
-      for(int i=1;i<maxdata-1;i++){
+      EXPECT(catima::_storage.get_index()==50);
+      for(int i=1;i<49;i++){
           catima::Projectile p1{2*i,i,i,1000};
           catima::_storage.Add(p1,water);
           EXPECT(catima::_storage.get_index()==i);
-          EXPECT(catima::_storage.GetN()==maxdata);
+          EXPECT(catima::_storage.GetN()==50);
       }
 
   
