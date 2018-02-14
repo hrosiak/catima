@@ -450,6 +450,11 @@ def energy_out(Projectile projectile, Material material, energy = None, Config c
         energy = projectile.T()
     return catimac.energy_out(projectile.cbase, <double>energy, material.cbase, config.cbase)
 
+def w_magnification(Projectile projectile, Material material, energy = None, Config config = default_config):
+    if(energy is None):
+        energy = projectile.T()
+    return catimac.w_magnification(projectile.cbase,energy, material.cbase, config.cbase)
+
 def sezi_dedx_e(Projectile projectile, Target t):
     return catimac.sezi_dedx_e(projectile.cbase, t.cbase)
 
