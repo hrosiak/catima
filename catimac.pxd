@@ -87,6 +87,8 @@ cdef extern from "catima/catima.h" namespace "catima":
     cdef Result calculate(Projectile &p, const Material &t, const Config &c);
     cdef MultiResult calculate(Projectile &p, const Layers &layers, const Config &c);
 
+    cdef double w_magnification(Projectile p, double E, const Material &t, const Config &c);
+
 cdef extern from "catima/calculations.h" namespace "catima":
     cdef double bethek_lindhard(const Projectile &p);
     cdef double bethek_lindhard_X(const Projectile &p);

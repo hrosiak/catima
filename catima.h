@@ -209,6 +209,11 @@ namespace catima{
       */
     double calculate_tof_from_E(Projectile p, double Eout, const Material &t, const Config &c=default_config);
     
+    /**
+     * returns energy magnification after passing material t
+     */
+    double w_magnification(Projectile p, double Ein, const Material &t, const Config &c=default_config);
+
     class DataPoint;
     /**
       * calculates DataPoint for Projectile Material combinatino
