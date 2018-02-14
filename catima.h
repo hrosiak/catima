@@ -18,6 +18,7 @@
 #define CPPATIMA_H
 
 #include <utility>
+#include <vector>
 
 // #define NDEBUG
 #include "catima/build_config.h"
@@ -69,6 +70,15 @@ namespace catima{
       * @return range
       */
     double dedx_from_range(Projectile &p, double T, const Material &t, const Config &c=default_config);
+
+    /**
+      * returns the dEdx calculated from range spline as derivative
+      * @param p - Projectile
+      * @param T - energy vector
+      * @param mat - Material
+      * @return range
+      */
+    std::vector<double> dedx_from_range(Projectile &p, const std::vector<double> &T, const Material &t, const Config &c=default_config);
 
     /**
       * returns the  range straggling of the Projectile in Material from spline
@@ -143,6 +153,15 @@ namespace catima{
       * @return outcoming energy after the material in Mev/u
       */
     double energy_out(Projectile &p, double T, const Material &t, const Config &c=default_config);
+
+    /**
+      * calculates outcoming energy 
+      * @p - Projectile
+      * @t - Material
+      * @param T - incoming energy vector
+      * @return outcoming energy after the material in Mev/u
+      */
+    std::vector<double> energy_out(Projectile &p, const std::vector<double> &T, const Material &t, const Config &c=default_config);
 
     /**
       * calculates all observables for projectile passing material
