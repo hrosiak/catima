@@ -418,18 +418,20 @@ double calculate_tof_from_E(Projectile p, double Eout, const Material &t, const 
     return res;
 }
 
-double w_magnification(Projectile p, double Ein, const Material &t, const Config &c){
-    double res = 1.0;
+std::pair<double,double> w_magnification(Projectile p, double Ein, const Material &t, const Config &c){
+    std::pair<double, double> res{1.0,1.0};
     if(t.density()<= 0.0 || t.thickness()<=0){
         return res;
     }
-    std::vector<double> energies{0.99*Ein, Ein, 1.1*Ein};
+    std::vector<double> energies{0.99*Ein, Ein, 1.01*Ein};
     auto eres = energy_out(p,energies,t,c);
     if(eres[0]>0.0 && eres[1]>0.0 && eres[2]>0.0){
-        res = energies[1]*(eres[2]-eres[0])/(eres[1]*(energies[2]-energies[0]));
+        res.first = energies[1]*(eres[2]-eres[0])/(eres[1]*(energies[2]-energies[0]));
+        res.second = p_from_T(energies[1],p.A)*(p_from_T(eres[2],p.A)-p_from_T(eres[0],p.A))/( p_from_T(eres[1],p.A)*( p_from_T(energies[2],p.A)-p_from_T(energies[0],p.A) ) );
         }
     else {
-        res = 0.0;
+        res.first = 0.0;
+        res.second = 0.0;
     }
     return res;
 }

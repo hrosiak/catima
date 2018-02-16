@@ -212,7 +212,7 @@ namespace catima{
     /**
      * returns energy magnification after passing material t
      */
-    double w_magnification(Projectile p, double Ein, const Material &t, const Config &c=default_config);
+    std::pair<double,double> w_magnification(Projectile p, double Ein, const Material &t, const Config &c=default_config);
 
     class DataPoint;
     /**

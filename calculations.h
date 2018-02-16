@@ -174,6 +174,7 @@ namespace catima{
     //helper
     double gamma_from_T(double T);
     double beta_from_T(double T);
+    double p_from_T(double T, double M);
     std::complex<double> lngamma( const std::complex<double> &z );
     std::complex<double> hyperg(const std::complex<double> &a,
                                                 const std::complex<double> &b,
