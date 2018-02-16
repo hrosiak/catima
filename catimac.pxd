@@ -6,6 +6,7 @@
 """
 
 from libcpp.vector cimport vector
+from libcpp.pair cimport pair
 from libcpp cimport bool
 
 cdef extern from "catima/structures.h" namespace "catima":
@@ -87,7 +88,7 @@ cdef extern from "catima/catima.h" namespace "catima":
     cdef Result calculate(Projectile &p, const Material &t, const Config &c);
     cdef MultiResult calculate(Projectile &p, const Layers &layers, const Config &c);
 
-    cdef double w_magnification(Projectile p, double E, const Material &t, const Config &c);
+    cdef pair[double,double] w_magnification(Projectile p, double E, const Material &t, const Config &c);
 
 cdef extern from "catima/calculations.h" namespace "catima":
     cdef double bethek_lindhard(const Projectile &p);

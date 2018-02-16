@@ -556,6 +556,10 @@ double beta_from_T(double T){
     return sqrt(1.0-1.0/(gamma*gamma));
 }
 
+double p_from_T(double T, double M){
+    return sqrt(T*(T+2*atomic_mass_unit))*M;
+}
+
 double energy_straggling_firsov(double z1,double energy, double z2, double m2){
     double gamma = gamma_from_T(energy);
     double beta2=1.0-1.0/(gamma*gamma);
@@ -566,7 +570,7 @@ double energy_straggling_firsov(double z1,double energy, double z2, double m2){
 double angular_scattering_variance(Projectile &p, Target &t){
     if(p.T<=0)return 0.0;
     double e=p.T;
-    double _p = sqrt(e*(e+2*atomic_mass_unit))*p.A;
+    double _p = p_from_T(e,p.A);
     double beta = _p/((e+atomic_mass_unit)*p.A);
     double lr = radiation_length(t.Z,t.A);
     return 198.81 * pow(p.Z,2)/(lr*pow(_p*beta,2));
