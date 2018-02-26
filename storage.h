@@ -22,6 +22,7 @@
 #include <cmath>
 //#include <unordered_set>
 #include <gsl/gsl_spline.h>
+#include "catima/build_config.h"
 #include "catima/constants.h"
 #include "catima/structures.h"
 #include "catima/config.h"

@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cassert>
 #include "catima/calculations.h"
+#include "catima/build_config.h"
 #include "catima/constants.h"
 #include "catima/data_ionisation_potential.h"
 #include "catima/data_atima.h"
