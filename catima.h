@@ -27,10 +27,9 @@
 #include "catima/structures.h"
 #include "catima/calculations.h"
 #include "catima/material_database.h"
+#include "catima/storage.h"
 
 namespace catima{
-    
-    class Interpolator;
     
     /**
       * calculate dEdx for projectile-Material combination

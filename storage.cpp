@@ -1,6 +1,22 @@
+/*
+ *  Copyright(C) 2017
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Affero General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU Affero General Public License for more details.
+
+ *  You should have received a copy of the GNU Affero General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include <math.h>
 #include <iostream>
 #include "storage.h"
+#include "catima/catima.h"
 namespace catima {
     Data _storage;
     EnergyTable<max_datapoints> energy_table(logEmin,logEmax);
@@ -58,7 +74,7 @@ DataPoint& Data::Get(const Projectile &p, const Material &t, const Config &c){
     }
 
 //////////// Interpolator ////////////////////////////////
-Interpolator::Interpolator(const double *x, const double *y, int num,interpolation_t type){
+InterpolatorGSL::InterpolatorGSL(const double *x, const double *y, int num,interpolation_t type){
     acc = gsl_interp_accel_alloc ();
 
     if(type==cspline)
@@ -71,7 +87,7 @@ Interpolator::Interpolator(const double *x, const double *y, int num,interpolati
     max= x[num-1];
 
 }
-Interpolator::Interpolator(const std::vector<double>& x, const std::vector<double>& y,interpolation_t type){
+InterpolatorGSL::InterpolatorGSL(const std::vector<double>& x, const std::vector<double>& y,interpolation_t type){
     //Interpolator(x.data(),y.data(),x.size());
     acc = gsl_interp_accel_alloc ();
     if(type==cspline)
@@ -84,21 +100,44 @@ Interpolator::Interpolator(const std::vector<double>& x, const std::vector<doubl
     max= x[x.size()-1];
 }
 
-Interpolator::~Interpolator(){
+InterpolatorGSL::~InterpolatorGSL(){
     gsl_interp_accel_free (acc);
     gsl_spline_free (spline);
 }
 
-double Interpolator::eval(double x){
+double InterpolatorGSL::eval(double x){
     if(x<min)x=min;
     if(x>max)x=max;
     return gsl_spline_eval(spline, x, acc);
 }
 
-double Interpolator::derivative(double x){
+double InterpolatorGSL::derivative(double x){
     if(x<min)x=min;
     if(x>max)x=max;
     return gsl_spline_eval_deriv (spline, x, acc);
 }
+
+
+//////////// Interpolator2 ////////////////////////////////
+#ifdef BUILTIN_SPLINE
+Interpolator2::Interpolator2(const double *x, const double *y, int num){
+    ss.set_points(x,y,num);
+    min= x[0];
+    max= x[num-1];
+
+}
+
+double Interpolator2::eval(double x){
+    if(x<min)x=min;
+    if(x>max)x=max;
+    return ss(x);
+}
+
+double Interpolator2::derivative(double x){
+    if(x<min)x=min;
+    if(x>max)x=max;
+    return ss.deriv(1,x);
+}
+#endif
 
 }

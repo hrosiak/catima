@@ -19,10 +19,17 @@
 
 #include <vector>
 #include <iterator>
+#include <cmath>
 //#include <unordered_set>
 #include <gsl/gsl_spline.h>
+#include "catima/build_config.h"
 #include "catima/constants.h"
-#include "catima/catima.h"
+#include "catima/structures.h"
+#include "catima/config.h"
+
+#ifdef BUILTIN_SPLINE
+#include "catima/spline.h"
+#endif
 
 
 namespace catima{
@@ -49,20 +56,20 @@ namespace catima{
 
 	template<int N>
 	int EnergyTable_index(const EnergyTable<N> &table, double val){
-        double lxval = log(val)/M_LN10;
 		if(val<table.values[0] || val>table.values[table.num-1])return -1;
-		int i = (int)lxval/table.step;
+		double lxval = (log(val/table.values[0])/M_LN10);
+		int i = (int)std::floor(lxval/table.step);
 		return i;
 	}
 	
 	template<int N>
 	double EnergyTable_interpolate(const EnergyTable<N> &table, double xval, double *y){
 	    double r;
-	    double lxval = log(xval)/M_LN10;
 	    if(xval<table.values[0] || xval>table.values[table.num-1])return 0.0;
 	    if(xval==table.values[table.num-1])return y[table.num-1];
-	    int i = (int)(lxval/table.step);
-		double linstep = table.values[i+1] - table.values[i];
+	    double lxval = (log(xval/table.values[0])/M_LN10);
+	    int i = (int)std::floor(lxval/table.step);
+	    double linstep = table.values[i+1] - table.values[i];
 	    double x = 1.0 - ((xval - table.values[i])/linstep);
 	    r = (x*y[i]) + ((1-x)*y[i+1]);
 	    return r;
@@ -113,11 +120,11 @@ namespace catima{
     };
     
 /// Interpolation class, to store interpolated values
-	class Interpolator{
+	class InterpolatorGSL{
         public:
-        Interpolator(const double *x, const double *y, int num,interpolation_t type=cspline);
-        Interpolator(const std::vector<double>& x, const std::vector<double>& y,interpolation_t type=cspline);
-        ~Interpolator();
+        InterpolatorGSL(const double *x, const double *y, int num,interpolation_t type=cspline);
+        InterpolatorGSL(const std::vector<double>& x, const std::vector<double>& y,interpolation_t type=cspline);
+        ~InterpolatorGSL();
         double operator()(double x){return eval(x);};
         double eval(double x);
         double derivative(double x);
@@ -131,6 +138,22 @@ namespace catima{
         gsl_spline *spline;
     };
     
+#ifdef BUILTIN_SPLINE
+	class Interpolator2{
+        public:
+        Interpolator2(const double *x, const double *y, int num);
+        double operator()(double x){return eval(x);};
+        double eval(double x);
+        double derivative(double x);
+        double get_min(){return min;};
+        double get_max(){return max;};
+
+        private:
+        double min=0;
+        double max=0;
+        spline ss;
+    };
+#endif    
     extern Data _storage;
 	
 	inline DataPoint& get_data(const Projectile &p, const Material &t, const Config &c=default_config){
@@ -138,6 +161,9 @@ namespace catima{
 	}
 
     bool operator==(const DataPoint &a, const DataPoint &b);
+    
+    using InterpolatorLinear = InterpolatorGSL;
+    using Interpolator = InterpolatorGSL;
 }
 
 #endif
