@@ -11,6 +11,7 @@ option(GENERATE_DATA "make data tables generator" OFF)
 option(THIN_TARGET_APPROXIMATION "thin target approximation" ON)
 option(DOCS "build documentation (requires doxygen)" OFF)
 option(GLOBAL "build with global, sources are required" OFF)
+option(APPS "build catima applications" ON)
 
 ######## build type ############
 set(CMAKE_BUILD_TYPE Release)
@@ -149,6 +150,11 @@ add_custom_target(docs
                    COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile COMMENT "Generating API documentation with Doxygen" VERBATIM )
 endif(DOXYGEN_FOUND)
 endif(DOCS)
+
+###### subdirectories ######
+if(APPS)
+add_subdirectory("bin")
+endif(APPS)
 
 ####### install part #######
 FILE(GLOB headers "*.h")

@@ -88,6 +88,20 @@ namespace catima{
 	std::size_t num;
     };
     */
+    
+    // return vector with lineary spaced elements from a to b, num is number of elements
+inline std::vector<double> linspace_vector(double a, double b, unsigned int num){
+    std::vector<double> res;
+    if(num>=2 && a<b){
+	res.resize(num);
+	double step = (b-a)/(num-1);
+	for(unsigned int i=0;i<(num-1);i++){
+	    res[i]=a+(i*step);
+	    }
+	res[num-1] = b;
+	}
+    return res;
+    }
   
     class DataPoint{
 	public:
