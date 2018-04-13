@@ -1,5 +1,5 @@
 {
-"projectile":[11.99, 6.0],
+"projectile":[11.99671, 6],
 "energy":{
     "min": 100,
     "max": 1000,

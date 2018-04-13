@@ -27,6 +27,7 @@ int main( int argc, char * argv[] )
     Projectile projectile;
     Layers layers;
     std::vector<double> energies;
+    Config conf;
     
     if(argc == 1 ){
         help();
@@ -98,6 +99,20 @@ int main( int argc, char * argv[] )
             else{
                 throw std::invalid_argument("material field is missing");
                 }
+            if(j.count("config")>0){
+                auto e = j["config"];
+                if(e.is_string()){
+                    std::string cstr = e.get<std::string>();
+                    if(cstr=="atimav1.3"){
+                        conf.z_effective = z_eff_type::pierce_blann;
+                        cout<<"using config: Atima v1.3\n";
+                    }
+                    if(cstr=="atimav1.4"){
+                        conf.z_effective = z_eff_type::atima14;
+                        cout<<"using config: Atima v1.4\n";
+                    }
+                }
+            }
                 
         } // end of try 
         catch(...){
