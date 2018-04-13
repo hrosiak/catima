@@ -135,7 +135,7 @@ Example Files
 The predefined compound material can be used using the __Z__ field as an ID of the compound.
 The following are supported:
 ```
-Plastics = 201,
+		 Plastics = 201,
 		 Air = 202,
 		 CH2 = 203,
 		 LH2 = 204,
