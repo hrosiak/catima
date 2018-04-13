@@ -243,7 +243,9 @@ Material json_material(json &j){
             return m;
             }
         else{
-            return get_material(z);
+            Material m = get_material(z);
+            m.thickness(th);
+            return m;
             }
         
         }
