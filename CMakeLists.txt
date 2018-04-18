@@ -34,6 +34,8 @@ else()
   set(RPATH_VARIABLE "LD_LIBRARY_PATH")
 endif()
 
+MESSAGE(STATUS "install prefix: " ${CMAKE_INSTALL_PREFIX})
+
 ############# Requirements ##################
 find_package(GSL REQUIRED)
 MESSAGE(STATUS "GSL include dirs: " ${GSL_INCLUDE_DIRS})
@@ -50,8 +52,8 @@ if(PYTHONINTERP_FOUND)
 endif()
 
 configure_file(
-                    "${PROJECT_SOURCE_DIR}/build_config.in"
-                    "${PROJECT_BINARY_DIR}/include/catima/build_config.h"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/build_config.in"
+                    "${CMAKE_CURRENT_BINARY_DIR}/include/catima/build_config.h"
                     )
 
 configure_file("${PROJECT_SOURCE_DIR}/init.sh.in"
@@ -80,6 +82,8 @@ target_include_directories(catima_static
                            PUBLIC  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
                                    $<BUILD_INTERFACE:${GSL_INCLUDE_DIRS}>
                           )
+add_library(catima::catima ALIAS catima)
+add_library(catima::catima_static ALIAS catima_static)
 
 FILE(COPY ${HEADERS} DESTINATION ${PROJECT_BINARY_DIR}/include/catima)
 
@@ -158,10 +162,21 @@ endif(APPS)
 
 ####### install part #######
 FILE(GLOB headers "*.h")
+include(GNUInstallDirs)
 install (TARGETS catima catima_static 
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib)
+        EXPORT catimaConfig
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+        
 install (FILES ${headers} DESTINATION include/catima)
+
+install(EXPORT catimaConfig
+        NAMESPACE catima::
+        DESTINATION lib/cmake/catima
+         )
+         
+export(TARGETS catima catima_static NAMESPACE catima:: FILE catimaConfig.cmake)
+export(PACKAGE catima)
 
 ###### packaging #######
 set(CPACK_PACKAGE_NAME "catima")
