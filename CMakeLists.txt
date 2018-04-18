@@ -70,7 +70,15 @@ file(GLOB HEADERS *.h)
 
 add_library(catima SHARED ${SOURCES})
 add_library(catima_static STATIC ${SOURCES})
-set_target_properties(catima_static PROPERTIES OUTPUT_NAME catima POSITION_INDEPENDENT_CODE ON)
+set_target_properties(catima PROPERTIES
+		      POSITION_INDEPENDENT_CODE ON
+                      LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
+                      )
+set_target_properties(catima_static 
+                        PROPERTIES OUTPUT_NAME catima 
+                        POSITION_INDEPENDENT_CODE ON
+                        ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
+                    )
 target_link_libraries(catima ${EXTRA_LIBS} ${GSL_LIBRARIES} )
 target_link_libraries(catima_static ${EXTRA_LIBS} ${GSL_LIBRARIES})
 
