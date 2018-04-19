@@ -15,7 +15,7 @@ using namespace catima;
 using json = nlohmann::json;
 
 void help(){
-        std::cout<<"usage: catima_calculator [options]";
+        std::cout<<"usage: catima_calculator config_file.json\n";
 }
 
 json load_json(const char *fname);
