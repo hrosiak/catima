@@ -2,7 +2,7 @@ enable_testing()
 add_definitions(-Dlest_FEATURE_COLOURISE=1)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
-set(CATIMA_TESTS test_calculations test_generated test_storage test_structures test_dedx_range)
+set(CATIMA_TESTS test_calculations test_generated test_storage test_structures test_dedx_range test_abundances)
 
 foreach(entry ${CATIMA_TESTS})
     add_executable(${entry} ${entry}.cpp)
