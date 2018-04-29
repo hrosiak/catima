@@ -51,6 +51,13 @@ if(PYTHONINTERP_FOUND)
     message("-- Python found: ${PYTHON_EXECUTABLE}")
 endif()
 
+find_package(nurex QUIET)
+if(nurex_FOUND)
+message(STATUS "nurex library found")
+set(NUREX ON)
+endif(nurex_FOUND)
+
+
 configure_file(
                     "${CMAKE_CURRENT_SOURCE_DIR}/build_config.in"
                     "${CMAKE_CURRENT_BINARY_DIR}/include/catima/build_config.h"
