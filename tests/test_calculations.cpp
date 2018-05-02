@@ -313,6 +313,13 @@ const lest::test specification[] =
         EXPECT(res.Eout == approx(345.6).epsilon(1.0));
         EXPECT(res.sigma_a == approx(0.0013).epsilon(1e-4));
         EXPECT(res.sigma_E == approx(0.12).epsilon(1e-3));
+        EXPECT(res.dEdxi == approx(103.5).epsilon(1e-1));
+
+        res = catima::calculate(p(150),air);
+        EXPECT(res.dEdxi == approx(173.6).epsilon(1e0));
+        res = catima::calculate(p(1000),air);
+        EXPECT(res.dEdxi == approx(70.69).epsilon(1e-0));
+
         
         auto water = catima::get_material(catima::material::Water);
         auto res2 = catima::calculate(p(600),water,600);

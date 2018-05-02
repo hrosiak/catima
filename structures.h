@@ -20,6 +20,7 @@
 #include <vector>
 #include <array>
 #include <initializer_list>
+#include "catima/constants.h"
 
 namespace catima{
 
@@ -89,7 +90,7 @@ namespace catima{
                 });
               * \endcode
               */
-            Material(std::initializer_list<std::array<double,3>>list,double _density=0.0, double ipot = 0.0);
+            Material(std::initializer_list<std::array<double,3>>list,double _density=0.0, double ipot = 0.0, double mass=0.0);
             
             /**
              * calculates internal variables if needed
@@ -132,6 +133,11 @@ namespace catima{
               * @return returns Molar Mass of the Material
               */
             double M() const {return molar_mass;}
+
+            /**
+              * sets molar mass of the Material
+              */
+            Material& M(double mass){molar_mass=mass; return *this;}
             
             /**
               * @return returns density in g/cm^3
@@ -154,6 +160,11 @@ namespace catima{
             Material& thickness(double val){th = val;return *this;};
 
             /**
+              * set length in cm, density should be set before
+              */
+            Material& thickness_cm(double l){th = rho*l; return *this;}
+
+            /**
               * set the mean ionization potential, if non elemental I should be used
               */
             Material& I(double val){i_potential = val;return *this;};
@@ -163,6 +174,38 @@ namespace catima{
               * @return returns ionisation potential in ev
               */
             double I() const {return i_potential;};
+
+            /**
+              * return number density of atoms/molecules per cm3 in 10^23 units
+              */
+            double number_density()const{
+              return Avogadro*rho/molar_mass;
+            }
+
+            /**
+              * return number density of atoms of i-th element in 10^23 units
+              */
+            double number_density(int i)const{
+              if(i>=atoms.size())return 0.0;  
+              return number_density()*molar_fraction(i);
+            }
+
+            /**
+              * return number density of atoms/molecules per cm2 in 10^23 units
+              */
+            double number_density_cm2()const{
+              return Avogadro*th/molar_mass;
+            }
+
+             /**
+              * return number density of atoms per cm2 of i-th element in 10^23 units
+              */
+            double number_density_cm2(int i)const{
+              if(i>=atoms.size())return 0.0;
+              return number_density_cm2()*molar_fraction(i);
+            }
+
+
 
 
             friend bool operator==(const Material &a, const Material&b);

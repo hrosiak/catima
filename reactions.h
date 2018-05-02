@@ -21,9 +21,37 @@
 
 #include "nurex/nurex.h"
 #include "catima/structures.h"
+#include "catima/config.h"
+#include "catima/integrator.h"
+#include <cmath>
 
 namespace catima{
     
+    /**
+     * return reaction probability 
+     * @param sigma - cross section in mb
+     * @param t - number of targets per cm2 in 10^23 unit 
+     */
+    inline double reaction_rate(double sigma, double t){
+        return 1.0 - std::exp(-sigma*t*0.0001);
+    }
+
+    /**
+     * return nonreaction rate
+     * @param sigma - cross section in mb
+     * @param t - number of targets per cm2 in 10^23 unit 
+     */
+    inline double nonreaction_rate(double sigma, double t){
+        return std::exp(-sigma*t*0.0001);
+    }
+    
+    template<typename F>
+    double reaction_rate(F& f, double t){
+        GaussLegendreIntegration<8> ii;        
+        double i = ii.integrate(f,0,t);
+        return 1.0 - std::exp(-i*0.0001);
+    }
+
     double reaction_rate(Projectile &projectile, const Material &target, const Config &c=default_config);
     
 }

@@ -57,6 +57,15 @@ const lest::test specification[] =
             SECTION("default ionisation potential"){
               EXPECT(graphite.I()==0.0);
             }
+            SECTION("length"){
+                water.density(1.0);
+                water.thickness(1.0);
+                EXPECT(water.thickness()==approx(1.0,0.0001));
+                water.thickness_cm(1.0);
+                EXPECT(water.thickness()==approx(1.0,0.0001));
+                water.thickness_cm(2.0);
+                EXPECT(water.thickness()==approx(2.0,0.0001));
+            }
         }
     },
     CASE("Material automatic atomic weight"){
@@ -242,6 +251,8 @@ const lest::test specification[] =
                         {0, 8, 1}
                         });
 
+        auto air = catima::get_material(catima::material::Air);
+
         EXPECT(water1.weight_fraction(0)==0.111898);
         EXPECT(water2.weight_fraction(0)==approx(water1.weight_fraction(0)).R(1e-5));
         EXPECT(water1.weight_fraction(1)==0.888102);
@@ -263,6 +274,42 @@ const lest::test specification[] =
         EXPECT(mat.M()==approx(12.0,0.001));
         EXPECT(mat.weight_fraction(0)==approx(1.0).R(1e-6));
 
+        EXPECT(air.M() == approx(28.97,0.1));
+
+    },
+    CASE("number density"){
+        catima::Material c({12.0,6,1});
+        auto water = catima::get_material(catima::material::Water);
+        auto air = catima::get_material(catima::material::Air);
+        water.density(0.9982);
+        c.density(3.513);
+        air.density(1.2041e-3);
+
+        c.thickness_cm(1.0);
+        EXPECT(c.number_density()==approx(1.7662,0.01));
+        EXPECT(c.number_density_cm2()==approx(1.7662,0.01));
+        EXPECT(c.number_density(0)==approx(1.7662,0.01));
+        EXPECT(c.number_density_cm2(0)==approx(1.7662,0.01));
+        EXPECT(c.number_density(1)==0.0);
+        EXPECT(c.number_density_cm2(1)==0.0);
+        c.thickness_cm(2.0);
+        EXPECT(c.number_density()==approx(1.7662,0.01));
+        EXPECT(c.number_density_cm2()==approx(2.0*1.7662,0.01));
+        
+        water.thickness_cm(1.0);
+        EXPECT(water.number_density()==approx(0.3336,0.001));
+        EXPECT(water.number_density_cm2()==approx(0.3336,0.001));
+        EXPECT(water.number_density(0)==approx(2*0.3336,0.001));
+        EXPECT(water.number_density_cm2(0)==approx(2*0.3336,0.001));
+        EXPECT(water.number_density(1)==approx(0.3336,0.001));
+        EXPECT(water.number_density_cm2(1)==approx(0.3336,0.001));
+        water.thickness_cm(3.0);
+        EXPECT(water.number_density_cm2()==approx(3.0*0.3336,0.001));
+    
+        air.thickness_cm(1.0);
+        EXPECT(air.number_density(0)==approx(air.molar_fraction(0)*2*0.0002504,0.00001));
+        EXPECT(air.number_density(1)==approx(air.molar_fraction(1)*2*0.0002504,0.00001));
+        EXPECT(air.number_density(2)==approx(air.molar_fraction(2)*1*0.0002504,0.00001));
     }
 };
 
