@@ -16,9 +16,8 @@
 
 #ifndef REACTIONS_H
 #define REACTIONS_H
-
+#include "catima/build_config.h"
 #ifdef NUREX
-
 #include "nurex/nurex.h"
 #include "catima/structures.h"
 #include "catima/config.h"
@@ -52,7 +51,7 @@ namespace catima{
         return 1.0 - std::exp(-i*0.0001);
     }
 
-    double reaction_rate(Projectile &projectile, const Material &target, const Config &c=default_config);
+    double reaction_rate1(Projectile &projectile, const Material &target, const Config &c=default_config);
     
 }
 

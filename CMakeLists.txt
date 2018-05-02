@@ -55,6 +55,7 @@ find_package(nurex QUIET)
 if(nurex_FOUND)
 message(STATUS "nurex library found")
 set(NUREX ON)
+list(APPEND EXTRA_LIBS nurex::nurex)
 endif(nurex_FOUND)
 
 
