@@ -146,7 +146,8 @@ namespace catima{
 		 UC = 339,
 		 UO2 = 340,
 		 Urea = 341,
-		 Valine = 342
+		 Valine = 342,
+		 C10H7I = 343
         };
 
       Material get_compound(material m);

@@ -154,6 +154,7 @@ namespace catima{
 		 case material::UO2:	 return Material({{0,8,2},{0,92,1}},10.97);
 		 case material::Urea:	 return Material({{0,1,0.067131},{0,6,0.2},{0,7,0.466459},{0,8,0.266411}},1.323);
 		 case material::Valine:	 return Material({{0,1,11},{0,6,5},{0,7,1},{0,8,2}},1.23);
+		 case material::C10H7I:	 return Material({{0,6,10},{0,1,7},{0,53,1}},1.738);
             default:break;
              }
         return Material();
