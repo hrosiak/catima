@@ -38,7 +38,7 @@ namespace catima{
 		 case material::Methanol:	 return Material({{0,1,4},{0,6,1},{0,8,1}},0.792);
 		 case material::Acetone:	 return Material({{0,1,6},{0,6,3},{0,8,1}},0.7899);
 		 case material::Acetylene:	 return Material({{0,1,2},{0,6,2}},0.0010967);
-		 case material::Adenine:	 return Material({{0,1,5},{0,6,5},{0,7,5}},1.35);
+		 case material::Adenine:	 return Material({{0,1,5},{0,6,5},{0,7,5},{0,53,71.4}},1.35);
 		 case material::Adipose_Tissue:	 return Material({{0,1,0.119477},{0,6,0.63724},{0,7,0.00797},{0,8,0.232333},{0,11,0.0005},{0,12,2e-05},{0,15,0.00016},{0,16,0.00073},{0,17,0.00119},{0,19,0.00032},{0,20,2e-05},{0,26,2e-05},{0,30,2e-05}},0.92);
 		 case material::Alanine:	 return Material({{0,1,7},{0,6,3},{0,7,1},{0,8,2}},1.42);
 		 case material::Bakelite:	 return Material({{0,1,0.057441},{0,6,0.774591},{0,8,0.167968}},1.25);
@@ -154,6 +154,7 @@ namespace catima{
 		 case material::UO2:	 return Material({{0,8,2},{0,92,1}},10.97);
 		 case material::Urea:	 return Material({{0,1,0.067131},{0,6,0.2},{0,7,0.466459},{0,8,0.266411}},1.323);
 		 case material::Valine:	 return Material({{0,1,11},{0,6,5},{0,7,1},{0,8,2}},1.23);
+		 case material::C10H7I:	 return Material({{0,6,10},{0,1,7},{0,53,1}},1.738);
             default:break;
              }
         return Material();
