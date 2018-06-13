@@ -5,9 +5,9 @@ The library is based on physics used in the ATIMA code,however its not 100% copy
  see CREDITS for more details.
 
 The WebAtima UI to this library can be found here: 
-https://web-docs.gsi.de/~aprochaz/webatima
-https://hrosiak.github.io/webatima
-https://isotopea.com/webatima
+ * https://web-docs.gsi.de/~aprochaz/webatima
+ * https://hrosiak.github.io/webatima
+ * https://isotopea.com/webatima
 
 Installation
 ------------
