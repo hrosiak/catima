@@ -15,8 +15,8 @@ namespace catima{
 		 case material::Plastics:	 return Material({{0,1,10},{0,6,9}},1.032);
 		 case material::Air:	 return Material({{0,7,0.755267},{0,8,0.231781},{0,18,0.012827},{0,6,0.000124}},0.001205);
 		 case material::CH2:	 return Material({{0,6,1},{0,1,2}},0.94);
-		 case material::LH2:	 return Material({{0,1,1}},0.0708);
-		 case material::LD2:	 return Material({{2.0141,1,1}},0.162);
+		 case material::lH2:	 return Material({{0,1,1}},0.0708);
+		 case material::lD2:	 return Material({{2.0141,1,1}},0.162);
 		 case material::Water:	 return Material({{0,1,2},{0,8,1}},1);
 		 case material::Diamond:	 return Material({{0,6,1}},3.52);
 		 case material::Glass:	 return Material({{0,14,0.37722},{0,8,0.539562},{0,5,0.040064},{0,11,0.028191},{0,13,0.011644},{0,19,0.003321}},2.4);
@@ -34,7 +34,7 @@ namespace catima{
 		 case material::HAVAR:	 return Material({{0,27,0.403228},{0,24,0.169412},{0,28,0.124301},{0,74,0.089847},{0,42,0.031259},{0,26,0.181952}},8.3);
 		 case material::Steel:	 return Material({{0,26,0.74621},{0,24,0.169},{0,28,0.08479}},8);
 		 case material::CO2:	 return Material({{0,6,1},{0,8,2}},0.001842);
-		 case material::CH4:	 return Material({{0,1,4},{0,6,1}},0.0006);
+		 case material::Methane:	 return Material({{0,1,4},{0,6,1}},0.0006);
 		 case material::Methanol:	 return Material({{0,1,4},{0,6,1},{0,8,1}},0.792);
 		 case material::Acetone:	 return Material({{0,1,6},{0,6,3},{0,8,1}},0.7899);
 		 case material::Acetylene:	 return Material({{0,1,2},{0,6,2}},0.0010967);
@@ -57,12 +57,12 @@ namespace catima{
 		 case material::Benzene:	 return Material({{0,1,6},{0,6,6}},0.87865);
 		 case material::BeO:	 return Material({{0,4,1},{0,8,1}},3.01);
 		 case material::BGO:	 return Material({{0,8,12},{0,32,3},{0,83,4}},7.13);
-		 case material::Blood:	 return Material({{0,1,0.101866},{0,6,0.10002},{0,7,0.02964},{0,8,0.759414},{0,11,0.00185},{0,12,4e-05},{0,14,3e-05},{0,15,0.00035},{0,16,0.00185},{0,17,0.00278},{0,19,0.00163},{0,20,6e-05},{0,26,0.00046},{0,30,1e-05}},1.06);
+		 case material::Blood_ICRP:	 return Material({{0,1,0.101866},{0,6,0.10002},{0,7,0.02964},{0,8,0.759414},{0,11,0.00185},{0,12,4e-05},{0,14,3e-05},{0,15,0.00035},{0,16,0.00185},{0,17,0.00278},{0,19,0.00163},{0,20,6e-05},{0,26,0.00046},{0,30,1e-05}},1.06);
 		 case material::Bone_Compact:	 return Material({{0,1,0.063984},{0,6,0.278},{0,7,0.027},{0,8,0.410016},{0,12,0.002},{0,15,0.07},{0,16,0.002},{0,20,0.147}},1.85);
 		 case material::Bone_Cortical:	 return Material({{0,1,0.047234},{0,6,0.14433},{0,7,0.04199},{0,8,0.446096},{0,12,0.0022},{0,15,0.10497},{0,16,0.00315},{0,20,0.20993},{0,30,0.0001}},1.85);
 		 case material::Brain_ICRP:	 return Material({{0,1,0.110667},{0,6,0.12542},{0,7,0.01328},{0,8,0.737723},{0,11,0.00184},{0,12,0.00015},{0,15,0.00354},{0,16,0.00177},{0,17,0.00236},{0,19,0.0031},{0,20,9e-05},{0,26,5e-05},{0,30,1e-05}},1.03);
 		 case material::B4C:	 return Material({{0,5,4},{0,6,1}},2.52);
-		 case material::BC400:	 return Material({{0,1,10},{0,6,9}},1.032);
+		 case material::BC_400:	 return Material({{0,1,10},{0,6,9}},1.032);
 		 case material::nButanol:	 return Material({{0,1,10},{0,6,4},{0,8,1}},0.81);
 		 case material::C_552:	 return Material({{0,1,0.02468},{0,6,0.50161},{0,8,0.004527},{0,9,0.465209},{0,14,0.003973}},1.76);
 		 case material::CdTe:	 return Material({{0,48,1},{0,52,1}},6.2);
@@ -74,7 +74,7 @@ namespace catima{
 		 case material::CsF:	 return Material({{0,9,1},{0,55,1}},4.115);
 		 case material::CsI:	 return Material({{0,53,1},{0,55,1}},4.51);
 		 case material::CCl4:	 return Material({{0,6,1},{0,17,4}},1.594);
-		 case material::C2Cl4:	 return Material({{0,6,2},{0,17,4}},1.622);
+		 case material::Tetrachloroethylene:	 return Material({{0,6,2},{0,17,4}},1.622);
 		 case material::Cellophane:	 return Material({{0,1,0.062162},{0,6,0.444462},{0,8,0.493376}},1.42);
 		 case material::Chlorobenzene:	 return Material({{0,1,5},{0,6,6},{0,17,1}},1.1058);
 		 case material::Chloroform:	 return Material({{0,1,1},{0,6,1},{0,17,3}},1.4832);
@@ -87,11 +87,11 @@ namespace catima{
 		 case material::Eye_lens:	 return Material({{0,1,0.099269},{0,6,0.19371},{0,7,0.05327},{0,8,0.653751}},1.1);
 		 case material::Fe2O3:	 return Material({{0,8,3},{0,26,2}},5.242);
 		 case material::FeO:	 return Material({{0,8,1},{0,26,1}},5.745);
-		 case material::Freon12:	 return Material({{0,6,1},{0,9,2},{0,17,2}},1.486);
-		 case material::Freon12B2:	 return Material({{0,6,1},{0,9,2},{0,35,2}},2.27);
-		 case material::Freon13:	 return Material({{0,6,1},{0,9,3},{0,17,1}},1.526);
-		 case material::Freon13B1:	 return Material({{0,6,1},{0,9,3},{0,35,1}},1.538);
-		 case material::Freon13I1:	 return Material({{0,6,1},{0,9,3},{0,53,1}},1.538);
+		 case material::Freon_12:	 return Material({{0,6,1},{0,9,2},{0,17,2}},1.486);
+		 case material::Freon_12B2:	 return Material({{0,6,1},{0,9,2},{0,35,2}},2.27);
+		 case material::Freon_13:	 return Material({{0,6,1},{0,9,3},{0,17,1}},1.526);
+		 case material::Freon_13B1:	 return Material({{0,6,1},{0,9,3},{0,35,1}},1.538);
+		 case material::Freon_13I1:	 return Material({{0,6,1},{0,9,3},{0,53,1}},1.538);
 		 case material::Gd2O2S:	 return Material({{0,8,2},{0,16,1},{0,64,2}},7.44);
 		 case material::GaAs:	 return Material({{0,31,1},{0,33,1}},5.3176);
 		 case material::Gel_Photo_Emulsion:	 return Material({{0,1,0.08118},{0,6,0.41606},{0,7,0.11124},{0,8,0.38064},{0,16,0.01088}},1.2914);
@@ -154,7 +154,8 @@ namespace catima{
 		 case material::UO2:	 return Material({{0,8,2},{0,92,1}},10.97);
 		 case material::Urea:	 return Material({{0,1,0.067131},{0,6,0.2},{0,7,0.466459},{0,8,0.266411}},1.323);
 		 case material::Valine:	 return Material({{0,1,11},{0,6,5},{0,7,1},{0,8,2}},1.23);
-		 case material::C10H7I:	 return Material({{0,6,10},{0,1,7},{0,53,1}},1.738);
+		 case material::Iodonaphthalene:	 return Material({{0,6,10},{0,1,7},{0,53,1}},1.738);
+		 case material::C21H24O4:	 return Material({{0,6,21},{0,1,24},{0,8,4}},1.18);
             default:break;
              }
         return Material();
