@@ -21,7 +21,7 @@ set(CMAKE_BUILD_TYPE Release)
 
 ######### compiler flags ###########
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
     "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -87,7 +87,7 @@ set_target_properties(catima_static
                         POSITION_INDEPENDENT_CODE ON
                         ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
                     )
-target_link_libraries(catima ${EXTRA_LIBS} ${GSL_LIBRARIES} nurex::nurex)
+target_link_libraries(catima ${EXTRA_LIBS} ${GSL_LIBRARIES})
 target_link_libraries(catima_static ${EXTRA_LIBS} ${GSL_LIBRARIES})
 
 target_include_directories(catima 

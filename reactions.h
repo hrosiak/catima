@@ -18,7 +18,6 @@
 #define REACTIONS_H
 #include "catima/build_config.h"
 #ifdef NUREX
-#include "nurex/nurex.h"
 #include "catima/structures.h"
 #include "catima/config.h"
 #include "catima/integrator.h"
