@@ -21,7 +21,6 @@
 #include <vector>
 
 // #define NDEBUG
-#include "catima/build_config.h"
 #include "catima/config.h"
 #include "catima/constants.h"
 #include "catima/structures.h"

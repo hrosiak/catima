@@ -50,7 +50,7 @@ namespace catima{
         return 1.0 - std::exp(-i*0.0001);
     }
 
-    double reaction_rate1(Projectile &projectile, const Material &target, const Config &c=default_config);
+    double nonreaction_rate1(Projectile &projectile, const Material &target, const Config &c=default_config);
     
 }
 

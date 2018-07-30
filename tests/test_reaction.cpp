@@ -10,23 +10,24 @@ using catima::nonreaction_rate;
 const lest::test specification[] =
 {
     CASE("reaction"){
-        catima::Projectile proj{12,6,6,1000};
+        catima::Projectile proj{12,6,6,870};
         auto c = catima::get_material(6);
         c.thickness(4.0);
-        double r = reaction_rate(1000,c.number_density_cm2());
+        double r = reaction_rate(846,c.number_density_cm2());
         std::cout<<r<<"\n";
 
         EXPECT(reaction_rate(0,10.0) == 0.0);
-        EXPECT(reaction_rate(1000,0.0) == 0.0);
+        EXPECT(reaction_rate(860,0.0) == 0.0);
         
         EXPECT(nonreaction_rate(0,10.0) == 1.0);
         EXPECT(nonreaction_rate(1000,0.0) == 1.0);
 
-        auto fcc = [](double x){return 1000.0;};
+        auto fcc = [](double x){return 846.0;};
         r = reaction_rate(fcc, c.number_density_cm2());
         std::cout<<r<<"\n";
 
-        catima::reaction_rate1(proj, c);
+        r= 1-catima::nonreaction_rate1(proj, c);
+        std::cout<<r<<std::endl;
     }
 };
 

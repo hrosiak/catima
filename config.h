@@ -1,7 +1,6 @@
 /// \file config.h
 #ifndef CONFIG
 #define CONFIG
-
 #include <cstring>
 namespace catima{
     
