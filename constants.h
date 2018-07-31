@@ -20,7 +20,7 @@ constexpr double int_eps_tof = 0.01;
 */
 
 constexpr double thin_target_limit = 1 - 1e-3;
-#ifdef NUREX
+#ifdef REACTIONS
 constexpr double emin_reaction = 30.0;
 constexpr bool reactions = true;
 #else

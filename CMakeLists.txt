@@ -11,6 +11,7 @@ option(GENERATE_DATA "make data tables generator" OFF)
 option(THIN_TARGET_APPROXIMATION "thin target approximation" ON)
 option(DOCS "build documentation (requires doxygen)" OFF)
 option(GLOBAL "build with global, sources are required" OFF)
+option(REACTIONS "enable/disable nuclear reaction rate" ON)
 option(APPS "build catima applications" ON)
 
 ######## build type ############
@@ -148,6 +149,7 @@ if(EXAMPLES)
     #add_subdirectory("examples")
 endif(EXAMPLES)
 if(TESTS)
+enable_testing()
 add_subdirectory("tests")
 endif(TESTS)
 

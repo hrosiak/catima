@@ -60,7 +60,7 @@ namespace catima{
         //char z_effective=z_eff_type::atima14;
         unsigned char dedx = 0;
         unsigned char dedx_straggling = omega::atima;
-        #ifdef NUREX
+        #ifdef REACTIONS
         unsigned char skip=skip_none;
         #else
         unsigned char skip=skip_calculation::skip_reactions;

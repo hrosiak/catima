@@ -9,7 +9,7 @@
 #include "catima/storage.h"
 #include "catima/nucdata.h"
 #include "catima/calculations.h"
-#ifdef NUREX
+#ifdef REACTIONS
 #include "catima/reactions.h"
 #endif
 
@@ -254,7 +254,7 @@ Result calculate(Projectile &p, const Material &t, const Config &c){
     }
     res.sigma_r = sqrt(range_straggling_spline(T));
     res.Eloss = (res.Ein - res.Eout)*p.A;
-    #ifdef NUREX
+    #ifdef REACTIONS
     res.sp = nonreaction_rate(p,t,c);
     #endif
     return res;
@@ -274,7 +274,7 @@ MultiResult calculate(Projectile &p, const Layers &layers, const Config &c){
         res.total_result.sigma_E += r.sigma_E*r.sigma_E; 
         res.total_result.tof += r.tof;
         res.total_result.Eout = r.Eout;
-        #ifdef NUREX
+        #ifdef REACTIONS
         res.total_result.sp = (r.sp>=0.0)?res.total_result.sp*r.sp:-1;
         #endif
         res.results.push_back(r);

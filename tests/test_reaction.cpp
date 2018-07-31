@@ -12,6 +12,8 @@ const lest::test specification[] =
     CASE("reaction"){
         catima::Projectile proj{12,6,6,870};
         auto c = catima::get_material(6);
+        auto h = catima::get_material(1);
+        catima::Material water({{0,8,2},{0,1,1}},1.0);
         c.thickness(2.0);
         double r;
 

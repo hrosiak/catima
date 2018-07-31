@@ -4,7 +4,7 @@
 #cmakedefine THIN_TARGET_APPROXIMATION
 #cmakedefine GSL_INTEGRATION
 #cmakedefine GLOBAL
-
+#cmakedefine REACTIONS
 #cmakedefine NUREX
 
 #endif

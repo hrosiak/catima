@@ -227,7 +227,7 @@ namespace catima{
         double sigma_a=0.0;
         double sigma_r=0.0;
         double tof=0.0;   
-        #ifdef NUREX
+        #ifdef REACTIONS
         double sp = 1.0;
         #endif
     };

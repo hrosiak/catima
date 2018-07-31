@@ -50,8 +50,24 @@ namespace catima{
         return 1.0 - std::exp(-i*0.0001);
     }
 
-    double nonreaction_rate(Projectile &projectile, const Material &target, const Config &c=default_config);
-    
+    double nonreaction_rate(Projectile &projectile, const Material &target, const Config &c=default_config);   
+}
+#else
+
+double SigmaR_Kox(int Ap, int Zp, double E, int At, int Zt);
+
+inline double p_from_T(double T, double M=1.0){
+    return M*sqrt(T*T + 2*T*atomic_mass_unit);
+}
+
+inline double Ecm_from_T_relativistic(double T, double Ap, double At){
+    double mp = Ap*atomic_mass_unit;
+    double mt = At*atomic_mass_unit;
+    double plab= p_from_T(T,Ap);
+    double elab = sqrt(plab*plab + mp*mp);
+    double ecm = sqrt(mp*mp + mt*mt + 2*elab*mt);
+    double pcm = plab * mt / ecm;
+    return sqrt(pcm*pcm+mp*mp)-mp;
 }
 
 #endif //NUREX

@@ -1,12 +1,18 @@
 #include "catima/reactions.h"
-
-#ifdef NUREX
-#include "nurex/Parametrization.h"
 #include "catima/catima.h"
 #include "catima/abundance_database.h"
 #include "catima/storage.h"
 #include <cmath>
 #include <iostream>
+
+#ifdef NUREX
+#include "nurex/Parametrization.h"
+using nurex::SigmaR_Kox;
+#else
+using catima::SigmaR_Kox;
+#endif
+
+
 namespace catima{
     
 double nonreaction_rate(Projectile &projectile, const Material &target, const Config &c){
@@ -27,7 +33,7 @@ double nonreaction_rate(Projectile &projectile, const Material &target, const Co
         double e = energy_out(projectile.T, th, range_spline);
         for(unsigned int i = 0;i<target.ncomponents();i++){
             stn_sum += target.molar_fraction(i);
-            sum += target.molar_fraction(i)*nurex::SigmaR_Kox(ap,zp,e,at,zt); 
+            sum += target.molar_fraction(i)*SigmaR_Kox(ap,zp,e,at,zt); 
         }
         return sum/stn_sum;
     };
@@ -52,4 +58,29 @@ double nonreaction_rate(Projectile &projectile, const Material &target, const Co
 
 }
 
+#ifndef NUREX
+double SigmaR_Kox(int Ap, int Zp, double E, int At, int Zt){
+    constexpr double rc = 1.3;
+    constexpr double r0 = 1.1;
+    constexpr double a = 1.85;
+    constexpr double c1 = 2-(10.0/(1.5*1.5*1.5*1.5*1.5));
+    double Ap13 = pow(Ap,1.0/3.0);
+    double At13 = pow(At,1.0/3.0);
+    double D = 5.0*(At-2*Zt)*Zp/(Ap*At);
+    double Bc = Zp*Zt/(rc*(Ap13+At13));
+    double logE = std::log10(E);
+    double c = 0;
+    if(logE < 1.5){
+        c = c1*std::pow(logE/1.5,3);
+    }
+    else{
+        c = (-10.0/std::pow(logE,5)) + 2;
+    }
+    double Rs = r0 * ((a*Ap13*At13)/(Ap13+At13)-c)+D;
+    double Rv = r0 * (Ap13 + At13);
+    double Ri = Rv + Rs;
+    double Ecm = Ecm_from_T_relativistic(E,Ap,At);
+    return 10.0*PI*Ri*Ri*(1-(Bc/Ecm));
+    }
 #endif
+
