@@ -12,22 +12,32 @@ const lest::test specification[] =
     CASE("reaction"){
         catima::Projectile proj{12,6,6,870};
         auto c = catima::get_material(6);
-        c.thickness(4.0);
-        double r = reaction_rate(846,c.number_density_cm2());
-        std::cout<<r<<"\n";
+        c.thickness(2.0);
+        double r;
 
-        EXPECT(reaction_rate(0,10.0) == 0.0);
-        EXPECT(reaction_rate(860,0.0) == 0.0);
+        r= catima::nonreaction_rate(proj, c);
+        EXPECT(r == approx(0.92,0.02));
+
+        catima::Layers l;
+        l.add(c);
+        l.add(c);
+        l.add(c);
+
+        auto res = catima::calculate(proj,l);
+        EXPECT(res.total_result.sp == approx(r*r*r,0.02));
+
+        c.thickness(6.0);
+        r= catima::nonreaction_rate(proj, c);
+        EXPECT(res.total_result.sp == approx(r,0.001));
         
-        EXPECT(nonreaction_rate(0,10.0) == 1.0);
-        EXPECT(nonreaction_rate(1000,0.0) == 1.0);
+        c.thickness(0.0);
+        r= catima::nonreaction_rate(proj, c);
+        EXPECT(r == 1.0);
+        proj.T = 0.0;
+        c.thickness(6);
+        r= catima::nonreaction_rate(proj, c);
+        EXPECT(r == -1.0);
 
-        auto fcc = [](double x){return 846.0;};
-        r = reaction_rate(fcc, c.number_density_cm2());
-        std::cout<<r<<"\n";
-
-        r= 1-catima::nonreaction_rate1(proj, c);
-        std::cout<<r<<std::endl;
     }
 };
 

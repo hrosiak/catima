@@ -255,7 +255,7 @@ Result calculate(Projectile &p, const Material &t, const Config &c){
     res.sigma_r = sqrt(range_straggling_spline(T));
     res.Eloss = (res.Ein - res.Eout)*p.A;
     #ifdef NUREX
-    res.sp = nonreaction_rate1(p,t,c);
+    res.sp = nonreaction_rate(p,t,c);
     #endif
     return res;
 }

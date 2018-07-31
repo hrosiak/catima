@@ -9,9 +9,10 @@
 #include <iostream>
 namespace catima{
     
-double nonreaction_rate1(Projectile &projectile, const Material &target, const Config &c){
+double nonreaction_rate(Projectile &projectile, const Material &target, const Config &c){
 
     if(projectile.T<emin_reaction)return -1.0;
+    if(target.thickness()<=0.0)return 1.0;
 
     int ap = lround(projectile.A);
     int zp = lround(projectile.Z);
@@ -24,11 +25,9 @@ double nonreaction_rate1(Projectile &projectile, const Material &target, const C
     auto sigma_r = [&](double th){
         double stn_sum=0.0, sum=0.0;
         double e = energy_out(projectile.T, th, range_spline);
-        std::cout<<"th = "<<th <<"E = "<<e<<std::endl;
         for(unsigned int i = 0;i<target.ncomponents();i++){
             stn_sum += target.molar_fraction(i);
             sum += target.molar_fraction(i)*nurex::SigmaR_Kox(ap,zp,e,at,zt); 
-            std::cout<<"sum = "<<sum<<std::endl;
         }
         return sum/stn_sum;
     };
