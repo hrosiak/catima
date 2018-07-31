@@ -1,7 +1,7 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 #include <limits>
-
+#include "catima/build_config.h"
 namespace catima {
 
 constexpr double Ezero = 1E-3; // lowest E to calculate, below taken as 0
@@ -20,6 +20,13 @@ constexpr double int_eps_tof = 0.01;
 */
 
 constexpr double thin_target_limit = 1 - 1e-3;
+#ifdef REACTIONS
+constexpr double emin_reaction = 30.0;
+constexpr bool reactions = true;
+#else
+constexpr bool reactions = false;
+#endif
+
 
 constexpr double Avogadro = 6.022140857; // 10^23
 constexpr double electron_mass = 0.510998928;   // MeV/c^2

@@ -35,3 +35,4 @@
 ana/*
 benchmark/*
 build/*
+.vscode/*

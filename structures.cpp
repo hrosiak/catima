@@ -27,15 +27,19 @@ bool operator==(const Material &a, const Material&b){
 }
 
 
-Material::Material(std::initializer_list<std::array<double,3>>list,double _density, double _ipot):rho(_density),i_potential(_ipot){
+Material::Material(std::initializer_list<std::array<double,3>>list,double _density, double _ipot, double mass):rho(_density),i_potential(_ipot){
     std::initializer_list<std::array<double,3>>::iterator it;
     atoms.reserve(list.size());
     for ( it=list.begin(); it!=list.end(); ++it){
         add_element((*it)[0],(*it)[1],(*it)[2]);
     }
 
-    calculate(); // calculate if needed, ie average molar mass
-    
+    if(mass!=0.0){
+        molar_mass=mass;
+        }
+    else{
+        calculate(); // calculate if needed, ie average molar mass
+        }
 }
 
 Material::Material(double _a, int _z, double _rho, double _th):rho(_rho),th(_th){

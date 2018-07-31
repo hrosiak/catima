@@ -1,4 +1,3 @@
-enable_testing()
 add_definitions(-Dlest_FEATURE_COLOURISE=1)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
@@ -10,6 +9,11 @@ foreach(entry ${CATIMA_TESTS})
     add_test(${entry} ${PROJECT_BINARY_DIR}/tests/${entry})
 endforeach(entry in ${CATIMA_TESTS})
 
+if(REACTIONS)
+    add_executable(test_reaction test_reaction.cpp)
+    target_link_libraries(test_reaction catima)
+    add_test(test_reaction ${PROJECT_BINARY_DIR}/tests/test_reaction)
+endif(REACTIONS)
 
 set(C_TESTS test_c)
 MESSAGE( STATUS "CMAKE_C_COMPILER: " ${CMAKE_C_COMPILER} )

@@ -32,6 +32,7 @@ cdef extern from "catima/structures.h" namespace "catima":
         double sigma_a
         double sigma_r
         double tof
+        double sp
 
     cdef cppclass MultiResult:
         vector[Result] results
@@ -111,6 +112,7 @@ cdef extern from "catima/constants.h" namespace "catima":
     int max_storage_data "catima::max_storage_data"
     int logEmin "catima::logEmin"
     int logEmax "catima::logEmax"
+    bool reactions "catima::reactions"
     
 cdef extern from "catima/storage.h" namespace "catima":
     cdef cppclass Interpolator:

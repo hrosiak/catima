@@ -1,7 +1,6 @@
 /// \file config.h
 #ifndef CONFIG
 #define CONFIG
-
 #include <cstring>
 namespace catima{
     
@@ -23,17 +22,18 @@ namespace catima{
     /**
       * enum to select which calculation to skip
       */
-    enum skip_calculation:char{
+    enum skip_calculation:unsigned char{
         skip_none = 0,
         skip_tof = 1,
         skip_sigma_a = 2,
-        skip_sigma_r = 4
+        skip_sigma_r = 4,
+        skip_reactions = 128
     };
 
     /**
       * enum to select which dEdx correction to skip
       */
-    enum corrections:char{
+    enum corrections:unsigned char{
         no_barkas = 1,
         no_lindhard = 2,
         no_shell_correction = 4
@@ -42,7 +42,7 @@ namespace catima{
     /**
       * enum to select which dEdx straggling options
       */
-    enum omega:char{
+    enum omega:unsigned char{
         atima = 0,
         bohr = 1,
     };
@@ -56,11 +56,15 @@ namespace catima{
       * 
       */
     struct Config{
-        char z_effective=z_eff_type::pierce_blann;
+        unsigned char z_effective=z_eff_type::pierce_blann;
         //char z_effective=z_eff_type::atima14;
-        char skip=skip_none;
-        char dedx = 0;
-        char dedx_straggling = omega::atima;
+        unsigned char dedx = 0;
+        unsigned char dedx_straggling = omega::atima;
+        #ifdef REACTIONS
+        unsigned char skip=skip_none;
+        #else
+        unsigned char skip=skip_calculation::skip_reactions;
+        #endif
     };
     
     extern Config default_config;

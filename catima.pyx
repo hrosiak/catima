@@ -192,6 +192,7 @@ cdef class Result:
     cdef public double sigma_a
     cdef public double sigma_r
     cdef public double tof
+    cdef public double sp
     def __init__(self):
         self.Ein=0.0
         self.Eout=0.0
@@ -203,6 +204,7 @@ cdef class Result:
         self.sigma_a=0.0
         self.sigma_r=0.0
         self.tof=0.0
+        self.sp=1.0
 
     def get_dict(self):
         return {"Ein":self.Ein,
@@ -215,6 +217,7 @@ cdef class Result:
                 "sigma_a":self.sigma_a,
                 "sigma_r":self.sigma_r,
                 "tof":self.tof,
+                "sp":self.sp,
                 }
 
     def __getitem__(self,key):
@@ -233,6 +236,7 @@ cdef class Result:
         self.sigma_a=val.sigma_a
         self.sigma_r=val.sigma_r
         self.tof=val.tof
+        self.sp=val.sp
 
 cdef class MultiResult:
     cdef public Result total_result

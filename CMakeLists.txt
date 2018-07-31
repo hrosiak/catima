@@ -11,6 +11,7 @@ option(GENERATE_DATA "make data tables generator" OFF)
 option(THIN_TARGET_APPROXIMATION "thin target approximation" ON)
 option(DOCS "build documentation (requires doxygen)" OFF)
 option(GLOBAL "build with global, sources are required" OFF)
+option(REACTIONS "enable/disable nuclear reaction rate" ON)
 option(APPS "build catima applications" ON)
 
 ######## build type ############
@@ -51,6 +52,14 @@ if(PYTHONINTERP_FOUND)
     message("-- Python found: ${PYTHON_EXECUTABLE}")
 endif()
 
+find_package(nurex QUIET)
+if(nurex_FOUND)
+message(STATUS "nurex library found")
+set(NUREX ON)
+list(APPEND EXTRA_LIBS nurex::nurex)
+endif(nurex_FOUND)
+
+
 configure_file(
                     "${CMAKE_CURRENT_SOURCE_DIR}/build_config.in"
                     "${CMAKE_CURRENT_BINARY_DIR}/include/catima/build_config.h"
@@ -79,7 +88,7 @@ set_target_properties(catima_static
                         POSITION_INDEPENDENT_CODE ON
                         ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
                     )
-target_link_libraries(catima ${EXTRA_LIBS} ${GSL_LIBRARIES} )
+target_link_libraries(catima ${EXTRA_LIBS} ${GSL_LIBRARIES})
 target_link_libraries(catima_static ${EXTRA_LIBS} ${GSL_LIBRARIES})
 
 target_include_directories(catima 
@@ -140,6 +149,7 @@ if(EXAMPLES)
     #add_subdirectory("examples")
 endif(EXAMPLES)
 if(TESTS)
+enable_testing()
 add_subdirectory("tests")
 endif(TESTS)
 
