@@ -26,7 +26,7 @@ compile options, enable or disable with cmake:
 > cmake ../ -D[OPTION]
 
 available options:
-  * CATIMA_PYTHON - enable/disable building of the python bindigs, cython and numpy are required to build the catima python module, default OFF
+  * PYTHON_MODULE - enable/disable building of the python bindigs, cython and numpy are required to build the catima python module, default OFF
   * TESTS - build tests
   * EXAMPLES - build examples
   * DOCS - prepare doxygen documentation (after cmake, __make docs__ needs to be executed)

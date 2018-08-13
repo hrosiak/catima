@@ -3,7 +3,7 @@ project(catima)
 
 ############ options #############
 #option(THREADS "Use multi-threading" ON)
-option(CATIMA_PYTHON "compile the Catima python module(requires numpy and cython installed)" OFF)
+option(PYTHON_MODULE "compile the Catima python module(requires numpy and cython installed)" OFF)
 option(TESTS "build tests" OFF)
 option(EXAMPLES "build examples" ON)
 option(GSL_INTEGRATION "use GSL integration" ON)
@@ -110,7 +110,7 @@ MESSAGE( STATUS "CMAKE_CXX_COMPILER: " ${CMAKE_CXX_COMPILER} )
 MESSAGE( STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS_RELEASE} )
 
 ######## for python module
-if(CATIMA_PYTHON)
+if(PYTHON_MODULE)
     if(NOT PYTHONINTERP_FOUND)
         MESSAGE(SEND_ERROR "Python is required to build nurex python modules") 
     endif(NOT PYTHONINTERP_FOUND)
@@ -139,7 +139,7 @@ if(CATIMA_PYTHON)
     add_custom_command(TARGET target_python
                         COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_BINARY_DIR}/setup.py  build_ext ${CYTHON_DEFINES} -i                         
                         )
-endif(CATIMA_PYTHON )
+endif(PYTHON_MODULE )
 
 ########## Sub Directories ###########
 if(EXAMPLES)

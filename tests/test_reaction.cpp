@@ -48,7 +48,31 @@ const lest::test specification[] =
         EXPECT( (r > 0 && r<1.0) );
         EXPECT( (r2 > 0 && r2<1.0) );
         EXPECT( r2>r );
-
+    },
+    CASE("production"){
+        catima::Projectile proj{12,6,6,870};
+        auto c = catima::get_material(6);
+        c.thickness(0.1);
+        double r,r2;
+        
+        double cs = 70;
+        double rcsi = 870;
+        double rcso = 850;
+        
+        r = 0.0001*cs*c.number_density_cm2();
+        r2 = catima::production_rate(cs,rcsi,rcso, c);
+        EXPECT(r==approx(r2).R(0.01));
+        
+        r2 = catima::production_rate(cs,2,1, c);
+        EXPECT(r==approx(r2).R(0.001));
+        
+        r = catima::production_rate(cs,870,870, c);
+        r2 = catima::production_rate(cs,870,860, c);
+        EXPECT(r==approx(r2).R(0.001));
+        c.thickness(2.0);
+        r = catima::production_rate(cs,870,870, c);
+        r2 = catima::production_rate(cs,870,860, c);
+        EXPECT(r==approx(r2).R(0.001));
     }
 };
 
