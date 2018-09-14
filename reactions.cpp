@@ -55,7 +55,17 @@ double nonreaction_rate(Projectile &projectile, const Material &target, const Co
     }
     return exp(-cs*0.0001);
     }
-
+    
+double production_rate(double cs, double rcs_projectile, double rcs_product, const Material &target, const Config &c){
+    double t = target.number_density_cm2();
+    double res = 0.0;
+    if( std::abs(rcs_product - rcs_projectile)<5.0){
+        res = 0.0001*cs*t*(exp(-0.0001*rcs_product*t));
+    }
+    else{
+        res = cs*(exp(-0.0001*rcs_projectile*t) - exp(-0.0001*rcs_product*t))/(rcs_product-rcs_projectile);
+    }
+    return res;
 }
 
 #ifndef NUREX
@@ -84,3 +94,4 @@ double SigmaR_Kox(int Ap, int Zp, double E, int At, int Zt){
     }
 #endif
 
+} //end of catima namespace

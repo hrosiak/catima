@@ -22,6 +22,7 @@
 #include "catima/config.h"
 #include "catima/integrator.h"
 #include <cmath>
+#endif
 
 namespace catima{
     
@@ -49,17 +50,14 @@ namespace catima{
         double i = ii.integrate(f,0,t);
         return 1.0 - std::exp(-i*0.0001);
     }
-
-    double nonreaction_rate(Projectile &projectile, const Material &target, const Config &c=default_config);   
-}
-#else
-
+    double nonreaction_rate(Projectile &projectile, const Material &target, const Config &c=default_config);
+    double production_rate(double cs, double rcs_projectile, double rcs_product, const Material &target, const Config &c=default_config);
+    
+#ifndef NUREX
 double SigmaR_Kox(int Ap, int Zp, double E, int At, int Zt);
-
 inline double p_from_T(double T, double M=1.0){
     return M*sqrt(T*T + 2*T*atomic_mass_unit);
 }
-
 inline double Ecm_from_T_relativistic(double T, double Ap, double At){
     double mp = Ap*atomic_mass_unit;
     double mt = At*atomic_mass_unit;
@@ -72,3 +70,4 @@ inline double Ecm_from_T_relativistic(double T, double Ap, double At){
 
 #endif //NUREX
 #endif
+} // end of catime namespace
