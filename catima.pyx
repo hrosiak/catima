@@ -64,6 +64,10 @@ cdef class Material:
             return self.cbase.thickness()
         else:
             return self.cbase.thickness(val)
+            
+    def thickness_cm(self, val):
+        return self.cbase.thickness_cm(val)
+            
     def I(self, val=None):
         if(val is None):
             return self.cbase.I()

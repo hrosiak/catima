@@ -48,6 +48,7 @@ cdef extern from "catima/structures.h" namespace "catima":
         void density(double val)
         double thickness()
         void thickness(double val)
+        void thickness_cm(double val)
         void calculate()
         double I()
         void I(double val)
