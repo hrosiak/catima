@@ -100,14 +100,14 @@ const lest::test specification[] =
       catima::_storage.Reset();      
       EXPECT(catima::_storage.get_index()==0);
       for(int i=1;i<maxdata+1;i++){
-          catima::Projectile p1{2*i,i,i,1000};
+          catima::Projectile p1{2.0*i,(double)i,(double)i,1000};
           catima::_storage.Add(p1,graphite);
           EXPECT(catima::_storage.get_index()==i);
           EXPECT(catima::_storage.GetN()==maxdata);
       }
       EXPECT(catima::_storage.get_index()==maxdata);
       for(int i=1;i<maxdata-1;i++){
-          catima::Projectile p1{2*i,i,i,1000};
+          catima::Projectile p1{2.0*i,(double)i,(double)i,1000};
           catima::_storage.Add(p1,water);
           EXPECT(catima::_storage.get_index()==i);
           EXPECT(catima::_storage.GetN()==maxdata);
@@ -123,7 +123,6 @@ const lest::test specification[] =
       EXPECT(catima::energy_table.values[catima::max_datapoints-1]==approx(exp(M_LN10*(catima::logEmax))).epsilon(1e-6));
     },
     CASE("indexing"){
-      double step = catima::energy_table.step;
       double val, dif;
       
       EXPECT(EnergyTable_index(catima::energy_table, 0.0)==-1);
