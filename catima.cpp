@@ -58,7 +58,7 @@ double domega2dx(Projectile &p, double T, const Material &mat, const Config &c){
         auto t= mat.get_element(i);
         w = mat.weight_fraction(i);
         p.T = T;
-        sum += w*dedx_variance(p,t);
+        sum += w*dedx_variance(p,t,c);
     }
     return sum;
 }
