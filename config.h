@@ -59,7 +59,7 @@ namespace catima{
         unsigned char z_effective=z_eff_type::pierce_blann;
         //char z_effective=z_eff_type::atima14;
         unsigned char dedx = 0;
-        unsigned char dedx_straggling = omega::atima;
+        unsigned char dedx_straggling = omega::bohr;
         #ifdef REACTIONS
         unsigned char skip=skip_none;
         #else

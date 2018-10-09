@@ -61,7 +61,7 @@ namespace catima{
 		int i = (int)std::floor(lxval/table.step);
 		return i;
 	}
-	
+
 	template<int N>
 	double EnergyTable_interpolate(const EnergyTable<N> &table, double xval, double *y){
 	    double r;
@@ -88,7 +88,7 @@ namespace catima{
 	std::size_t num;
     };
     */
-    
+
     // return vector with lineary spaced elements from a to b, num is number of elements
 inline std::vector<double> linspace_vector(double a, double b, unsigned int num){
     std::vector<double> res;
@@ -102,7 +102,7 @@ inline std::vector<double> linspace_vector(double a, double b, unsigned int num)
 	}
     return res;
     }
-  
+
     class DataPoint{
 	public:
 	Projectile p;
@@ -117,7 +117,7 @@ inline std::vector<double> linspace_vector(double a, double b, unsigned int num)
 	~DataPoint();
 	friend bool operator==(const DataPoint &a, const DataPoint &b);
     };
-    
+
     class Data{
 	public:
 	Data();
@@ -132,7 +132,7 @@ inline std::vector<double> linspace_vector(double a, double b, unsigned int num)
 	std::vector<DataPoint> storage;
 	std::vector<DataPoint>::iterator index;
     };
-    
+
 /// Interpolation class, to store interpolated values
 	class InterpolatorGSL{
         public:
@@ -151,7 +151,7 @@ inline std::vector<double> linspace_vector(double a, double b, unsigned int num)
         gsl_interp_accel *acc;
         gsl_spline *spline;
     };
-    
+
 #ifdef BUILTIN_SPLINE
 	class Interpolator2{
         public:
@@ -167,15 +167,15 @@ inline std::vector<double> linspace_vector(double a, double b, unsigned int num)
         double max=0;
         spline ss;
     };
-#endif    
+#endif
     extern Data _storage;
-	
+
 	inline DataPoint& get_data(const Projectile &p, const Material &t, const Config &c=default_config){
 		return _storage.Get(p, t, c);
 	}
 
     bool operator==(const DataPoint &a, const DataPoint &b);
-    
+
     using InterpolatorLinear = InterpolatorGSL;
     using Interpolator = InterpolatorGSL;
 }
