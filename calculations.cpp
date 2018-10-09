@@ -820,7 +820,7 @@ double z_eff_atima14(double pz, double T, double tz){
     double qmean = 0.0;
     #ifdef GLOBAL
     double qpb;
-    double qhigh,qwinger,qglobal;
+    double qhigh,qwinger,qglobal=0.0;
     double c1 = 1.4;
     double c2 = 0.28;
     double c3 = 0.04;
