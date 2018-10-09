@@ -54,8 +54,6 @@ std::vector<double> band_matrix::trig_solve(const std::vector<double>& b) const
     assert( this->dim()==(int)b.size() );
     std::vector<double> x(this->dim());
     std::vector<double> g(this->dim());
-    int j_stop;
-    double sum;
     
     assert(d[0]!=0.0);
     x[0] = b[0]/d[0];

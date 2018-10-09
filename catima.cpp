@@ -29,7 +29,6 @@ bool operator==(const Config &a, const Config&b){
 
 double dedx(Projectile &p, double T, const Material &mat, const  Config &c){
     double sum = 0;
-    double w=0;
     if(T<=0)return 0.0;
 
     sum += dedx_n(p,mat);
@@ -108,7 +107,6 @@ std::vector<double> dedx_from_range(Projectile &p, const std::vector<double> &T,
 }
 
 double range_straggling(Projectile &p, double T, const Material &t, const Config &c){
-    double r=0;
     auto data = _storage.Get(p,t,c);
     Interpolator range_straggling_spline(energy_table.values,data.range_straggling.data(),energy_table.num);
     return sqrt(range_straggling_spline(T));
@@ -133,7 +131,6 @@ double da2de(Projectile &p, double T, const Material &t, const Config &c){
 }
 
 double angular_straggling_from_E(Projectile &p, double T, double Tout, const Material &t, const Config &c){
-    double r=0;
     auto data = _storage.Get(p,t,c);
     Interpolator angular_straggling_spline(energy_table.values,data.angular_variance.data(),energy_table.num);
     return sqrt(angular_straggling_spline(T) - angular_straggling_spline(Tout));
@@ -151,7 +148,6 @@ double energy_straggling_from_E(Projectile &p, double T, double Tout,const Mater
 double energy_out(double T, double thickness, Interpolator &range_spline){
     constexpr double epsilon = 1E-5;
     int counter = 0;
-    double lo=0,hi=T;
     double range;
     double dedx;
     double e,r;
@@ -381,7 +377,6 @@ DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
     dp.range.resize(max_datapoints);
     dp.range_straggling.resize(max_datapoints);
     dp.angular_variance.resize(max_datapoints);
-    double dedxval;
     auto fdedx = [&](double x)->double{
             return 1.0/dedx(p,x,t,c);    
             };
