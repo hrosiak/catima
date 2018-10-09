@@ -35,9 +35,7 @@ const lest::test specification[] =
     CASE("proton stopping power from srim"){
         catima::Projectile p{1,1,1,1};
         catima::Target he{4.002600,2};
-        catima::Target carbon{12.0107,6};
-        double dif,dif2;
-        
+        catima::Target carbon{12.0107,6};       
         
         EXPECT( catima::sezi_p_se(1,he) == approx(283,1));
         p.T = 1;
@@ -66,8 +64,6 @@ const lest::test specification[] =
     CASE("dedx, low energy, from sezi"){
         catima::Projectile p{4,2,2,1};
         catima::Target carbon{12.0107,6};
-        double dif;
-        double exp;
         
         // He projectile case
         p.T = 1;
@@ -129,7 +125,6 @@ const lest::test specification[] =
                 {1.00794,1,2},
                 {15.9994,8,1}
                 });
-        double dif;
 
         EXPECT( catima::dedx(p,1000, water) == approx(2.23).R(5e-3));
         EXPECT( catima::dedx(p,500, water) == approx(2.76).R(5e-3));
@@ -141,7 +136,6 @@ const lest::test specification[] =
                 {12.011,6,1},
                 });
 
-        double dif;
         auto res = catima::calculate(p(1000),graphite);
         EXPECT(catima::dedx(p,1000, graphite) == approx(res.dEdxi).R(0.001) );
         
@@ -166,10 +160,8 @@ const lest::test specification[] =
             graphite.add_element(12,6,1);
             graphite.density(2.0);
             graphite.thickness(0.5);
-      double dif;
       
       auto res = catima::calculate(p,graphite);
-      dif = res.Eout - 997.077;
       EXPECT( res.Eout == approx(997.07,01));
     },
   CASE("TOF test"){
