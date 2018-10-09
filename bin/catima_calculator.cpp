@@ -67,14 +67,15 @@ int main( int argc, char * argv[] )
                     if(e.count("min")>0 && e.count("max")>0 && (e.count("num")>0 || e.count("step")>0)){
                         double emin = e["min"].get<double>();
                         double emax = e["max"].get<double>();
-                        int num;
+                        int num=0;
                         if(e.count("step")){
                             num = 1+(emax-emin)/e["step"].get<int>();
                         }
                         if(e.count("num")){
                             num = e["num"].get<int>();
                         }
-                        energies  =  linspace_vector(emin,emax,num);
+                        if(num>2)
+                            energies  =  linspace_vector(emin,emax,num);
                     }
                 }
                 }

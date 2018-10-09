@@ -26,7 +26,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
     "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(warnings "-Wall -Wextra -Werror")
+    set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wno-sign-compare -Wno-unused-parameter")
 endif()
 
 if(APPLE)

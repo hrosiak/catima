@@ -456,7 +456,7 @@ double sezi_dedx_e(const Projectile &p, const Target &t){
         return se;
     }
     else{ // heavy ion
-        double h1,h2,h3,h4;
+        double h1,h4;
         double a,q,b;
         double l1,l0,l;
         double YRmin = 0.130; //  YRmin = VR / ZP**0.67 <= 0.13 OR VR <= 1.0
@@ -817,8 +817,10 @@ double z_eff_Schiwietz(double pz, double beta, double tz){
 }
 
 double z_eff_atima14(double pz, double T, double tz){
+    double qmean = 0.0;
+    #ifdef GLOBAL
     double qpb;
-    double qhigh,qwinger,qglobal,qmean=0;
+    double qhigh,qwinger,qglobal;
     double c1 = 1.4;
     double c2 = 0.28;
     double c3 = 0.04;
@@ -826,7 +828,6 @@ double z_eff_atima14(double pz, double T, double tz){
     double gamma = gamma_from_T(T);
     double emax, emin;
     qpb = z_eff_Pierce_Blann(pz,beta);
-    #ifdef GLOBAL
 
     if(T>30.0 && T<1500.0 && pz>28){
         qglobal = z_eff_global(pz,T,tz);
