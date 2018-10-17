@@ -664,8 +664,7 @@ double dedx_variance(Projectile &p, Target &t, const Config &c){
     double cor=0;
     double beta = beta_from_T(p.T);
     double beta2 = beta*beta;
-    //double zp_eff = z_effective(p,t,c);
-    double zp_eff = z_eff_Pierce_Blann(p.Z, beta);
+    double zp_eff = z_effective(p,t,c);
     double f = domega2dx_constant*pow(zp_eff,2)*t.Z/t.A;
 
     if(c.dedx_straggling == omega::atima){
