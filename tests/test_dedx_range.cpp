@@ -9,8 +9,8 @@
 using std::cout;
 using std::endl;
 
-double logEmax = catima::logEmax;
-double logEmin = catima::logEmin;
+double logEmax = catima::logEmax-0.01;
+double logEmin = catima::logEmin+0.001;
 
 template<int N>
     struct EnergyTable{
@@ -106,7 +106,7 @@ int main(){
     std::vector<std::pair<double,int>> projectiles = {{1,1},{4,2},{12,6},{238,92}};
 
     bool fwrite = false;
-    double eps = 0.01;
+    double eps = 0.005;
     comp_dedx(p,c_target,eps,fwrite,"dedx_p_c.dat");
     comp_dedx(p,h_target,eps,fwrite,"dedx_p_h.dat");
     comp_dedx(p,water,eps,fwrite,"dedx_p_water.dat");

@@ -169,6 +169,23 @@ class TestStructures(unittest.TestCase):
         res = catima.calculate(p,water)
         res2 = catima.dedx_from_range(p,water)
         self.assertAlmostEqual(res.dEdxi,res2,3)
+        
+    def test_config(self):
+        water = catima.get_material(catima.material.WATER)
+        water.density(1.0)
+        water.thickness(1.0)
+        p = catima.Projectile(1,1)
+        conf = catima.Config()
+        conf.dedx_straggling(catima.omega_type.bohr)
+        conf2 = catima.Config()
+        conf2.dedx_straggling(catima.omega_type.atima)
+        p(1000)
+        res = catima.calculate(p,water,config=conf)
+        res2 = catima.calculate(p,water,config=conf2)
+        self.assertAlmostEqual(res.dEdxi,res2.dEdxi,delta=1e-6)
+        self.assertNotAlmostEqual(res.sigma_E,res2.sigma_E,delta=1e-4)
+        self.assertNotAlmostEqual(res.sigma_r,res2.sigma_r,delta=1e-4)
+        
     
     def test_eout(self):
         graphite = catima.get_material(6)

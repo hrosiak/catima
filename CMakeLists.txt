@@ -15,27 +15,30 @@ option(REACTIONS "enable/disable nuclear reaction rate" ON)
 option(APPS "build catima applications" ON)
 
 ######## build type ############
-set(CMAKE_BUILD_TYPE Release)
-#set(CMAKE_BUILD_TYPE Debug)
-#set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+if(NOT CMAKE_BUILD_TYPE  STREQUAL "Debug")
+    set(CMAKE_BUILD_TYPE "Release")
+    MESSAGE(STATUS "Build type Release")
+else()
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+    if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+        set(CMAKE_CXX_FLAGS_DEBUG "-Wall -Wextra -Wfatal-errors -g")
+    endif()
+    MESSAGE(STATUS "Build type Debug")
+endif()
+MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 ################################
 
 ######### compiler flags ###########
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
-    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wno-sign-compare -Wno-unused-parameter")
-endif()
+MESSAGE(STATUS "install prefix: " ${CMAKE_INSTALL_PREFIX})
 
 if(APPLE)
   set(RPATH_VARIABLE "DYLD_LIBRARY_PATH")
 else()
   set(RPATH_VARIABLE "LD_LIBRARY_PATH")
 endif()
-
-MESSAGE(STATUS "install prefix: " ${CMAKE_INSTALL_PREFIX})
 
 ############# Requirements ##################
 find_package(GSL REQUIRED)
@@ -106,8 +109,6 @@ FILE(COPY ${HEADERS} DESTINATION ${PROJECT_BINARY_DIR}/include/catima)
 
 # the compiler used for C++ files 
 MESSAGE( STATUS "CMAKE_CXX_COMPILER: " ${CMAKE_CXX_COMPILER} )
-# the compiler flags for compiling C++ sources 
-MESSAGE( STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS_RELEASE} )
 
 ######## for python module
 if(PYTHON_MODULE)
