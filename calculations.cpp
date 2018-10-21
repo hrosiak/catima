@@ -43,11 +43,17 @@ double dedx_n(const Projectile &p, const Target &t){
     double asum = p.A + t.A;
     double epsilon = 32.53*t.A*1000*p.T*p.A/(p.Z*t.Z*asum*zpowers); //projectile energy is converted from MeV/u to keV
     double sn=0;
-    
-    if(epsilon<=30){
+    if(epsilon<=0){
+        return 0.0;
+    }
+    else if(epsilon<=30){
+        assert(p.A>0);
+        assert(epsilon>0);
         sn = log(1+(1.1383*epsilon))/ (2*(epsilon + 0.01321*pow(epsilon,0.21226) + 0.19593*pow(epsilon,0.5)));
     }
     else{
+        assert(p.A>0);
+        assert(epsilon>0);
         sn = log(epsilon)/(2*epsilon);
     }
     sn = 100*8.4621*p.Z*t.Z*p.A*sn*Avogadro/(asum*zpowers*t.A);
@@ -798,6 +804,7 @@ double z_eff_global(double pz, double E, double tz){
         #ifdef GLOBAL
         return global_qmean(pz, tz, E);
         #else
+        assert(false);
         return -1;
         #endif
 }
@@ -871,6 +878,8 @@ double z_eff_atima14(double pz, double T, double tz){
                 }
         }
     }
+    #else
+    assert(false);
     #endif
     return qmean;
     }

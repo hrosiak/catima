@@ -39,9 +39,13 @@ namespace catima{
     double reduced_energy_loss_unit(const Projectile &p, const Target &t);
     
 
-
+    /**
+     * @brief bethek_dedx_e - electronics stopping power
+     * @return stopping power
+     */
     double bethek_dedx_e(Projectile &p,const Target &t, const Config &c=default_config, double I=0.0);
     double bethek_dedx_e(Projectile &p,const Material &mat, const Config &c=default_config);
+
     double bethek_barkas(double zp_eff,double eta, double zt);
     double bethek_density_effect(double beta, int zt);
     

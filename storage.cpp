@@ -29,11 +29,72 @@ namespace catima {
 	    return false;
         }
     }
-    
-    DataPoint::~DataPoint(){
-	
+
+#ifdef GSL_INTERPOLATION
+//////////// Interpolator ////////////////////////////////
+InterpolatorGSL::InterpolatorGSL(const EnergyTable<max_datapoints>& x, const std::vector<double>& y, interpolation_t type){
+    acc = gsl_interp_accel_alloc ();
+    const int num = y.size();
+    if(type==cspline)
+    spline = gsl_spline_alloc (gsl_interp_cspline, num);
+    else
+    spline = gsl_spline_alloc (gsl_interp_linear, num);
+
+    gsl_spline_init (spline, x.values, y.data(), num);
+    min= x[0];
+    max= x[num-1];
+
+}
+
+InterpolatorGSL::~InterpolatorGSL(){
+    gsl_interp_accel_free (acc);
+    gsl_spline_free (spline);
+}
+
+double InterpolatorGSL::eval(double x) const{
+    if(x<min)x=min;
+    if(x>max)x=max;
+    return gsl_spline_eval(spline, x, acc);
+}
+
+double InterpolatorGSL::derivative(double x)const{
+    if(x<min)x=min;
+    if(x>max)x=max;
+    return gsl_spline_eval_deriv (spline, x, acc);
+}
+#endif
+
+#ifdef STORE_SPLINES
+    const Interpolator& get_range_spline(const DataPoint &data){
+        return data.range_spline;
     }
-    
+
+    const Interpolator& get_range_straggling_spline(const DataPoint &data){
+        return data.range_straggling_spline;
+    }
+
+    const Interpolator& get_angular_variance_spline(const DataPoint &data){
+        return data.angular_variance_spline;
+    }
+#else
+    Interpolator get_range_spline(const DataPoint &data){
+        //return Interpolator(energy_table.values,data.range);
+        //return data.range_spline;
+        return Interpolator(energy_table,data.range);
+    }
+
+    Interpolator get_range_straggling_spline(const DataPoint &data){
+        //return Interpolator(energy_table.values,data.range_straggling);
+        //return data.range_straggling_spline;
+        return Interpolator(energy_table,data.range_straggling);
+    }
+
+    Interpolator get_angular_variance_spline(const DataPoint &data){
+        //return Interpolator(energy_table.values,data.angular_variance);
+        //return data.angular_variance_spline;
+        return Interpolator(energy_table,data.angular_variance);
+    }
+#endif
     Data::Data(){
         //storage.reserve(max_storage_data); // disabled because of "circular" storage
         storage.resize(max_storage_data);
@@ -57,87 +118,28 @@ void Data::Add(const Projectile &p, const Material &t, const Config &c){
     index->angular_variance = calculate_angular_variance(p,t,c);
     #else
     *index = calculate_DataPoint(p,t,c);
-    #endif
+#ifdef STORE_SPLINES
+    //index->range_spline = Interpolator(energy_table.values,index->range);
+    //index->range_straggling_spline = Interpolator(energy_table.values,index->range_straggling);
+    //index->angular_variance_spline = Interpolator(energy_table.values,index->angular_variance);
+    index->range_spline = Interpolator(energy_table, index->range);
+    index->range_straggling_spline = Interpolator(energy_table, index->range_straggling);
+    index->angular_variance_spline = Interpolator(energy_table, index->angular_variance);
+#endif
+#endif
 
     index++;
     }
     
-DataPoint& Data::Get(const Projectile &p, const Material &t, const Config &c){
+ DataPoint& Data::Get(const Projectile &p, const Material &t, const Config &c){
 	for(auto &e:storage){
 	    if( (e.p==p) && (e.m==t) && (e.config==c)){
-		return e;
+        return e;
 	    }
 	}
     Add(p,t,c);
 	//return storage.back();
     return *std::prev(index);
     }
-
-//////////// Interpolator ////////////////////////////////
-InterpolatorGSL::InterpolatorGSL(const double *x, const double *y, int num,interpolation_t type){
-    acc = gsl_interp_accel_alloc ();
-
-    if(type==cspline)
-	spline = gsl_spline_alloc (gsl_interp_cspline, num);
-    else
-	spline = gsl_spline_alloc (gsl_interp_linear, num);
-
-    gsl_spline_init (spline, x, y, num);
-    min= x[0];
-    max= x[num-1];
-
-}
-InterpolatorGSL::InterpolatorGSL(const std::vector<double>& x, const std::vector<double>& y,interpolation_t type){
-    //Interpolator(x.data(),y.data(),x.size());
-    acc = gsl_interp_accel_alloc ();
-    if(type==cspline)
-	spline = gsl_spline_alloc (gsl_interp_cspline, x.size());
-    else
-	spline = gsl_spline_alloc (gsl_interp_linear, x.size());
-
-    gsl_spline_init (spline, x.data(), y.data(), x.size());
-    min= x[0];
-    max= x[x.size()-1];
-}
-
-InterpolatorGSL::~InterpolatorGSL(){
-    gsl_interp_accel_free (acc);
-    gsl_spline_free (spline);
-}
-
-double InterpolatorGSL::eval(double x){
-    if(x<min)x=min;
-    if(x>max)x=max;
-    return gsl_spline_eval(spline, x, acc);
-}
-
-double InterpolatorGSL::derivative(double x){
-    if(x<min)x=min;
-    if(x>max)x=max;
-    return gsl_spline_eval_deriv (spline, x, acc);
-}
-
-
-//////////// Interpolator2 ////////////////////////////////
-#ifdef BUILTIN_SPLINE
-Interpolator2::Interpolator2(const double *x, const double *y, int num){
-    ss.set_points(x,y,num);
-    min= x[0];
-    max= x[num-1];
-
-}
-
-double Interpolator2::eval(double x){
-    if(x<min)x=min;
-    if(x>max)x=max;
-    return ss(x);
-}
-
-double Interpolator2::derivative(double x){
-    if(x<min)x=min;
-    if(x>max)x=max;
-    return ss.deriv(1,x);
-}
-#endif
 
 }

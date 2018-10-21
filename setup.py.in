@@ -10,8 +10,8 @@ setup(
                 library_dirs=["${CMAKE_CURRENT_BINARY_DIR}/lib"],
 		include_dirs=["${CMAKE_CURRENT_BINARY_DIR}/include"],
 #		extra_objects=["${CATIMA_LIB}"],
-		extra_compile_args=["-std=c++14"],
-		extra_link_args=["-std=c++14"]
+                extra_compile_args=["-std=c++14"],
+                extra_link_args=["-std=c++14"]
 		),
 	    ])
 )

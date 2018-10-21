@@ -3,6 +3,8 @@
 
 #cmakedefine THIN_TARGET_APPROXIMATION
 #cmakedefine GSL_INTEGRATION
+#cmakedefine GSL_INTERPOLATION
+#cmakedefine STORE_SPLINES
 #cmakedefine GLOBAL
 #cmakedefine REACTIONS
 #cmakedefine NUREX

@@ -21,6 +21,7 @@
 #include <vector>
 
 // #define NDEBUG
+#include "catima/build_config.h"
 #include "catima/config.h"
 #include "catima/constants.h"
 #include "catima/structures.h"
@@ -141,7 +142,7 @@ namespace catima{
       * @range_spline - precaclulated range spline for material 
       * @return outcoming energy after the thickness in Mev/u
       */
-    double energy_out(double T, double thickness, Interpolator &range_spline);
+    double energy_out(double T, double thickness, const Interpolator &range_spline);
 
     /**
       * calculates outcoming energy 

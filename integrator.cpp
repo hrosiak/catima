@@ -1,12 +1,13 @@
 #include "integrator.h"
+
+//#ifdef GSL_INTEGRATION
 #include "gsl/gsl_integration.h"
 #include "gsl/gsl_errno.h"
+//#endif
 
 namespace catima{
-    
     integrator_type integrator;
-    IntegratorGSL integratorGSL(true);
-    
+#ifdef GSL_INTEGRATION
     double funcwrapper3(double x, void *_c){
     std::function<double(double)> *f = (std::function<double(double)> *)_c;
     return (*f)(x);
@@ -44,6 +45,5 @@ namespace catima{
             }
         return result;
     };
-
-
+#endif
 }
