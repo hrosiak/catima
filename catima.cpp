@@ -17,7 +17,6 @@ namespace catima{
 
 Config default_config;
 
-
 bool operator==(const Config &a, const Config&b){
     if(std::memcmp(&a,&b,sizeof(Config)) == 0){
         return true;
@@ -30,11 +29,9 @@ bool operator==(const Config &a, const Config&b){
 double dedx(Projectile &p, double T, const Material &mat, const  Config &c){
     double sum = 0;
     if(T<=0)return 0.0;
-
-    sum += dedx_n(p,mat);
-
-    double se=0;
     p.T = T;
+    sum += dedx_n(p,mat);
+    double se=0;
     if(p.T<=10){
         se = sezi_dedx_e(p,mat);
     }
@@ -78,21 +75,23 @@ double da2dx(Projectile &p, double T, const Material &mat, const Config &c){
 
 
 double range(Projectile &p, double T, const Material &t, const Config &c){
-    auto data = _storage.Get(p,t,c);
-    Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
+    auto& data = _storage.Get(p,t,c);
+    //Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
+    spline_type range_spline = get_range_spline(data);
     return range_spline(T);
 }
 
 double dedx_from_range(Projectile &p, double T, const Material &t, const Config &c){
-    auto data = _storage.Get(p,t,c);
-    Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
+    auto& data = _storage.Get(p,t,c);
+    //Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
+    spline_type range_spline = get_range_spline(data);
     return p.A/range_spline.derivative(T);
 }
 
 std::vector<double> dedx_from_range(Projectile &p, const std::vector<double> &T, const Material &t, const Config &c){
-    auto data = _storage.Get(p,t,c);
-    Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
-
+    auto& data = _storage.Get(p,t,c);
+    //Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
+    spline_type range_spline = get_range_spline(data);
     std::vector<double> dedx;
     dedx.reserve(T.size());
     for(auto e:T){
@@ -107,45 +106,52 @@ std::vector<double> dedx_from_range(Projectile &p, const std::vector<double> &T,
 }
 
 double range_straggling(Projectile &p, double T, const Material &t, const Config &c){
-    auto data = _storage.Get(p,t,c);
-    Interpolator range_straggling_spline(energy_table.values,data.range_straggling.data(),energy_table.num);
+    auto& data = _storage.Get(p,t,c);
+    //Interpolator range_straggling_spline(energy_table.values,data.range_straggling.data(),energy_table.num);
+    spline_type range_straggling_spline = get_range_straggling_spline(data);
     return sqrt(range_straggling_spline(T));
 }
 
 double range_variance(Projectile &p, double T, const Material &t, const Config &c){
-    auto data = _storage.Get(p,t,c);
-    Interpolator range_straggling_spline(energy_table.values,data.range_straggling.data(),energy_table.num);
+    auto& data = _storage.Get(p,t,c);
+    //Interpolator range_straggling_spline(energy_table.values,data.range_straggling.data(),energy_table.num);
+    spline_type range_straggling_spline = get_range_straggling_spline(data);
     return range_straggling_spline(T);
 }
 
 double domega2de(Projectile &p, double T, const Material &t, const Config &c){
-    auto data = _storage.Get(p,t,c);
-    Interpolator range_straggling_spline(energy_table.values,data.range_straggling.data(),energy_table.num);
+    auto& data = _storage.Get(p,t,c);
+    //Interpolator range_straggling_spline(energy_table.values,data.range_straggling.data(),energy_table.num);
+    spline_type range_straggling_spline = get_range_straggling_spline(data);
     return range_straggling_spline.derivative(T);
 }
 
 double da2de(Projectile &p, double T, const Material &t, const Config &c){
-    auto data = _storage.Get(p,t,c);
-    Interpolator angular_variance_spline(energy_table.values,data.angular_variance.data(),energy_table.num);
+    auto& data = _storage.Get(p,t,c);
+    //Interpolator angular_variance_spline(energy_table.values,data.angular_variance.data(),energy_table.num);
+    spline_type angular_variance_spline = get_angular_variance_spline(data);
     return angular_variance_spline.derivative(T);
 }
 
 double angular_straggling_from_E(Projectile &p, double T, double Tout, const Material &t, const Config &c){
-    auto data = _storage.Get(p,t,c);
-    Interpolator angular_straggling_spline(energy_table.values,data.angular_variance.data(),energy_table.num);
-    return sqrt(angular_straggling_spline(T) - angular_straggling_spline(Tout));
+    auto& data = _storage.Get(p,t,c);
+    //Interpolator angular_straggling_spline(energy_table.values,data.angular_variance.data(),energy_table.num);
+    spline_type angular_variance_spline = get_angular_variance_spline(data);
+    return sqrt(angular_variance_spline(T) - angular_variance_spline(Tout));
 }
 
 double energy_straggling_from_E(Projectile &p, double T, double Tout,const Material &t, const Config &c){
-    auto data = _storage.Get(p,t,c);
+    auto& data = _storage.Get(p,t,c);
 
-    Interpolator range_straggling_spline(energy_table.values,data.range_straggling.data(),energy_table.num);
-    Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
+    //Interpolator range_straggling_spline(energy_table.values,data.range_straggling.data(),energy_table.num);
+    //Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
+    spline_type range_spline = get_range_spline(data);
+    spline_type range_straggling_spline = get_range_straggling_spline(data);
     double dEdxo = p.A/range_spline.derivative(Tout);
     return dEdxo*sqrt(range_straggling_spline(T) - range_straggling_spline(Tout))/p.A;
 }
 
-double energy_out(double T, double thickness, Interpolator &range_spline){
+double energy_out(double T, double thickness, const Interpolator &range_spline){
     constexpr double epsilon = 1E-5;
     int counter = 0;
     double range;
@@ -172,14 +178,16 @@ double energy_out(double T, double thickness, Interpolator &range_spline){
 }
 
 double energy_out(Projectile &p, double T, const Material &t, const Config &c){
-    auto data = _storage.Get(p,t,c);
-    Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
+    auto& data = _storage.Get(p,t,c);
+    //Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
+    spline_type range_spline = get_range_spline(data);
     return energy_out(T,t.thickness(),range_spline);
     }
 
 std::vector<double> energy_out(Projectile &p, const std::vector<double> &T, const Material &t, const Config &c){
-    auto data = _storage.Get(p,t,c);
-    Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
+    auto& data = _storage.Get(p,t,c);
+    //Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
+    spline_type range_spline = get_range_spline(data);
 
     std::vector<double> eout;
     eout.reserve(T.size());
@@ -199,15 +207,18 @@ Result calculate(Projectile &p, const Material &t, const Config &c){
     Result res;
     double T = p.T;
     if(T<catima::Ezero && T<catima::Ezero-catima::numeric_epsilon){return res;}
-    auto data = _storage.Get(p,t,c);
+    auto& data = _storage.Get(p,t,c);
 
-    Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
+    //Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
+    spline_type range_spline = get_range_spline(data);
+
     res.Ein = T;
     res.range = range_spline(T);
     res.dEdxi = p.A/range_spline.derivative(T);
     res.Eout = energy_out(T,t.thickness(),range_spline);
 
-    Interpolator range_straggling_spline(energy_table.values,data.range_straggling.data(),energy_table.num);
+    //Interpolator range_straggling_spline(energy_table.values,data.range_straggling.data(),energy_table.num);
+    spline_type range_straggling_spline = get_range_straggling_spline(data);
 
     if(res.Eout<Ezero){
         res.dEdxo = 0.0;
@@ -225,20 +236,23 @@ Result calculate(Projectile &p, const Material &t, const Config &c){
             double s2 = range_straggling_spline.derivative(res.Eout);
             res.sigma_E = res.dEdxo*sqrt(edif*0.5*(s1+s2))/p.A;
         
-            Interpolator angular_variance_spline(energy_table.values,data.angular_variance.data(),energy_table.num);
+            //Interpolator angular_variance_spline(energy_table.values,data.angular_variance.data(),energy_table.num);
+            spline_type angular_variance_spline = get_angular_variance_spline(data);
             s1 = angular_variance_spline.derivative(T);
             s2 = angular_variance_spline.derivative(res.Eout);
             res.sigma_a = sqrt(0.5*(s1+s2)*edif);
         }
         else{
             res.sigma_E = res.dEdxo*sqrt(range_straggling_spline(T) - range_straggling_spline(res.Eout))/p.A;
-            Interpolator angular_variance_spline(energy_table.values,data.angular_variance.data(),energy_table.num);
+            //Interpolator angular_variance_spline(energy_table.values,data.angular_variance.data(),energy_table.num);
+            spline_type angular_variance_spline = get_angular_variance_spline(data);
             res.sigma_a = sqrt(angular_variance_spline(T) - angular_variance_spline(res.Eout));    
         }
         
         #else
         res.sigma_E = res.dEdxo*sqrt(range_straggling_spline(T) - range_straggling_spline(res.Eout))/p.A;
-        Interpolator angular_variance_spline(energy_table.values,data.angular_variance.data(),energy_table.num);
+        //Interpolator angular_variance_spline(energy_table.values,data.angular_variance.data(),energy_table.num);
+        spline_type angular_variance_spline = get_angular_variance_spline(data);
         res.sigma_a = sqrt(angular_variance_spline(T) - angular_variance_spline(res.Eout));
         #endif
         if( !(c.skip&skip_tof) && t.thickness()>0){
@@ -371,7 +385,7 @@ std::vector<double> calculate_tof(Projectile p, const Material &t, const Config 
     }
     return values;
 }
-
+/*
 DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
     DataPoint dp(p,t,c);
     dp.range.resize(max_datapoints);
@@ -405,6 +419,47 @@ DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
         res = da2dx(p,energy_table(i),t)*res;
         dp.angular_variance[i] = res + dp.angular_variance[i-1];
     
+        res = integrator.integrate(fomega,energy_table(i-1),energy_table(i));
+        res = p.A*res;
+        dp.range_straggling[i] = res + dp.range_straggling[i-1];
+    }
+    return dp;
+}
+*/
+
+
+DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
+    DataPoint dp(p,t,c);
+    dp.range.resize(max_datapoints);
+    dp.range_straggling.resize(max_datapoints);
+    dp.angular_variance.resize(max_datapoints);
+    auto fdedx = [&](double x)->double{
+            return 1.0/dedx(p,x,t,c);
+            };
+    auto fomega = [&](double x)->double{
+            //return 1.0*domega2dx(p,x,t)/pow(dedx(p,x,t),3);
+            return domega2dx(p,x,t,c)/catima::power(dedx(p,x,t,c),3);
+            };
+
+    double res=0.0;
+    //calculate 1st point to have i-1 element ready for loop
+    //res = integrator.integrate(fdedx,Ezero,energy_table(0));
+    //res = p.A*res;
+    //dp.range[0] = res;
+    dp.range[0] = 0.0;
+
+    dp.angular_variance[0] = 0.0;
+
+    //res = integrator.integrate(fomega,Ezero,energy_table(0));
+    //res = p.A*res;
+    dp.range_straggling[0]=0.0;
+    //p.T = energy_table(0);
+    for(int i=1;i<max_datapoints;i++){
+        res = p.A*integrator.integrate(fdedx,energy_table(i-1),energy_table(i));
+        dp.range[i] = res + dp.range[i-1];
+        res = da2dx(p,energy_table(i),t)*res;
+        dp.angular_variance[i] = res + dp.angular_variance[i-1];
+
         res = integrator.integrate(fomega,energy_table(i-1),energy_table(i));
         res = p.A*res;
         dp.range_straggling[i] = res + dp.range_straggling[i-1];

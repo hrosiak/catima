@@ -23,8 +23,8 @@ double nonreaction_rate(Projectile &projectile, const Material &target, const Co
     int ap = lround(projectile.A);
     int zp = lround(projectile.Z);
 
-    auto data = _storage.Get(projectile,target,c);
-    Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
+    auto& data = _storage.Get(projectile,target,c);
+    spline_type range_spline = get_range_spline(data);
     if(energy_out(projectile.T, target.thickness(), range_spline) < emin_reaction)return -1.0;
     
     auto sigma_r = [&](double th){

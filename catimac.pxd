@@ -114,7 +114,7 @@ cdef extern from "catima/constants.h" namespace "catima":
     int logEmin "catima::logEmin"
     int logEmax "catima::logEmax"
     bool reactions "catima::reactions"
-    
+
 cdef extern from "catima/storage.h" namespace "catima":
     cdef cppclass Interpolator:
         Interpolator(const double *x, const double *y, int num) except +
@@ -141,4 +141,4 @@ cdef extern from "catima/storage.h" namespace "catima":
         
     cdef EnergyTableType energy_table;
     cdef Data _storage;
-    cdef DataPoint& get_data(const Projectile &p, const Material &t, Config c);
+    cdef DataPoint& get_data(const Projectile &p, const Material &t, const Config c);

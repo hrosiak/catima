@@ -26,17 +26,18 @@ compile options, enable or disable with cmake:
 > cmake ../ -D[OPTION]
 
 available options:
+  * BUILD_SHARED_LIBS - if ON shared library is build, otherwise static
   * PYTHON_MODULE - enable/disable building of the python bindigs, cython and numpy are required to build the catima python module, default OFF
   * TESTS - build tests
   * EXAMPLES - build examples
   * DOCS - prepare doxygen documentation (after cmake, __make docs__ needs to be executed)
   * GENERATE_DATA - makes program to re-generate precalculated tables (ie precalculated LS coefficients), default:OFF
   * THIN_TARGET_APPROXIMATION - compile the library with thin target approximation, default: ON
-  * GSL_INTEGRATION - use GSL integration functions, otherwise use built-in integrator, default: ON
+  * GSL_INTEGRATION - use GSL integration functions, otherwise use built-in integrator, default: OFF
   * GLOBAL - compile with GLOBAL code (source not included at the moment, needs to be manually added to __global__ directory, default:OFF)
 
 ie:
-> cmake -DCATIMA_PYTHON=ON -DEXAMPLES=ON ../
+> cmake -DPYTHON_MODULE=ON -DEXAMPLES=ON ../
 
 
 after the compilation the libraries and headers must be either installed system-wide by make install or PATH and LD_LIBRARY_PATH must be adjusted to point to headers and library files.

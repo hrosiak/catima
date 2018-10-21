@@ -57,18 +57,18 @@ const lest::test specification[] =
       EXPECT(catima::_storage.get_index()==0);
       
       catima::_storage.Add(p,water);
-      auto dp = catima::_storage.Get(0);
+      auto& dp = catima::_storage.Get(0);
       EXPECT(catima::_storage.get_index()==1);
       EXPECT(dp.p.A==12);
       EXPECT(dp.m.ncomponents()==2);
       catima::_storage.Add(p,water);
-      auto dp2 = catima::_storage.Get(1);
+      auto& dp2 = catima::_storage.Get(1);
       EXPECT(catima::_storage.get_index()==1);
       EXPECT(dp2.p.A==0);
       EXPECT(dp2.m.ncomponents()==0);
       
       catima::_storage.Add(p,graphite);
-      auto dp3 = catima::_storage.Get(1);
+      auto&  dp3 = catima::_storage.Get(1);
       EXPECT(catima::_storage.get_index()==2);
       EXPECT(dp3.p.A==12);
       EXPECT(dp3.m.ncomponents()==1);

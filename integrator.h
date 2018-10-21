@@ -17,15 +17,20 @@
 #ifndef INTEGRATOR_H
 #define INTEGRATOR_H
 #include "catima/build_config.h"
-#include "gsl/gsl_integration.h"
 #include <functional>
 #include <array>
-#ifdef USE_THREADS
-#include <mutex>
+
+//#ifdef USE_THREADS
+//#include <mutex>
+//#endif
+
+#ifdef GSL_INTEGRATION
+#include "gsl/gsl_integration.h"
 #endif
 
 namespace catima{
     
+#ifdef GSL_INTEGRATION
 /// helper class to integrate functions using the GSL library
 class IntegratorGSL{
 	public:
@@ -45,6 +50,7 @@ class IntegratorGSL{
 	std::mutex integration_mutex;
 	#endif
     };
+#endif
 
 template<int order>
 struct GL_data{
@@ -176,7 +182,6 @@ using integrator_type = GaussLegendreIntegration<8>;
 #endif
 
 extern integrator_type integrator;
-extern IntegratorGSL integratorGSL;
 }
 
 #endif
