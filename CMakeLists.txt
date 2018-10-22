@@ -75,7 +75,7 @@ LIST (APPEND SOURCES ${GLOBAL_SOURCES})
 endif(GLOBAL)
 file(GLOB HEADERS *.h)
 
-add_library(catima SHARED ${SOURCES})
+add_library(catima ${SOURCES})
 set_target_properties(catima PROPERTIES
 		      POSITION_INDEPENDENT_CODE ON
                       LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
