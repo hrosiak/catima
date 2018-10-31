@@ -112,6 +112,11 @@ double bethek_dedx_e(Projectile &p, const Target &t, const Config &c, double I){
         }
     double result  = (f2)*barkas + LS - delta/2.;
     result *=f1;
+
+    if( (p.T>50000.0) && (!c.dedx&corrections::no_highenergy)){
+        result += pair_production(p,t);
+        result += bremsstrahlung(p,t);
+    }
     
     return result;
 }

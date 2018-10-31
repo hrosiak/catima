@@ -127,7 +127,7 @@ const lest::test specification[] =
 
         EXPECT(catima::pair_production(p(1e6),t) == approx(1900,300));
         EXPECT(catima::bremsstrahlung(p(1e6),t) == approx(170,20));
-        EXPECT(catima::pair_production(p(7e6),t) == approx(21000,3000));
+        EXPECT(catima::pair_production(p(7e6),t) == approx(19000,5000));
         EXPECT(catima::bremsstrahlung(p(7e6),t) == approx(6000,500));
     },
     CASE("dEdx for compounds"){

@@ -36,7 +36,8 @@ namespace catima{
     enum corrections:unsigned char{
         no_barkas = 1,
         no_lindhard = 2,
-        no_shell_correction = 4
+        no_shell_correction = 4,
+        no_highenergy = 8
     };
 
     /**

@@ -65,8 +65,7 @@ namespace catima{
 	int EnergyTable_index(const EnergyTable<N> &table, double val){
 		if(val<table.values[0] || val>table.values[table.num-1])return -1;
 		double lxval = (log(val/table.values[0])/M_LN10);
-		int i = (int)std::floor(lxval/table.step);
-		return i;
+        return static_cast<int>( std::floor(lxval/table.step));
 	}
 
 	template<int N>
