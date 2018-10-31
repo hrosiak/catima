@@ -119,6 +119,17 @@ const lest::test specification[] =
         p.T = 2794.4822;
         EXPECT( f()== approx(1.768018).R(0.01) );
     },
+    CASE("ultrarelativistic corrections"){
+        catima::Projectile p{238,92};
+        catima::Target t{27,13};
+        EXPECT(catima::pair_production(p(1e3),t) == approx(0.0,1e-3));
+        EXPECT(catima::bremsstrahlung(p(1e3),t) == approx(0.0,1e-3));
+
+        EXPECT(catima::pair_production(p(1e6),t) == approx(1900,300));
+        EXPECT(catima::bremsstrahlung(p(1e6),t) == approx(170,20));
+        EXPECT(catima::pair_production(p(7e6),t) == approx(21000,3000));
+        EXPECT(catima::bremsstrahlung(p(7e6),t) == approx(6000,500));
+    },
     CASE("dEdx for compounds"){
         catima::Projectile p{1,1,1,1000};
         catima::Material water({
@@ -385,7 +396,12 @@ const lest::test specification[] =
       EXPECT(res3[0] == approx(catima::dedx_from_range(p,energies[0],graphite),0.1));
       EXPECT(res3[1] == approx(catima::dedx_from_range(p,energies[1],graphite),0.1));
       EXPECT(res3[2] == approx(catima::dedx_from_range(p,energies[2],graphite),0.1));
-    }
+    },
+    CASE("constants"){
+        using namespace catima;
+        EXPECT(0.1*hbar*c_light/atomic_mass_unit == approx(0.21183,0.0001));
+        EXPECT(16.0*dedx_constant*electron_mass*fine_structure/(atomic_mass_unit*3.0*4.0*M_PI) == approx(5.21721169334564e-7).R(1e-3));
+        }
     
 };
 
