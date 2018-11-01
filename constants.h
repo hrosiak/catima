@@ -8,7 +8,7 @@ constexpr double Ezero = 1E-3; // lowest E to calculate, below taken as 0
 constexpr double logEmin = -3; // log of minimum energy
 constexpr double logEmax = 7.0;  // log of max energy
 constexpr int max_datapoints = 500; // how many datapoints between logEmin and logEmax
-constexpr int max_storage_data = 100; // number of datapoints which can be stored in cache
+constexpr int max_storage_data = 60; // number of datapoints which can be stored in cache
 constexpr double numeric_epsilon = std::numeric_limits<double>::epsilon();
 
 /// required integration precision (relative units)

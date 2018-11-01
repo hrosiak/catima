@@ -131,11 +131,13 @@ const lest::test specification[] =
       
       EXPECT(EnergyTable_index(catima::energy_table, 0.0)==-1);
 
-      for(int i:{5,10,100,498}){
+      for(int i=0;i<catima::max_datapoints-1;i++){
           val = catima::energy_table.values[i];
           dif = catima::energy_table.values[i+1] - val;
           EXPECT(EnergyTable_index(catima::energy_table, val)==i);
           EXPECT(EnergyTable_index(catima::energy_table, val+0.5*dif)==i);
+          EXPECT(catima::energy_table.index(val)==i);
+          EXPECT(catima::energy_table.index(val+0.5*dif)==i);
       }
     }
 };

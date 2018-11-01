@@ -113,7 +113,7 @@ double bethek_dedx_e(Projectile &p, const Target &t, const Config &c, double I){
     double result  = (f2)*barkas + LS - delta/2.;
     result *=f1;
 
-    if( (p.T>50000.0) && (!c.dedx&corrections::no_highenergy)){
+    if( (p.T>50000.0) && !(c.dedx&corrections::no_highenergy)){
         result += pair_production(p,t);
         result += bremsstrahlung(p,t);
     }
@@ -413,8 +413,8 @@ double bethek_lindhard_X(const Projectile &p){
     else{ // ultrarelativistic limit
         
     }
-    return 2*bethek_lindhard(p) - sum - beta2;
-    //return sum;
+    double res = 2*bethek_lindhard(p) - sum - beta2;
+    return (res>=0)?res:0.0;
 }
 
 double pair_production(const Projectile &p, const Target &t){
