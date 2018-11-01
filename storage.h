@@ -77,9 +77,9 @@ namespace catima{
 	    double r;
 	    if(xval<table.values[0] || xval>table.values[table.num-1])return 0.0;
 	    if(xval==table.values[table.num-1])return y[table.num-1];
-	    double lxval = (log(xval/table.values[0])/M_LN10);
-	    int i = (int)std::floor(lxval/table.step);
+        int i = EnergyTable_index(table, xval);
 	    double linstep = table.values[i+1] - table.values[i];
+        if(linstep == 0.0)return table.values[i];
 	    double x = 1.0 - ((xval - table.values[i])/linstep);
 	    r = (x*y[i]) + ((1-x)*y[i+1]);
 	    return r;

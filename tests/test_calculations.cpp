@@ -118,6 +118,9 @@ const lest::test specification[] =
         
         p.T = 2794.4822;
         EXPECT( f()== approx(1.768018).R(0.01) );
+
+        for(double e:{2000,20000,200000, 9000000, 50000000})
+            EXPECT(catima::precalculated_lindhard_X(p(e)) >= 0.0);
     },
     CASE("ultrarelativistic corrections"){
         catima::Projectile p{238,92};
