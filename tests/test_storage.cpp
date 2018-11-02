@@ -120,6 +120,10 @@ const lest::test specification[] =
       EXPECT(catima::energy_table.step==step);
       EXPECT(catima::energy_table.values[0]==exp(M_LN10*(catima::logEmin)));
       EXPECT(catima::energy_table.values[1]==exp(M_LN10*(catima::logEmin+step)));
+      EXPECT(catima::energy_table.values[2]==exp(M_LN10*(catima::logEmin+2.0*step)));
+      EXPECT(catima::energy_table.values[3]==exp(M_LN10*(catima::logEmin+3.0*step)));
+      EXPECT(catima::energy_table.values[4]==exp(M_LN10*(catima::logEmin+4.0*step)));
+      EXPECT(catima::energy_table.values[5]==exp(M_LN10*(catima::logEmin+5.0*step)));
       EXPECT(catima::energy_table.values[catima::max_datapoints-1]==approx(exp(M_LN10*(catima::logEmax))).epsilon(1e-6));
     },
     CASE("indexing"){
@@ -127,11 +131,13 @@ const lest::test specification[] =
       
       EXPECT(EnergyTable_index(catima::energy_table, 0.0)==-1);
 
-      for(int i:{5,10,100,498}){
+      for(int i=0;i<catima::max_datapoints-1;i++){
           val = catima::energy_table.values[i];
           dif = catima::energy_table.values[i+1] - val;
           EXPECT(EnergyTable_index(catima::energy_table, val)==i);
           EXPECT(EnergyTable_index(catima::energy_table, val+0.5*dif)==i);
+          EXPECT(catima::energy_table.index(val)==i);
+          EXPECT(catima::energy_table.index(val+0.5*dif)==i);
       }
     }
 };

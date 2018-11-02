@@ -53,8 +53,10 @@ namespace catima{
     int index(double v)const noexcept{
         double lxval = (log(v/values[0])/M_LN10);
         if(v<values[0] || step==0.0)return -1;
-        if(v>=values[N-1])return N-1;
-        return static_cast<int> (std::floor(lxval/step));
+        if(v>=values[N-1]-numeric_epsilon)return N-1;
+        int i = static_cast<int> (std::floor(lxval/step));
+        if(v >= values[i+1]-numeric_epsilon)i++; // this is correction for floating point precision
+        return i;
     };
 	std::size_t num;
     };
@@ -65,8 +67,9 @@ namespace catima{
 	int EnergyTable_index(const EnergyTable<N> &table, double val){
 		if(val<table.values[0] || val>table.values[table.num-1])return -1;
 		double lxval = (log(val/table.values[0])/M_LN10);
-		int i = (int)std::floor(lxval/table.step);
-		return i;
+        int i = static_cast<int>( std::floor(lxval/table.step));
+        if(val >= table.values[i+1]-numeric_epsilon)i++; // this is correction for floating point precision
+        return i;
 	}
 
 	template<int N>
@@ -74,9 +77,9 @@ namespace catima{
 	    double r;
 	    if(xval<table.values[0] || xval>table.values[table.num-1])return 0.0;
 	    if(xval==table.values[table.num-1])return y[table.num-1];
-	    double lxval = (log(xval/table.values[0])/M_LN10);
-	    int i = (int)std::floor(lxval/table.step);
+        int i = EnergyTable_index(table, xval);
 	    double linstep = table.values[i+1] - table.values[i];
+        if(linstep == 0.0)return table.values[i];
 	    double x = 1.0 - ((xval - table.values[i])/linstep);
 	    r = (x*y[i]) + ((1-x)*y[i+1]);
 	    return r;

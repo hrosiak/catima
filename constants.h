@@ -6,9 +6,9 @@ namespace catima {
 
 constexpr double Ezero = 1E-3; // lowest E to calculate, below taken as 0
 constexpr double logEmin = -3; // log of minimum energy
-constexpr double logEmax = 5.0;  // log of max energy
+constexpr double logEmax = 7.0;  // log of max energy
 constexpr int max_datapoints = 500; // how many datapoints between logEmin and logEmax
-constexpr int max_storage_data = 100; // number of datapoints which can be stored in cache
+constexpr int max_storage_data = 60; // number of datapoints which can be stored in cache
 constexpr double numeric_epsilon = std::numeric_limits<double>::epsilon();
 
 /// required integration precision (relative units)
@@ -36,6 +36,7 @@ constexpr double fine_structure = 1/137.035999139;
 constexpr double fine_structure_inverted = 1/fine_structure;
 constexpr double c_light = 299.792458; //Mm/s
 constexpr double bohr_velocity = 2.19 / c_light; // in c unit
+constexpr double hbar = 6.582119514; // in eV*s * 10^-16
 
 constexpr double dedx_constant = 0.3070749187;  //4*pi*Na*me*c^2*r_e^2  //MeV cm^2
 constexpr double domega2dx_constant = dedx_constant*electron_mass;  //4*pi*Na*me*c^2*r_e^2  //MeV^2 cm^2

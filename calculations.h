@@ -60,6 +60,16 @@ namespace catima{
     double bethek_lindhard_X(const Projectile &p);
 
     /**
+      * calculates pair production stopping power
+      */
+    double pair_production(const Projectile &p, const Target &t);
+
+    /**
+      * calculates bremsstrahlung stopping power
+      */
+    double bremsstrahlung(const Projectile &p, const Target &t);
+
+    /**
       * returns linhard correction (L) calulated from tabulated precalculated data
       * if energy is less than minimal calculated energy the LS coefficient of at  minimal 
       * calculated energy is returned and similar for highest caclulated energy limit

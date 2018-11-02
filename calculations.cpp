@@ -112,6 +112,11 @@ double bethek_dedx_e(Projectile &p, const Target &t, const Config &c, double I){
         }
     double result  = (f2)*barkas + LS - delta/2.;
     result *=f1;
+
+    if( (p.T>50000.0) && !(c.dedx&corrections::no_highenergy)){
+        result += pair_production(p,t);
+        result += bremsstrahlung(p,t);
+    }
     
     return result;
 }
@@ -408,10 +413,35 @@ double bethek_lindhard_X(const Projectile &p){
     else{ // ultrarelativistic limit
         
     }
-    return 2*bethek_lindhard(p) - sum - beta2;
-    //return sum;
+    double res = 2*bethek_lindhard(p) - sum - beta2;
+    return (res>=0)?res:0.0;
 }
 
+double pair_production(const Projectile &p, const Target &t){
+    double s=0.0;
+    double gamma=1.0 + p.T/atomic_mass_unit;
+    double d = 1.0/sqrt(gamma);
+    double logd2 = log(d*d);
+    double l0 = log(2.0*gamma);
+    double Zt13 = 183.0*power(t.Z,-1.0/3.0);
+    double L0screen = (19.0/9.0)*log(Zt13/(1.0 + 25.018803808*Zt13/gamma));
+    double L1 = (4178.0/(81.0*M_PI*M_PI))
+                - (21.0/27.0)
+                - (248.0*l0/(27.0*M_PI*M_PI))
+                + ( ((28.0*l0/(9.0)) - 446.0/27.0)*logd2/(M_PI*M_PI))
+                + (14.0*logd2*logd2/(9.0*M_PI*M_PI));
+    L1 *= d;
+    s = 0.25*dedx_constant*fine_structure*fine_structure*p.Z*p.Z*t.Z*t.Z*gamma*(1.0+(1.0/t.Z))*(L0screen + L1)/t.A;
+    return (s<0.0)?0.0:s;
+};
+
+double bremsstrahlung(const Projectile &p, const Target &t){
+    double gamma=1.0 + p.T/atomic_mass_unit;
+    double R = 1.18*(catima::power(p.A, 1.0/3.0) + catima::power(t.A, 1.0/3.0));
+    double Lbs = log(1.0 + 2.0*gamma*0.1*hbar*c_light/atomic_mass_unit/R/p.A);
+    double C = dedx_constant*fine_structure*(electron_mass/atomic_mass_unit);
+    return 16.0*C*gamma*p.Z*p.Z*p.Z*p.Z*t.Z*t.Z*Lbs/(t.A*p.A*3.0*4.0*M_PI);
+};
 
 
 double sezi_p_se(double energy,const Target &t){
