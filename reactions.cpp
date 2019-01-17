@@ -89,7 +89,7 @@ double SigmaR_Kox(int Ap, int Zp, double E, int At, int Zt){
     double Rs = r0 * ((a*Ap13*At13)/(Ap13+At13)-c)+D;
     double Rv = r0 * (Ap13 + At13);
     double Ri = Rv + Rs;
-    double Ecm = Ecm_from_T_relativistic(E,Ap,At);
+    double Ecm = Ecm_from_T(E,Ap,At);
     return 10.0*PI*Ri*Ri*(1-(Bc/Ecm));
     }
 #endif
