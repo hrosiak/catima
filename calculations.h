@@ -92,7 +92,7 @@ namespace catima{
       * electronic energy loss for low energy, should be like SRIM
       */ 
     double sezi_dedx_e(const Projectile &p, const Target &t);
-
+ 
     /**
       * electronic energy loss for low energy, should be like SRIM
       */ 
@@ -102,7 +102,7 @@ namespace catima{
       * electronic energy loss of protons for low energy, should be like SRIM
       */ 
     double sezi_p_se(double energy,const Target &t);
-    
+
 
     double angular_scattering_variance(Projectile &p, Target &t);
 

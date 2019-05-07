@@ -107,6 +107,7 @@ cdef extern from "catima/calculations.h" namespace "catima":
     cdef double z_eff_Schiwietz(double pz, double beta, double tz);
     cdef double gamma_from_T(double T);
     cdef double beta_from_T(double T);
+    cdef double sezi_p_se(double, const Target&);
 
 cdef extern from "catima/constants.h" namespace "catima":        
     int max_datapoints "catima::max_datapoints"

@@ -506,6 +506,9 @@ def gamma_from_T(double T):
 def beta_from_T(double T):
     return catimac.beta_from_T(T);
 
+def sezi_p_se(double T, Target t):
+    return catimac.sezi_p_se(T, t.cbase)
+
 def get_data(Projectile projectile, Material material, Config config = default_config):
     data = catimac.get_data(projectile.cbase, material.cbase, config.cbase)
     return [data.range,data.range_straggling,data.angular_variance]
