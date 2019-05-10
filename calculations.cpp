@@ -88,7 +88,7 @@ double bethek_dedx_e(Projectile &p, const Target &t, const Config &c, double I){
     double f2 = log(2.0*electron_mass*1000000*beta2/Ipot);
 
     double eta = beta*gamma;
-    if(!(c.dedx&corrections::no_shell_correction) &&  eta>=0.13){ //shell corrections
+    if(!(c.corrections&corrections::no_shell_correction) &&  eta>=0.13){ //shell corrections
         double cor = (+0.422377*pow(eta,-2)
                     +0.0304043*pow(eta,-4)
                     -0.00038106*pow(eta,-6))*1e-6*pow(Ipot,2) 
@@ -100,21 +100,21 @@ double bethek_dedx_e(Projectile &p, const Target &t, const Config &c, double I){
     f2+=2*log(gamma) -beta2;
     
     double barkas=1.0;
-    if(!(c.dedx&corrections::no_barkas)){
+    if(!(c.corrections&corrections::no_barkas)){
         barkas = bethek_barkas(zp_eff,eta,t.Z);
         }
     
     double delta = bethek_density_effect(beta, t.Z);
     
     double LS = 0.0;
-    if(!(c.dedx&corrections::no_lindhard)){
+    if(!(c.corrections&corrections::no_lindhard)){
         //double LS = bethek_lindhard(p);
         LS = precalculated_lindhard(p);
         }
     double result  = (f2)*barkas + LS - delta/2.;
     result *=f1;
 
-    if( (p.T>50000.0) && !(c.dedx&corrections::no_highenergy)){
+    if( (p.T>50000.0) && !(c.corrections&corrections::no_highenergy)){
         result += pair_production(p,t);
         result += bremsstrahlung(p,t);
     }
@@ -444,23 +444,16 @@ double bremsstrahlung(const Projectile &p, const Target &t){
     return 16.0*C*gamma*p.Z*p.Z*p.Z*p.Z*t.Z*t.Z*Lbs/(t.A*p.A*3.0*4.0*M_PI);
 };
 
-double sezi_p_se(double energy,const Target &t){
-    return 100*p_se(t.Z, energy)*Avogadro/t.A;
-}
-
-double sezi_dedx_e(const Projectile &p, const Target &t){
-    return 100*srim_dedx_e(p.Z,t.Z,p.T)*Avogadro/t.A;
-}
-
-double sezi_dedx_e(const Projectile &p, const Material &mat){
+double sezi_dedx_e(const Projectile &p, const Material &mat, const Config &c){
     double w;
     double sum=0.0;
+    bool use95 = config_lowenergy(c) == low_energy_types::srim_95;
     for(int i=0;i<mat.ncomponents();i++){
         auto t = mat.get_element(i);
         w = mat.weight_fraction(i);
-        sum += w*sezi_dedx_e(p,t);
+        sum += w*srim_dedx_e(p.Z,t.Z,p.T, use95)/t.A;
     }
-    return sum;
+    return 100*sum*Avogadro; // returning MeV/g/cm2
 }
 
 
@@ -583,7 +576,7 @@ double dedx_variance(Projectile &p, Target &t, const Config &c){
     double zp_eff = z_effective(p,t,c);
     double f = domega2dx_constant*pow(zp_eff,2)*t.Z/t.A;
 
-    if(c.dedx_straggling == omega::atima){
+    if(config_omega(c) == omega_types::atima){
         cor = 24.89 * pow(t.Z,1.2324)/(electron_mass*1e6 * beta2)*
 			log( 2.0*electron_mass*1e6*beta2/(33.05*pow(t.Z,1.6364)));
 	    cor = std::max(cor, 0.0 );

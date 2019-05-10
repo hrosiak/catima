@@ -87,21 +87,11 @@ namespace catima{
       * this function is not used and is not tested 
       */
     double energy_straggling_firsov(double z1,double energy, double z2, double m2);
-    
+     
     /**
       * electronic energy loss for low energy, should be like SRIM
       */ 
-    double sezi_dedx_e(const Projectile &p, const Target &t);
- 
-    /**
-      * electronic energy loss for low energy, should be like SRIM
-      */ 
-    double sezi_dedx_e(const Projectile &p, const Material &mat);
-    
-    /**
-      * electronic energy loss of protons for low energy, should be like SRIM
-      */ 
-    double sezi_p_se(double energy,const Target &t);
+    double sezi_dedx_e(const Projectile &p, const Material &mat, const Config &c=default_config);
 
 
     double angular_scattering_variance(Projectile &p, Target &t);

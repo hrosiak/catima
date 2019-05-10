@@ -34,36 +34,27 @@ const lest::test specification[] =
     
     CASE("proton stopping power from srim"){
         catima::Projectile p{1,1,1,1};
-        catima::Target he{4.002600,2};
-        catima::Target carbon{12.0107,6};       
-        
-        EXPECT( catima::sezi_p_se(1,he) == approx(283,1));
-        p.T = 1;
-        EXPECT( catima::sezi_p_se(p.T,he) == approx(catima::sezi_dedx_e(p,he)).R(1e-6));
-        
-        EXPECT(catima::sezi_p_se(10,he)==approx(45.6,1));
-        p.T = 10;
-        EXPECT( catima::sezi_p_se(p.T,he) == approx(catima::sezi_dedx_e(p,he)).R(1e-6));
-        
-        EXPECT(catima::sezi_p_se(30,he) == approx(18.38,1));
-        p.T = 30;
-        EXPECT( catima::sezi_p_se(p.T,he) == approx(catima::sezi_dedx_e(p,he)).R(1e-6));
-  
-        
-        EXPECT( catima::sezi_p_se(1,carbon) == approx(229.5,1));
-        p.T = 1;
-        EXPECT( catima::sezi_p_se(p.T,carbon) == approx(catima::sezi_dedx_e(p,carbon)).R(1e-6));
+        auto he = catima::get_material(2);
+        auto carbon = catima::get_material(6);
 
+        p.T = 1;
+        EXPECT( catima::sezi_dedx_e(p,he) == approx(283,1));
+        p.T = 10;
+        EXPECT( catima::sezi_dedx_e(p,he) == approx(45.6,1));
         
-        EXPECT( catima::sezi_p_se(10,carbon) == approx(40.8,1));
-        
-        EXPECT(catima::sezi_p_se(30,carbon) == approx(16.8,1));
+        p.T = 30;        
+        EXPECT( catima::sezi_dedx_e(p,he) == approx(18.38,1));
+
+        p.T = 1;        
+        EXPECT( catima::sezi_dedx_e(p,carbon) == approx(229.5,1));
+        p.T = 10;
+        EXPECT( catima::sezi_dedx_e(p,carbon) == approx(40.8,1));
         p.T = 30;
-        EXPECT( catima::sezi_p_se(p.T,carbon) == approx(catima::sezi_dedx_e(p,carbon)).R(1e-6));
+        EXPECT( catima::sezi_dedx_e(p,carbon) == approx(16.8,1));        
     },
     CASE("dedx, low energy, from sezi"){
         catima::Projectile p{4,2,2,1};
-        catima::Target carbon{12.0107,6};
+        auto carbon = catima::get_material(6);
         
         // He projectile case
         p.T = 1;

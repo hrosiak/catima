@@ -305,47 +305,53 @@ cdef class Config:
         #self.cbase = catimac.Config()
         self.cbase.z_effective = z_eff_type.pierce_blann
         self.cbase.skip = 0
-        self.cbase.dedx = 0
-        self.cbase.dedx_straggling = omega_type.atima
+        self.cbase.calculation = 1
+        self.cbase.corrections = 0
+        
     def z_effective(self, val=None):
         if(val is None):
             return self.cbase.z_effective
         else:
             self.cbase.z_effective = val
+    
     def skip_calculation(self, val=None):
         if(val is None):
             return self.cbase.skip
         else:
             self.cbase.skip = val
-    def dedx(self, val=None):
+    
+    def corrections(self, val=None):
         if(val is None):
-            return self.cbase.dedx
+            return self.cbase.corrections
         else:
-            self.cbase.dedx = val
-    def dedx_straggling(self, val=None):
+            self.cbase.corrections = val
+            
+    def calculation(self, val=None):
         if(val is None):
-            return self.cbase.dedx_straggling
+            return self.cbase.calculation
         else:
-            self.cbase.dedx_straggling = val
+            self.cbase.calculation = val
+    
     def set(self,other):
         if("z_effective" in other):
             self.cbase.z_effective = other["z_effective"]
-        if("dedx" in other):
-            self.cbase.dedx = other["dedx"]
-        if("dedx_straggling" in other):
-            self.cbase.dedx_straggling = other["dedx_straggling"]
+        if("calculation" in other):
+            self.cbase.calculation = other["calculation"]
+        if("corrections" in other):
+            self.cbase.corrections = other["corrections"]
 	
+    
     def get(self):
         res = {}
         res["z_effective"] = self.cbase.z_effective
-        res["dedx"] = self.cbase.dedx
-        res["dedx_straggling"] = self.cbase.dedx_straggling
+        res["corrections"] = self.cbase.corrections
+        res["calculation"] = self.cbase.calculation
         res["skip"] = self.cbase.skip
         return res
 
     def print_info(self):
         print("z_effective = %s"%z_eff_type(self.cbase.z_effective))
-        print("dedx_straggling = %s"%omega_type(self.cbase.dedx_straggling))
+        print("calculation = %s"%omega_type(self.cbase.dedx_straggling))
 
 default_config = Config()
 
@@ -464,9 +470,6 @@ def w_magnification(Projectile projectile, Material material, energy = None, Con
         energy = projectile.T()
     return catimac.w_magnification(projectile.cbase,energy, material.cbase, config.cbase)
 
-def sezi_dedx_e(Projectile projectile, Target t):
-    return catimac.sezi_dedx_e(projectile.cbase, t.cbase)
-
 def bethek_dedx_e(Projectile projectile, Target t,  Config c = default_config, Ipot=0.0):
     return catimac.bethek_dedx_e(projectile.cbase, t.cbase,c.cbase,Ipot)
 
@@ -505,9 +508,6 @@ def gamma_from_T(double T):
 
 def beta_from_T(double T):
     return catimac.beta_from_T(T);
-
-def sezi_p_se(double T, Target t):
-    return catimac.sezi_p_se(T, t.cbase)
 
 def get_data(Projectile projectile, Material material, Config config = default_config):
     data = catimac.get_data(projectile.cbase, material.cbase, config.cbase)

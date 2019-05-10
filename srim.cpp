@@ -8,7 +8,7 @@ namespace catima{
   * @param energy - energy per nuclein in MeV/u
   */
  
-double p_se95(int Z, double energy){
+double p_se(int Z, double energy){
     double sp = -1;
     double e = 1000*energy; //e in keV/u
     int i = Z - 1;
@@ -16,8 +16,8 @@ double p_se95(int Z, double energy){
         i = 91;
         }
     if(e<=25)e=25;
-    double sl = (pse[i][0]*std::pow(e,pse[i][1])) + (pse[i][2]*std::pow(e,pse[i][3]));
-    double sh = pse[i][4]/std::pow(e,pse[i][5]) * std::log( (pse[i][6]/e) + (pse[i][7]*e));
+    double sl = (pse_95[i][0]*std::pow(e,pse_95[i][1])) + (pse_95[i][2]*std::pow(e,pse_95[i][3]));
+    double sh = pse_95[i][4]/std::pow(e,pse_95[i][5]) * std::log( (pse_95[i][6]/e) + (pse_95[i][7]*e));
     sp = sl*sh/(sl+sh);
     e=1000*energy;
     if(e<=25){
@@ -31,7 +31,7 @@ double p_se95(int Z, double energy){
   * @param Z - proton number of material
   * @param energy - energy per nuclein in MeV/u
   */
-double p_se(int Z, double energy){
+double p_se85(int Z, double energy){
     double sp = -1;
     double e = 1000*energy; //e in keV/u
     int i = Z - 1;
@@ -56,12 +56,13 @@ double p_se(int Z, double energy){
   * @param pZ - material Z
   * @param energy - projectile energy in MeV/u unit
   */
-double srim_dedx_e(int pZ, int tZ, double energy){
+double srim_dedx_e(int pZ, int tZ, double energy, bool use_new){
     double e=energy*1000; // e in keV/u
     double se = 0;
-    
+    double (*const fp_se)(int, double) = (use_new)?p_se:p_se85;
+//    double (*const fp_se)(int, double) = p_se85;
     if(pZ==1){
-        return p_se(tZ, energy);
+        return (*fp_se)(tZ, energy);
     }
     else if(pZ == 2){
         double a=0;
@@ -76,7 +77,7 @@ double srim_dedx_e(int pZ, int tZ, double energy){
         a = (1.0 + (0.007 + 0.00005*tZ)*exp(- b*b ));
         heh *= a*a;
         //zeta = sqrt(heh);
-        se = p_se(tZ, energy)*heh*4.0; //scale proton stopping
+        se = (*fp_se)(tZ, energy)*heh*4.0; //scale proton stopping
         if(e==1)se*= sqrt(e);  //vel proportional
         return se;
     }
@@ -150,17 +151,17 @@ double srim_dedx_e(int pZ, int tZ, double energy){
             
             h1 = zeta *pZ;
             h4 = std::pow(e / eee,eval);
-            se = p_se(tZ, eee*0.001) * h1*h1*h4;
+            se = (*fp_se)(tZ, eee*0.001) * h1*h1*h4;
             return se;
         }
         else {
-            return p_se(tZ,energy)*std::pow(zeta*pZ,2.0);
+            return (*fp_se)(tZ,energy)*std::pow(zeta*pZ,2.0);
         }
         return 0;
     }
 };
 
-const double pse[92][8] = {
+const double pse_95[92][8] = {
 //H
 {0.0128116,0.00533047,0.651042,0.531902,1959.01,1.1887,598.263,0.00954514},
 //He
