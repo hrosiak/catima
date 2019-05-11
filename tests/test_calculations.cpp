@@ -329,6 +329,7 @@ const lest::test specification[] =
         t.Z = 13;
         Config c;
 
+        c.z_effective = z_eff_type::pierce_blann;
         EXPECT(z_eff_Pierce_Blann(92,beta_from_T(5000.)) == approx(91.8).epsilon(0.2));
         EXPECT(z_eff_Pierce_Blann(92,beta_from_T(5000.)) == z_effective(p_u(5000.),t,c));
         
