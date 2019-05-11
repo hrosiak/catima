@@ -3,8 +3,8 @@
 
 // this is taken from atima
 
-namespace catima{
-
+namespace catima{ 
+/*
 constexpr double proton_stopping_coef[92][8] = { // proton in material stopping coefficient
 {  .0091827, .0053496, .69741, .48493, 316.07,1.0143, 9329.3, .0539890}, //H
 {  .11393, .0051984, 1.0822, .39252,  1081.0, 1.0645, 4068.5, .0176990}, //He
@@ -289,8 +289,9 @@ const double atima_lambda_screening[92]= {
  1.16,
  1.16,
  1.16};
-}
 
+*/
+}
 namespace density_effect{
 const double x0[97]= {
 1.8639, 2.2017,  0.1304, 0.0592, 0.0305, -.0178, 1.7378, 1.7541, 1.8433, 2.0735,

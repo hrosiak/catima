@@ -8,7 +8,7 @@ namespace catima{
       * \enum z_eff_type 
       * enum to select formulat to calculate effective charge of the Projectile
       */
-    enum z_eff_type:char {
+    enum z_eff_type:unsigned char {
         none = 0,
         pierce_blann = 1,
         anthony_landorf = 2,
@@ -43,9 +43,17 @@ namespace catima{
     /**
       * enum to select which dEdx straggling options
       */
-    enum omega:unsigned char{
+    enum omega_types:unsigned char{
         atima = 0,
         bohr = 1,
+    };
+
+    /**
+      * enum to select which how low energy part is calculated
+      */
+    enum low_energy_types:unsigned char{
+        srim_85 = 0,
+        srim_95 = 1,
     };
 
     /**
@@ -57,16 +65,38 @@ namespace catima{
       * 
       */
     struct Config{
+        #ifndef GLOBAL
         unsigned char z_effective=z_eff_type::pierce_blann;
-        //char z_effective=z_eff_type::atima14;
-        unsigned char dedx = 0;
-        unsigned char dedx_straggling = omega::bohr;
+        #else
+        unsigned char z_effective=z_eff_type::atima14;
+        #endif
+
         #ifdef REACTIONS
         unsigned char skip=skip_none;
         #else
         unsigned char skip=skip_calculation::skip_reactions;
         #endif
+
+        unsigned char corrections = 0;
+        unsigned char calculation = 1;
     };
+
+    inline void set_config_lowenergy(Config c, low_energy_types lt){
+      c.corrections = c.corrections & (lt<<2);
+    }
+
+    inline unsigned char config_lowenergy(const Config c){
+      return (c.corrections>>2) & 0x7;
+    }
+
+    inline void set_config_omega(Config c, omega_types ot){
+      c.corrections = c.corrections & ot;
+    }
+
+    inline unsigned char config_omega(const Config c){
+      return c.corrections & 0x3;
+    }
+
     
     extern Config default_config;
 }
