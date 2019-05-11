@@ -49,10 +49,7 @@ const lest::test specification[] =
       catima::Material graphite({
                 {12,6,1}
                 });
-      
-      catima::Config c1;
-      c1.z_effective = catima::z_eff_type::global;
-      
+            
       catima::_storage.Reset();
       EXPECT(catima::_storage.get_index()==0);
       
@@ -76,12 +73,15 @@ const lest::test specification[] =
       catima::_storage.Add(p,graphite);
       EXPECT(catima::_storage.get_index()==2);
       
+      catima::Config c1;
+      c1.z_effective = catima::z_eff_type::global;
+
       catima::_storage.Add(p,graphite, c1);
       EXPECT(catima::_storage.get_index()==3);
       
       catima::_storage.Add(p,graphite);
       EXPECT(catima::_storage.get_index()==3);
-      c1.z_effective = catima::z_eff_type::atima14;
+      c1.z_effective = catima::z_eff_type::hubert;
       catima::_storage.Add(p,graphite ,c1);
       EXPECT(catima::_storage.get_index()==4);
       
