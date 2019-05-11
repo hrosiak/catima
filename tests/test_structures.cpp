@@ -160,19 +160,21 @@ const lest::test specification[] =
       catima::Config c2;
       catima::Config c3{catima::z_eff_type::none};
       catima::Config c4;
-      EXPECT(c1.z_effective == catima::z_eff_type::pierce_blann);
-      EXPECT(c1.z_effective != catima::z_eff_type::atima14);
+      EXPECT(c1.z_effective == catima::default_config.z_effective);
+
       EXPECT(c1==c2);
       EXPECT( !(c1==c3));
       EXPECT(c1==c4);
+      
       c4.z_effective = catima::z_eff_type::global;
       EXPECT(!(c1==c4));
       auto c5 = c4;
       EXPECT(c4==c5);
-      c4.z_effective = catima::z_eff_type::atima14;
+      
+      c4.z_effective = catima::z_eff_type::hubert;
       EXPECT(!(c4==c5) );
       EXPECT(!(c4==c1));
-      c4.z_effective = catima::z_eff_type::pierce_blann;
+      c4.z_effective = catima::default_config.z_effective;
       EXPECT(!(c5==c4));
       EXPECT((c1==c4));
     },
