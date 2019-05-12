@@ -3,7 +3,7 @@ project(catima)
 
 ############ options #############
 option(BUILD_SHARED_LIBS "build as shared library" ON)
-option(PYTHON_MODULE "compile the Catima python module(requires numpy and cython installed)" ON)
+option(PYTHON_MODULE "compile the Catima python module(requires numpy and cython installed)" OFF)
 option(TESTS "build tests" OFF)
 option(EXAMPLES "build examples" ON)
 option(APPS "build catima applications" ON)
