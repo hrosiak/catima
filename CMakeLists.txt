@@ -1,9 +1,9 @@
- cmake_minimum_required(VERSION 3.2.0)
+cmake_minimum_required(VERSION 3.2.0)
 project(catima)
 
 ############ options #############
 option(BUILD_SHARED_LIBS "build as shared library" ON)
-option(PYTHON_MODULE "compile the Catima python module(requires numpy and cython installed)" OFF)
+option(PYTHON_MODULE "compile the Catima python module(requires numpy and cython installed)" ON)
 option(TESTS "build tests" OFF)
 option(EXAMPLES "build examples" ON)
 option(APPS "build catima applications" ON)
@@ -104,14 +104,14 @@ if(PYTHON_MODULE)
     if(NOT PYTHONINTERP_FOUND)
         MESSAGE(SEND_ERROR "Python is required to build nurex python modules") 
     endif(NOT PYTHONINTERP_FOUND)
-    #find_package(pybind11 REQUIRED)
-    #set(PYBIND11_CPP_STANDARD -std=c++14)
-    #pybind11_add_module(pycatima pymodule/pycatima)
-    #target_include_directories(pycatima PUBLIC
-    #                                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-    #                                $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/libs>
-    #                                $<INSTALL_INTERFACE:include>)
-    #target_link_libraries(pycatima PRIVATE catima)
+    find_package(pybind11 REQUIRED)
+    set(PYBIND11_CPP_STANDARD -std=c++14)
+    pybind11_add_module(pycatima pymodule/pycatima)
+    target_include_directories(pycatima PUBLIC
+                                    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+                                    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/libs>
+                                    $<INSTALL_INTERFACE:include>)
+    target_link_libraries(pycatima PRIVATE catima)
 
     find_program(CYTHON_EXECUTABLE 
                  NAMES cython cython2 cython3 cython.bat
