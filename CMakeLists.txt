@@ -113,31 +113,31 @@ if(PYTHON_MODULE)
                                     $<INSTALL_INTERFACE:include>)
     target_link_libraries(pycatima PRIVATE catima)
 
-    find_program(CYTHON_EXECUTABLE 
-                 NAMES cython cython2 cython3 cython.bat
-                 DOC "path to the cython executable"
-                )
-    if(NOT CYTHON_EXECUTABLE)
-        MESSAGE(SEND_ERROR "Cython not found, it is required to build nurex python modules") 
-    endif(NOT CYTHON_EXECUTABLE)
-    MESSAGE(STATUS "Cython found: " ${CYTHON_EXECUTABLE})
+#    find_program(CYTHON_EXECUTABLE 
+#                 NAMES cython cython2 cython3 cython.bat
+#                 DOC "path to the cython executable"
+#                )
+#    if(NOT CYTHON_EXECUTABLE)
+#        MESSAGE(SEND_ERROR "Cython not found, it is required to build nurex python modules") 
+#    endif(NOT CYTHON_EXECUTABLE)
+#    MESSAGE(STATUS "Cython found: " ${CYTHON_EXECUTABLE})
     
      ### build libraries string
-    foreach(entry ${EXTRA_LIBS} ${GSL_LIBRARIES} catima)
-        LIST (APPEND EXTRA_PYTHON_LIBS \"${entry}\")
-    endforeach(entry ${EXTRA_LIBS} ${GSL_LIBRARIES} catima)
-    string (REPLACE ";" "," EXTRA_PYTHON_LIBS "${EXTRA_PYTHON_LIBS}")
+#    foreach(entry ${EXTRA_LIBS} ${GSL_LIBRARIES} catima)
+#        LIST (APPEND EXTRA_PYTHON_LIBS \"${entry}\")
+#    endforeach(entry ${EXTRA_LIBS} ${GSL_LIBRARIES} catima)
+#    string (REPLACE ";" "," EXTRA_PYTHON_LIBS "${EXTRA_PYTHON_LIBS}")
 #    if(THREADS)
 #    set (CYTHON_DEFINES "-DUSE_THREADS=1")
 #    endif(THREADS)
      ### insert libraries string and create setup.py
-    FILE(COPY catimac.pxd catima.pyx DESTINATION ${PROJECT_BINARY_DIR})
-    set(CATIMA_LIB ${CMAKE_SHARED_LIBRARY_PREFIX}catima${CMAKE_SHARED_LIBRARY_SUFFIX})
-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in ${PROJECT_BINARY_DIR}/setup.py)
-    add_custom_target(target_python ALL DEPENDS catima)
-    add_custom_command(TARGET target_python
-                        COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_BINARY_DIR}/setup.py  build_ext ${CYTHON_DEFINES} -i                         
-                        )
+#    FILE(COPY catimac.pxd catima.pyx DESTINATION ${PROJECT_BINARY_DIR})
+#    set(CATIMA_LIB ${CMAKE_SHARED_LIBRARY_PREFIX}catima${CMAKE_SHARED_LIBRARY_SUFFIX})
+#    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in ${PROJECT_BINARY_DIR}/setup.py)
+#    add_custom_target(target_python ALL DEPENDS catima)
+#    add_custom_command(TARGET target_python
+#                        COMMAND ${PYTHON_EXECUTABLE} ${PROJECT_BINARY_DIR}/setup.py  build_ext ${CYTHON_DEFINES} -i                         
+#                        )
 endif(PYTHON_MODULE )
 
 ########## Sub Directories ###########

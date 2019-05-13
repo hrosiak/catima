@@ -200,6 +200,7 @@ const lest::test specification[] =
         catima::Material mat6;
         mat6 = mat5;
         EXPECT(mat5==mat6);
+        EXPECT(mat5.density() == mat6.density());
         EXPECT(mat5.ncomponents()==mat6.ncomponents());
         EXPECT(mat5.get_element(0).A==mat6.get_element(0).A);
         EXPECT(mat5.get_element(1).A==mat6.get_element(1).A);

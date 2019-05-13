@@ -42,7 +42,7 @@ Material::Material(std::initializer_list<std::array<double,3>>list,double _densi
         }
 }
 
-Material::Material(double _a, int _z, double _rho, double _th):rho(_rho),th(_th){
+Material::Material(double _a, int _z, double _rho, double _th, double _ipot):rho(_rho),th(_th),i_potential(_ipot){
     add_element(_a,_z,1.0);
 }
 

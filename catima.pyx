@@ -399,11 +399,12 @@ def projectile_range(Projectile projectile, Material material, energy = None, Co
     if(isinstance(energy,numpy.ndarray)):
         res = numpy.empty(energy.size)
         for i,e in enumerate(energy):
-            res[i] = catimac.range(projectile.cbase, e, material.cbase, config.cbase)
+            projectile.T(e)
+            res[i] = catimac.range(projectile.cbase, material.cbase, config.cbase)
         return res    
-    if(energy is None):
-        energy = projectile.T()    
-    return catimac.range(projectile.cbase, energy, material.cbase, config.cbase);
+    elif(energy is not None):
+        projectile.T(energy)    
+    return catimac.range(projectile.cbase, material.cbase, config.cbase);
 
 def dedx_from_range(Projectile projectile, Material material, energy = None, Config config = default_config):  
     if(isinstance(energy,numpy.ndarray)):
@@ -411,9 +412,9 @@ def dedx_from_range(Projectile projectile, Material material, energy = None, Con
         return numpy.asarray(res);
     if(isinstance(energy,list)):
         return catimac.dedx_from_range(projectile.cbase, <vector[double]>energy, material.cbase, config.cbase)
-    if(energy is None):
-        energy = projectile.T()    
-    return catimac.dedx_from_range(projectile.cbase, <double>energy, material.cbase, config.cbase);
+    if(energy is not None):
+        projectile.T(energy)    
+    return catimac.dedx_from_range(projectile.cbase, material.cbase, config.cbase);
 
 def domega2de(Projectile projectile, Material material, energy = None, Config config = default_config):  
     if(isinstance(energy,numpy.ndarray)):
@@ -439,11 +440,12 @@ def dedx(Projectile projectile, Material material, energy = None, Config config 
     if(isinstance(energy,numpy.ndarray)):
         res = numpy.empty(energy.size)
         for i,e in enumerate(energy):
-            res[i] = catimac.dedx(projectile.cbase, e, material.cbase, config.cbase)
+            projectile.T(e)
+            res[i] = catimac.dedx(projectile.cbase, material.cbase, config.cbase)
         return res
-    if(energy is None):
-        energy = projectile.T()
-    return catimac.dedx(projectile.cbase, energy, material.cbase, config.cbase)
+    if(energy is not None):
+        projectile.T(energy)
+    return catimac.dedx(projectile.cbase, material.cbase, config.cbase)
     
 def domega2dx(Projectile projectile, Material material, energy = None, Config config = default_config):
     if(isinstance(energy,numpy.ndarray)):

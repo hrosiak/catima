@@ -37,12 +37,12 @@ namespace catima{
       * @param mat - Material
       * @return dEdx
       */
-    double dedx(Projectile &p, double T, const Material &mat, const Config &c=default_config);
-
+    double dedx(Projectile &p, const Material &mat, const Config &c=default_config);
+    
     /**
       * calculate energy loss straggling variance for projectile-Material combination
       * @param p - Projectile
-      * @param mat - Material
+      * @param t - Material
       * @return dOmega^2/dx
       */
     double domega2dx(Projectile &p, double T, const Material &t, const Config &c=default_config);
@@ -55,20 +55,18 @@ namespace catima{
     /**
       * returns the range of the Projectile in Material calculated from range spline
       * @param p - Projectile
-      * @param T - energy in MeV/u
-      * @param mat - Material
+      * @param t - Material
       * @return range
       */
-    double range(Projectile &p, double T, const Material &t, const Config &c=default_config);
+    double range(Projectile &p, const Material &t, const Config &c=default_config);
 
     /**
       * returns the dEdx calculated from range spline as derivative
       * @param p - Projectile
-      * @param T - energy in MeV/u
-      * @param mat - Material
+      * @param t - Material
       * @return range
       */
-    double dedx_from_range(Projectile &p, double T, const Material &t, const Config &c=default_config);
+    double dedx_from_range(Projectile &p, const Material &t, const Config &c=default_config);
 
     /**
       * returns the dEdx calculated from range spline as derivative
@@ -151,7 +149,7 @@ namespace catima{
       * @param T - incoming energy
       * @return outcoming energy after the material in Mev/u
       */
-    double energy_out(Projectile &p, double T, const Material &t, const Config &c=default_config);
+    double energy_out(Projectile &p, const Material &t, const Config &c=default_config);
 
     /**
       * calculates outcoming energy 
@@ -194,11 +192,8 @@ namespace catima{
         return calculate(p, layers, c);
     }
 
-    /// the following functions are used to calculates array of data points for whole range of energies
-    /// usually used to construct splines
-    std::vector<double> calculate_range(Projectile p, const Material &t, const Config &c=default_config);
-    std::vector<double> calculate_range_straggling(Projectile p, const Material &t, const Config &c=default_config);
-    std::vector<double> calculate_angular_variance(Projectile p, const Material &t, const Config &c=default_config);
+ 
+    /// this calculate tof spline, at the moment it is not used
     std::vector<double> calculate_tof(Projectile p, const Material &t, const Config &c=default_config);
     
     /**

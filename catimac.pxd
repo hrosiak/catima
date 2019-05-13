@@ -72,10 +72,10 @@ cdef extern from "catima/config.h" namespace "catima":
         char calculation;
 
 cdef extern from "catima/catima.h" namespace "catima":
-    cdef double dedx(Projectile &p, double T, const Material &t,const Config &c)
+    cdef double dedx(Projectile &p, const Material &t,const Config &c)
     cdef double domega2dx(Projectile &p, double T, const Material &mat, const Config &c)
-    cdef double range(Projectile &p, double T, const Material &t, const Config &c);
-    cdef double dedx_from_range(Projectile &p, double T, const Material &t, const Config &c);
+    cdef double range(Projectile &p, const Material &t, const Config &c);
+    cdef double dedx_from_range(Projectile &p, const Material &t, const Config &c);
     cdef vector[double] dedx_from_range(Projectile &p, vector[double] &T, const Material &t, const Config &c);
     cdef double energy_out(Projectile &p, double T, const Material &t, const Config &c);
     cdef vector[double] energy_out(Projectile &p, vector[double] &T, const Material &t, const Config &c);

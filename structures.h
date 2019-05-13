@@ -78,7 +78,7 @@ namespace catima{
               * @param _rho - density of the material in g/cm3, default 0.0
               * @param _th - thickness of the material in g/cm2, default 0.0
               */
-            Material(double _a, int _z, double _rho=0.0, double _th=0.0);
+            Material(double _a, int _z, double _rho=0.0, double _th=0.0, double _ipot = 0.0);
 
 
             /**
