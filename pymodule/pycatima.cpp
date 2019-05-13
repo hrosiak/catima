@@ -83,6 +83,22 @@ Material py_make_material(py::list d, double density=0.0, double thickness=0.0, 
     return m;
 }
 
+py::dict get_result_dict(const Result& r){
+                    py::dict d;
+                    d["Ein"] = r.Ein;
+                    d["Eout"] = r.Eout;
+                    d["Eloss"] = r.Eloss;
+                    d["range"] = r.range;
+                    d["dEdxi"] = r.dEdxi;
+                    d["dEdxo"] = r.dEdxo;
+                    d["sigma_E"] = r.sigma_E;
+                    d["sigma_r"] = r.sigma_r;
+                    d["sigma_a"] = r.sigma_a;
+                    d["tof"] = r.tof;
+                    d["sp"] = r.sp;
+                    return d;
+                    }
+
 PYBIND11_MODULE(pycatima,m){
      py::class_<Projectile>(m,"Projectile")
              .def(py::init<>(),"constructor")
@@ -142,21 +158,7 @@ PYBIND11_MODULE(pycatima,m){
              .def_readwrite("sigma_r", &Result::sigma_r)
              .def_readwrite("tof", &Result::tof)
              .def_readwrite("sp", &Result::sp)
-             .def("get_dict",[](const Result& r){
-                    py::dict d;
-                    d["Ein"] = r.Ein;
-                    d["Eout"] = r.Eout;
-                    d["Eloss"] = r.Eloss;
-                    d["range"] = r.range;
-                    d["dEdxi"] = r.dEdxi;
-                    d["dEdxo"] = r.dEdxo;
-                    d["sigma_E"] = r.sigma_E;
-                    d["sigma_r"] = r.sigma_r;
-                    d["sigma_a"] = r.sigma_a;
-                    d["tof"] = r.tof;
-                    d["sp"] = r.sp;
-                    return d;
-                    });
+             .def("get_dict",&get_result_dict);
 
      py::class_<MultiResult>(m,"MultiResult")
              .def(py::init<>(),"constructor")
@@ -165,7 +167,7 @@ PYBIND11_MODULE(pycatima,m){
 //             .def_readwrite("Eout",&MultiResult::total_result.Eout)
              .def("__getitem__",[](MultiResult &r, int i){
                 return py::cast(r.results[i]);
-             })
+             },py::is_operator())
              .def("__getattr__",[](MultiResult &r, std::string& k){
                  if(k.compare("Eout")==0){
                      return py::cast(r.total_result.Eout);
@@ -182,13 +184,13 @@ PYBIND11_MODULE(pycatima,m){
                  else{
                      return py::cast(NULL);
                  }
-             })
-             .def("getJSON",[](const MultiResult &r){
+             },py::is_operator())
+             .def("get_dict",[](const MultiResult &r){
                 py::dict d;
                 py::list p;
-                d["result"] = r.total_result;
+                d["result"] = get_result_dict(r.total_result);
                 for(auto& entry:r.results){
-                    p.append(py::cast(entry));
+                    p.append(get_result_dict(entry));
                     }
                 d["partial"] = p;
                 return d;
@@ -277,6 +279,13 @@ PYBIND11_MODULE(pycatima,m){
     m.def("energy_out",py::overload_cast<Projectile&, const Material&, const Config&>(&energy_out),"energy_out",py::arg("projectile"), py::arg("material"), py::arg("config")=default_config);
     m.def("get_material",py::overload_cast<int>(&get_material));
     m.def("get_data",py::overload_cast<Projectile&, const Material&, const Config&>(get_data),"list of data",py::arg("projectile"),py::arg("material"),py::arg("config")=default_config);
+    m.def("w_magnification",[](Projectile& p, double energy, const Material& m, const Config& c){
+        py::list l;
+        auto r = w_magnification(p, energy, m, c);
+        l.append(r.first);
+        l.append(r.second);
+        return l;
+    });
     m.def("catima_info",&catima_info);
     m.def("storage_info",&storage_info);
     m.def("get_energy_table",&get_energy_table);
