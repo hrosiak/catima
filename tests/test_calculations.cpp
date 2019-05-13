@@ -131,9 +131,9 @@ const lest::test specification[] =
                 {15.9994,8,1}
                 });
 
-        EXPECT( catima::dedx(p,1000, water) == approx(2.23).R(5e-3));
-        EXPECT( catima::dedx(p,500, water) == approx(2.76).R(5e-3));
-        EXPECT( catima::dedx(p,9, water) == approx(51.17).R(5e-3));
+        EXPECT( catima::dedx(p(1000), water) == approx(2.23).R(5e-3));
+        EXPECT( catima::dedx(p(500), water) == approx(2.76).R(5e-3));
+        EXPECT( catima::dedx(p(9), water) == approx(51.17).R(5e-3));
     },
     CASE("dEdx from spline vs dEdx"){
         catima::Projectile p{238,92,92,1000};
@@ -142,13 +142,13 @@ const lest::test specification[] =
                 });
 
         auto res = catima::calculate(p(1000),graphite);
-        EXPECT(catima::dedx(p,1000, graphite) == approx(res.dEdxi).R(0.001) );
+        EXPECT(catima::dedx(p(1000), graphite) == approx(res.dEdxi).R(0.001) );
         
         res = catima::calculate(p,graphite,500);
-        EXPECT(catima::dedx(p,500, graphite) == approx(res.dEdxi).R(0.001) );
+        EXPECT(catima::dedx(p(500), graphite) == approx(res.dEdxi).R(0.001) );
         
         res = catima::calculate(p,graphite,9);
-        EXPECT(catima::dedx(p,9, graphite) == approx(res.dEdxi).R(0.001) );
+        EXPECT(catima::dedx(p(9), graphite) == approx(res.dEdxi).R(0.001) );
     },
     
 //    CASE("dOmega2dx Ferisov test"){
@@ -256,10 +256,10 @@ const lest::test specification[] =
         auto re = catima::energy_straggling_from_E(p,res1.Ein,res1.Eout,graphite);
         EXPECT(res1.sigma_E == re);
 
-        auto eo1 = catima::energy_out(p,1000,graphite);
+        auto eo1 = catima::energy_out(p(1000),graphite);
         EXPECT(res1.Eout == eo1);
 
-        auto de1 = catima::dedx_from_range(p,1000,graphite);
+        auto de1 = catima::dedx_from_range(p(1000),graphite);
         EXPECT(res1.dEdxi == de1);
 
     },
@@ -382,15 +382,15 @@ const lest::test specification[] =
       auto res2 = catima::energy_out(p,energies, graphite);
       EXPECT(res2.size()==energies.size());
       EXPECT(res2[2] == approx(997.07,01));
-      EXPECT(res2[0] == approx(catima::energy_out(p,energies[0],graphite),0.1));
-      EXPECT(res2[1] == approx(catima::energy_out(p,energies[1],graphite),0.1));
-      EXPECT(res2[2] == approx(catima::energy_out(p,energies[2],graphite),0.1));
+      EXPECT(res2[0] == approx(catima::energy_out(p(energies[0]),graphite),0.1));
+      EXPECT(res2[1] == approx(catima::energy_out(p(energies[1]),graphite),0.1));
+      EXPECT(res2[2] == approx(catima::energy_out(p(energies[2]),graphite),0.1));
 
       auto res3 = catima::dedx_from_range(p,energies,graphite);
       EXPECT(res3.size()==energies.size());
-      EXPECT(res3[0] == approx(catima::dedx_from_range(p,energies[0],graphite),0.1));
-      EXPECT(res3[1] == approx(catima::dedx_from_range(p,energies[1],graphite),0.1));
-      EXPECT(res3[2] == approx(catima::dedx_from_range(p,energies[2],graphite),0.1));
+      EXPECT(res3[0] == approx(catima::dedx_from_range(p(energies[0]),graphite),0.1));
+      EXPECT(res3[1] == approx(catima::dedx_from_range(p(energies[1]),graphite),0.1));
+      EXPECT(res3[2] == approx(catima::dedx_from_range(p(energies[2]),graphite),0.1));
     },
     CASE("constants"){
         using namespace catima;

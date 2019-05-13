@@ -58,7 +58,7 @@ void comp_dedx(catima::Projectile p, catima::Material t, double epsilon = 0.001,
     double v1, v2;
     for(auto _e : etable.values){
         p.T = _e;
-        v1 = catima::dedx(p,_e,t);
+        v1 = catima::dedx(p(_e),t);
         auto ares = catima::calculate(p(_e),t);
         v2 = ares.dEdxi;
         dif = rdif(v1,v2);

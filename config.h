@@ -82,19 +82,19 @@ namespace catima{
     };
 
     inline void set_config_lowenergy(Config c, low_energy_types lt){
-      c.corrections = c.corrections & (lt<<2);
+      c.calculation = c.calculation & (lt<<2);
     }
 
     inline unsigned char config_lowenergy(const Config c){
-      return (c.corrections>>2) & 0x7;
+      return (c.calculation>>2) & 0x7;
     }
 
     inline void set_config_omega(Config c, omega_types ot){
-      c.corrections = c.corrections & ot;
+      c.calculation = c.calculation & ot;
     }
 
     inline unsigned char config_omega(const Config c){
-      return c.corrections & 0x3;
+      return c.calculation & 0x3;
     }
 
     

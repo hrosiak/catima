@@ -26,10 +26,9 @@ bool operator==(const Config &a, const Config&b){
     }
 
 
-double dedx(Projectile &p, double T, const Material &mat, const  Config &c){
+double dedx(Projectile &p, const Material &mat, const  Config &c){
     double sum = 0;
-    if(T<=0)return 0.0;
-    p.T = T;
+    if(p.T<=0)return 0.0;
     sum += dedx_n(p,mat);
     double se=0;
     if(p.T<=10){
@@ -74,18 +73,18 @@ double da2dx(Projectile &p, double T, const Material &mat, const Config &c){
 }
 
 
-double range(Projectile &p, double T, const Material &t, const Config &c){
+double range(Projectile &p, const Material &t, const Config &c){
     auto& data = _storage.Get(p,t,c);
     //Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
     spline_type range_spline = get_range_spline(data);
-    return range_spline(T);
+    return range_spline(p.T);
 }
 
-double dedx_from_range(Projectile &p, double T, const Material &t, const Config &c){
+double dedx_from_range(Projectile &p, const Material &t, const Config &c){
     auto& data = _storage.Get(p,t,c);
     //Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
     spline_type range_spline = get_range_spline(data);
-    return p.A/range_spline.derivative(T);
+    return p.A/range_spline.derivative(p.T);
 }
 
 std::vector<double> dedx_from_range(Projectile &p, const std::vector<double> &T, const Material &t, const Config &c){
@@ -177,11 +176,11 @@ double energy_out(double T, double thickness, const Interpolator &range_spline){
     return -1;
 }
 
-double energy_out(Projectile &p, double T, const Material &t, const Config &c){
+double energy_out(Projectile &p, const Material &t, const Config &c){
     auto& data = _storage.Get(p,t,c);
     //Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
     spline_type range_spline = get_range_spline(data);
-    return energy_out(T,t.thickness(),range_spline);
+    return energy_out(p.T,t.thickness(),range_spline);
     }
 
 std::vector<double> energy_out(Projectile &p, const std::vector<double> &T, const Material &t, const Config &c){
@@ -306,74 +305,12 @@ Result calculate(double pa, int pz, double T, double ta, double tz, double thick
     return calculate(p(T),m);
 }
 
-std::vector<double> calculate_range(Projectile p, const Material &t, const Config &c){
-    double res;
-    std::vector<double>values;
-    values.reserve(max_datapoints);
-    auto fdedx = [&](double x)->double{return 1.0/dedx(p,x,t);};
-    
-    //calculate 1st point to have i-1 element ready for loop
-    res = integrator.integrate(fdedx,Ezero,energy_table(0));
-    res = p.A*res;
-    values.push_back(res);
-    
-    for(int i=1;i<max_datapoints;i++){
-        res = integrator.integrate(fdedx,energy_table(i-1),energy_table(i));
-        res = p.A*res;
-        res += values[i-1];
-        values.push_back(res);
-    }
-    
-    return values;
-}
-
-
-std::vector<double> calculate_range_straggling(Projectile p, const Material &t, const Config &c){
-    double res;
-    std::vector<double>values;
-    values.reserve(max_datapoints);
-    auto function = [&](double x)->double{return 1.0*domega2dx(p,x,t)/pow(dedx(p,x,t),3);};
-    //auto function = [&](double x)->double{
-                //double de = dedx(p,x,t);
-                //return 1.0*domega2dx(p,x,t)/(de*de*de);
-                //};
-    //calculate 1st point to have i-1 element ready for loop
-    res = integrator.integrate(function,Ezero,energy_table(0));
-    res = p.A*res;
-    values.push_back(res);
-    for(int i=1;i<max_datapoints;i++){
-        res = integrator.integrate(function,energy_table(i-1),energy_table(i));
-        res = p.A*res;
-        res += values[i-1];
-        values.push_back(res);
-    }
-    
-    return values;
-}
-
-std::vector<double> calculate_da2dx(Projectile p, const Material &t, const Config &c){
-    double res;
-    std::vector<double>values;
-    values.reserve(max_datapoints);
-    //auto function = [&](double x)->double{return p.A*da2dx(p,x,t)/dedx(p,x,t);};
-    auto function = [&](double x)->double{return 1.0/dedx(p,x,t);};
-    res = integrator.integrate(function,Ezero,energy_table(0));
-    res = p.A*da2dx(p,energy_table(0),t)*res;
-    values.push_back(res);
-    for(int i=1;i<max_datapoints;i++){
-        res = integrator.integrate(function,energy_table(i-1),energy_table(i));
-        res = p.A*da2dx(p,energy_table(i),t)*res;
-        res += values[i-1];
-        values.push_back(res);
-    }
-    return values;
-}
 
 std::vector<double> calculate_tof(Projectile p, const Material &t, const Config &c){
     double res;
     std::vector<double> values;
     values.reserve(max_datapoints);
-    auto function = [&](double x)->double{return 1.0/(dedx(p,x,t)*beta_from_T(x));};
+    auto function = [&](double x)->double{return 1.0/(dedx(p(x),t,c)*beta_from_T(x));};
     res = integrator.integrate(function,Ezero,energy_table(0));
     res = res*10.0*p.A/(c_light*t.density());
     values.push_back(res);
@@ -392,11 +329,11 @@ DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
     dp.range_straggling.resize(max_datapoints);
     dp.angular_variance.resize(max_datapoints);
     auto fdedx = [&](double x)->double{
-            return 1.0/dedx(p,x,t,c);    
+            return 1.0/dedx(p(x),t,c);    
             };
     auto fomega = [&](double x)->double{
-            //return 1.0*domega2dx(p,x,t)/pow(dedx(p,x,t),3);
-            return domega2dx(p,x,t,c)/catima::power(dedx(p,x,t,c),3);
+            //return 1.0*domega2dx(p,x,t)/pow(dedx(p(x),t),3);
+            return domega2dx(p,x,t,c)/catima::power(dedx(p(x),t,c),3);
             };
 
     double res;
@@ -434,11 +371,11 @@ DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
     dp.range_straggling.resize(max_datapoints);
     dp.angular_variance.resize(max_datapoints);
     auto fdedx = [&](double x)->double{
-            return 1.0/dedx(p,x,t,c);
+            return 1.0/dedx(p(x),t,c);
             };
     auto fomega = [&](double x)->double{
-            //return 1.0*domega2dx(p,x,t)/pow(dedx(p,x,t),3);
-            return domega2dx(p,x,t,c)/catima::power(dedx(p,x,t,c),3);
+            //return 1.0*domega2dx(p,x,t)/pow(dedx(p(x),t,c),3);
+            return domega2dx(p,x,t,c)/catima::power(dedx(p(x),t,c),3);
             };
 
     double res=0.0;
@@ -471,7 +408,7 @@ double calculate_tof_from_E(Projectile p, double Eout, const Material &t, const 
     double res;
     //double beta_in = beta_from_T(p.T);
     //double beta_out = beta_from_T(Eout);
-    auto function = [&](double x)->double{return 1.0/(dedx(p,x,t)*beta_from_T(x));};
+    auto function = [&](double x)->double{return 1.0/(dedx(p(x),t,c)*beta_from_T(x));};
     res = integrator.integrate(function,Eout,p.T);
     res = res*10.0*p.A/(c_light*t.density());
     return res;

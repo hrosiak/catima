@@ -1,8 +1,8 @@
-#include <exception>
 #include <stdexcept>
 #include <pybind11/pybind11.h>
 #include <pybind11/operators.h>
 #include <pybind11/numpy.h>
+#include <pybind11/stl.h>
 #include "catima/catima.h"
 #include "catima/srim.h"
 #include "catima/nucdata.h"
@@ -56,7 +56,7 @@ py::list get_data(Projectile& p, const Material &m, const Config& c=default_conf
     py::list ran;
     py::list rans;
     py::list av;
-    for(double e:data.range){ran.append(py::float_(e));}
+    for(double e:data.range){ran.append(e);}
     for(double e:data.range_straggling)rans.append(e);
     for(double e:data.angular_variance)av.append(e);
     r.append(ran);
@@ -65,11 +65,12 @@ py::list get_data(Projectile& p, const Material &m, const Config& c=default_conf
     return r;
 }
 
-Material py_make_material(py::list d, double density=0.0, double ipot=0.0, double mass=0.0){
+Material py_make_material(py::list d, double density=0.0, double thickness=0.0, double ipot=0.0, double mass=0.0){
     Material m;
     if(density>0.0)m.density(density);
     if(ipot>0.0)m.I(ipot);
     if(mass>0.0)m.M(mass);
+    if(thickness>0.0)m.thickness(thickness);
     for(int i=0;i<d.size();i++){
         py::list e(d[i]);
         if(e.size() != 3)throw std::invalid_argument("invalid Material constructor argument");
@@ -99,7 +100,9 @@ PYBIND11_MODULE(pycatima,m){
 
      py::class_<Material>(m,"Material")
              .def(py::init<>(),"constructor")
-             .def(py::init(&py_make_material),"constructor", py::arg("elements"),py::arg("density")=0.0,py::arg("i_potential")=0.0, py::arg("mass")=0.0)
+             .def(py::init<const Material&>(),"constructor")
+             .def(py::init<double, int, double, double, double>(),"constructor", py::arg("A"),py::arg("Z"),py::arg("density")=0.0,py::arg("thickness")=0.0,py::arg("i_potential")=0.0)
+             .def(py::init(&py_make_material),"constructor", py::arg("elements"),py::arg("density")=0.0,py::arg("thickness")=0.0,py::arg("i_potential")=0.0, py::arg("mass")=0.0)
              .def("add_element",&Material::add_element)
              .def("ncomponents",&Material::ncomponents)
              .def("density",py::overload_cast<>(&Material::density, py::const_), "get density")
@@ -115,9 +118,16 @@ PYBIND11_MODULE(pycatima,m){
              .def(py::init<>(),"constructor")
              .def("add",&Layers::add)
              .def("num",&Layers::num)
-             .def("__getitem__",&Layers::operator[],  py::is_operator())
+//             .def("__getitem__",&Layers::operator[],  py::is_operator())
+             .def("__getitem__",[](Layers &r, int i)->Material*
+                {
+                 if(i>=r.num()){
+                     throw std::invalid_argument("index out of range");}
+                 return &r[i];
+                },  py::is_operator(),py::return_value_policy::automatic_reference)
              .def("get",&Layers::operator[])
-             .def(py::self + py::self);
+             .def(py::self + py::self)
+             .def("__add__",[](const Layers s, const Material& m){return s+m;});
 
      py::class_<Result>(m,"Result")
              .def(py::init<>(),"constructor")
@@ -152,6 +162,27 @@ PYBIND11_MODULE(pycatima,m){
              .def(py::init<>(),"constructor")
              .def_readwrite("total_result", &MultiResult::total_result)
              .def_readwrite("results", &MultiResult::results)
+//             .def_readwrite("Eout",&MultiResult::total_result.Eout)
+             .def("__getitem__",[](MultiResult &r, int i){
+                return py::cast(r.results[i]);
+             })
+             .def("__getattr__",[](MultiResult &r, std::string& k){
+                 if(k.compare("Eout")==0){
+                     return py::cast(r.total_result.Eout);
+                 }
+                 else if(k.compare("sigma_a")==0){
+                     return py::cast(r.total_result.sigma_a);
+                 }
+                 else if(k.compare("tof")==0){
+                     return py::cast(r.total_result.tof);
+                 }
+                 else if(k.compare("Eloss")==0){
+                     return py::cast(r.total_result.Eloss);
+                 }
+                 else{
+                     return py::cast(NULL);
+                 }
+             })
              .def("getJSON",[](const MultiResult &r){
                 py::dict d;
                 py::list p;
@@ -235,16 +266,21 @@ PYBIND11_MODULE(pycatima,m){
                });
 
     m.def("srim_dedx_e",&srim_dedx_e);
-    m.def("sezi_dedx_e",&sezi_dedx_e, "sezi_dedx_e",  py::arg("Projectile"), py::arg("Material"), py::arg("Config")=default_config);
-    m.def("calculate",py::overload_cast<Projectile&, const Material&, const Config&>(&calculate),"calculate",py::arg("Projectile"), py::arg("Material"), py::arg("Config")=default_config);
-    m.def("dedx_from_range",py::overload_cast<Projectile&, double, const Material&, const Config&>(&dedx_from_range),"calculate",py::arg("Projectile"), py::arg("energy") ,py::arg("Material"), py::arg("config")=default_config);
-    m.def("dedx_from_range",py::overload_cast<Projectile&, const std::vector<double>&, const Material&, const Config&>(&dedx_from_range),"calculate",py::arg("Projectile"), py::arg("energy") ,py::arg("Material"), py::arg("config")=default_config);
-    //m.def("calculate",py::overload_cast<Projectile&, const Material&, double, const Config&>(&calculate), "calculate",py::arg("Projectile"), py::arg("Material"), py::arg("energy"), py::arg("config")=default_config);
+    m.def("sezi_dedx_e",&sezi_dedx_e, "sezi_dedx_e",  py::arg("projectile"), py::arg("material"), py::arg("config")=default_config);
+    m.def("calculate",py::overload_cast<Projectile&, const Material&, const Config&>(&calculate),"calculate",py::arg("projectile"), py::arg("material"), py::arg("config")=default_config);
+    m.def("calculate_layers",py::overload_cast<Projectile&, const Layers&, const Config&>(&calculate),"calculate_layers",py::arg("projectile"), py::arg("material"), py::arg("config")=default_config);
+    m.def("dedx_from_range",py::overload_cast<Projectile&, const Material&, const Config&>(&dedx_from_range),"calculate",py::arg("projectile") ,py::arg("material"), py::arg("config")=default_config);
+    m.def("dedx_from_range",py::overload_cast<Projectile&, const std::vector<double>&, const Material&, const Config&>(&dedx_from_range),"calculate",py::arg("projectile"), py::arg("energy") ,py::arg("material"), py::arg("config")=default_config);
+    m.def("dedx",py::overload_cast<Projectile&, const Material&, const Config&>(&dedx), "dedx",py::arg("projectile"), py::arg("material"), py::arg("config")=default_config);
+    m.def("range",py::overload_cast<Projectile&, const Material&, const Config&>(&range), "range",py::arg("projectile"), py::arg("material"), py::arg("config")=default_config);
+    m.def("energy_out",py::overload_cast<Projectile&, const std::vector<double>&, const Material&, const Config&>(&energy_out),"energy_out",py::arg("projectile"), py::arg("energy") ,py::arg("material"), py::arg("config")=default_config);
+    m.def("energy_out",py::overload_cast<Projectile&, const Material&, const Config&>(&energy_out),"energy_out",py::arg("projectile"), py::arg("material"), py::arg("config")=default_config);
     m.def("get_material",py::overload_cast<int>(&get_material));
-    m.def("get_data",py::overload_cast<Projectile&, const Material&, const Config&>(get_data),"list of data",py::arg("projectile"),py::arg("material"),py::arg("Config")=default_config);
+    m.def("get_data",py::overload_cast<Projectile&, const Material&, const Config&>(get_data),"list of data",py::arg("projectile"),py::arg("material"),py::arg("config")=default_config);
     m.def("catima_info",&catima_info);
     m.def("storage_info",&storage_info);
     m.def("get_energy_table",&get_energy_table);
+    m.def("energy_table",[](int i){return energy_table(i);});
     m.attr("max_datapoints") = max_datapoints;
     m.attr("max_storage_data") = max_storage_data;
     m.attr("logEmin")=logEmin;

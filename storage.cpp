@@ -111,12 +111,6 @@ void Data::Add(const Projectile &p, const Material &t, const Config &c){
 	    if(e==dp)return; 
 	}
     if(index==storage.end())index=storage.begin();
-    #if(0)
-    *index = dp;
-    index->range = calculate_range(p,t,c);
-    index->range_straggling = calculate_range_straggling(p,t,c);
-    index->angular_variance = calculate_angular_variance(p,t,c);
-    #else
     *index = calculate_DataPoint(p,t,c);
 #ifdef STORE_SPLINES
     //index->range_spline = Interpolator(energy_table.values,index->range);
@@ -126,8 +120,6 @@ void Data::Add(const Projectile &p, const Material &t, const Config &c){
     index->range_straggling_spline = Interpolator(energy_table, index->range_straggling);
     index->angular_variance_spline = Interpolator(energy_table, index->angular_variance);
 #endif
-#endif
-
     index++;
     }
     

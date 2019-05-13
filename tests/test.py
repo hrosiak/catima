@@ -1,7 +1,7 @@
 import sys
 sys.path.insert(0,"../build")
 import unittest
-import catima
+import pycatima as catima
 import math
 
 class TestStructures(unittest.TestCase):
@@ -18,10 +18,8 @@ class TestStructures(unittest.TestCase):
         self.assertEqual(p.Q(),90)
         p.T(1000)
         self.assertEqual(p.T(),1000)
-        self.assertEqual(p(),1000)
         p(500)
         self.assertEqual(p.T(),500)
-        self.assertEqual(p(),500)
 
         p = catima.Projectile(238,92,90, T=100)
         self.assertEqual(p.T(),100)
@@ -33,27 +31,27 @@ class TestStructures(unittest.TestCase):
         mat.add_element(1,1,2)
         self.assertEqual(mat.ncomponents(),2)
 
-        mat2 = catima.Material([12.01,6,1])
+        mat2 = catima.Material(12.01,6)
         self.assertEqual(mat2.ncomponents(),1)
         self.assertEqual(mat2.molar_mass(),12.01)
 
-        mat3 = catima.Material([12,6,1])
+        mat3 = catima.Material([[12,6,1]])
         self.assertEqual(mat3.ncomponents(),1)
         self.assertEqual(mat3.molar_mass(),12)
 
         water = catima.Material([[1,1,2],[16,8,1]])
         self.assertEqual(water.molar_mass(),18)
 
-        mat2 = catima.Material([0,6,1])
+        mat2 = catima.Material(0,6)
         self.assertEqual(mat2.ncomponents(),1)
         self.assertAlmostEqual(mat2.molar_mass(),12,1)
 
-        mat5 = catima.Material([0,6,1],density=1.9, thickness=0.5)
+        mat5 = catima.Material(0,6,density=1.9, thickness=0.5)
         self.assertEqual(mat5.ncomponents(),1)
         self.assertEqual(mat5.thickness(),0.5)
         self.assertEqual(mat5.density(),1.9)
 
-        mat6 = catima.Material([0,6,1],density=1.9, thickness=0.5,i_potential=80.0)
+        mat6 = catima.Material(0,6,density=1.9, thickness=0.5,i_potential=80.0)
         self.assertEqual(mat6.ncomponents(),1)
         self.assertEqual(mat6.thickness(),0.5)
         self.assertEqual(mat6.density(),1.9)
@@ -61,7 +59,7 @@ class TestStructures(unittest.TestCase):
 
         # copy
         mat3.density(1.8)
-        matc = mat3.copy()
+        matc = catima.Material(mat3)
         self.assertEqual(matc.ncomponents(),1)
         self.assertEqual(matc.molar_mass(),12)
         self.assertEqual(matc.density(),1.8)
@@ -76,7 +74,7 @@ class TestStructures(unittest.TestCase):
         self.assertEqual(m1.ncomponents(),1)
         self.assertAlmostEqual(m1.density(),2.0,1)
 
-        m2 = catima.get_material(catima.material.WATER)
+        m2 = catima.get_material(catima.material.Water)
         self.assertEqual(m2.ncomponents(),2)
         self.assertAlmostEqual(m2.molar_mass(),18,1)
         self.assertAlmostEqual(m2.density(),1.0,1)
@@ -114,15 +112,16 @@ class TestStructures(unittest.TestCase):
         self.assertAlmostEqual(mat[0].density(),2.0,1)
         self.assertAlmostEqual(mat[2].thickness(),1.0,1)
         self.assertAlmostEqual(mat[2].density(),1.8,1)
-        mat[2].thickness(1.2)
-        mat[2].density(1.9)
-        self.assertAlmostEqual(mat.materials[2].thickness(),1.2,1)
-        self.assertAlmostEqual(mat.materials[2].density(),1.9,1)
-        #self.assertAlmostEqual(mat.materials[0].thickness(),0.5,1)
-        #self.assertAlmostEqual(mat.materials[0].density(),2.0,1)
-        self.assertEqual(mat[3],None)
-        self.assertEqual(mat["a"],None)
-
+        a = mat[2]
+        a.thickness(1.2)
+        a.density(1.9)
+        self.assertAlmostEqual(mat[2].thickness(),1.2,1)
+        self.assertAlmostEqual(mat[2].density(),1.9,1)
+        
+        self.assertEqual(mat.num(),3)
+        with self.assertRaises(ValueError):
+            mat[3]
+    
         mat2 = catima.Layers()
         mat2.add(n2)
         self.assertEqual(mat2.num(),1)
@@ -143,14 +142,13 @@ class TestStructures(unittest.TestCase):
         self.assertEqual(mats[4].thickness(),0.5)
 
     def test_material_calculation(self):
-        water = catima.get_material(catima.material.WATER)
+        water = catima.get_material(catima.material.Water)
         p = catima.Projectile(1,1)
         
         p(1000)
         res = catima.calculate(p,water)
         res2 = catima.dedx(p,water)
         self.assertAlmostEqual(res.dEdxi,2.23,1)
-        self.assertAlmostEqual(res["dEdxi"],2.23,1)
         self.assertAlmostEqual(res.dEdxi,res2,3)
         res = catima.calculate(p(500),water)
         res2 = catima.dedx(p,water)
@@ -171,14 +169,16 @@ class TestStructures(unittest.TestCase):
         self.assertAlmostEqual(res.dEdxi,res2,3)
         
     def test_config(self):
-        water = catima.get_material(catima.material.WATER)
+        water = catima.get_material(catima.material.Water)
         water.density(1.0)
         water.thickness(1.0)
         p = catima.Projectile(1,1)
         conf = catima.Config()
-        conf.dedx_straggling(catima.omega_type.bohr)
+        conf.calculation = catima.omega_types.bohr
         conf2 = catima.Config()
-        conf2.dedx_straggling(catima.omega_type.atima)
+        conf2.calculation = catima.omega_types.atima
+        self.assertEqual(conf.calculation, 1)
+        self.assertEqual(conf2.calculation, 0)
         p(1000)
         res = catima.calculate(p,water,config=conf)
         res2 = catima.calculate(p,water,config=conf2)
@@ -194,7 +194,6 @@ class TestStructures(unittest.TestCase):
         res = catima.calculate(p(1000),graphite)
         res2 = catima.energy_out(p(1000),graphite)
         self.assertAlmostEqual(res.Eout,997.077,1)
-        self.assertAlmostEqual(res["Eout"],997.077,1)
         self.assertAlmostEqual(res.Eout,res2,3)
     
     def test_eout_list(self):
@@ -204,7 +203,7 @@ class TestStructures(unittest.TestCase):
         energies = [100,500,1000]
         res = catima.calculate(p(1000),graphite)
         self.assertAlmostEqual(res.Eout,997.077,1)
-        res2 = catima.energy_out(p,graphite,energy=energies)
+        res2 = catima.energy_out(p,energies, graphite)
         self.assertEqual(len(res2),len(energies))
         self.assertAlmostEqual(res2[2], 997.077,1)
         self.assertAlmostEqual(res2[0], catima.calculate(p(energies[0]),graphite).Eout ,1)
@@ -215,16 +214,16 @@ class TestStructures(unittest.TestCase):
         graphite.thickness(0.5)
         p = catima.Projectile(12,6)
         energies = [100,500,1000]
-        res2 = catima.dedx_from_range(p,graphite,energy=energies)
+        res2 = catima.dedx_from_range(p,energies, graphite)
         self.assertEqual(len(res2),len(energies))
         self.assertEqual(len(res2),3)
         for i,e in enumerate(energies):
-            r = catima.dedx_from_range(p, graphite, energy=e)
+            r = catima.dedx_from_range(p(e), graphite)
             self.assertAlmostEqual(res2[i], r, 0.1)
 
     def test_layer_calculation(self):
         p = catima.Projectile(12,6)
-        water = catima.get_material(catima.material.WATER)
+        water = catima.get_material(catima.material.Water)
         water.thickness(10.0)
         graphite = catima.get_material(6)
         graphite.thickness(1.0)
@@ -237,17 +236,17 @@ class TestStructures(unittest.TestCase):
         self.assertEqual(len(res.results),2)
         self.assertAlmostEqual(res.total_result.Eout,926.3,1)
         self.assertAlmostEqual(res.total_result.sigma_a,0.00269,1)
-        self.assertAlmostEqual(res["Eout"],926.3,1)
-        self.assertAlmostEqual(res["sigma_a"],0.00269,4)
-        self.assertAlmostEqual(res["tof"],0.402,2)
-        self.assertAlmostEqual(res["Eloss"],884,0)
+        self.assertAlmostEqual(res.Eout,926.3,1)
+        self.assertAlmostEqual(res.sigma_a,0.00269,4)
+        self.assertAlmostEqual(res.tof,0.402,2)
+        self.assertAlmostEqual(res.Eloss,884,0)
 
-        self.assertAlmostEqual(res[0]["Eout"],932.24,0)
-        self.assertAlmostEqual(res[1]["Eout"],926.3,0)
-        self.assertAlmostEqual(res[0]["sigma_a"],0.00258,4)
-        self.assertAlmostEqual(res[1]["sigma_a"],0.000774,4)
-        self.assertAlmostEqual(res[0]["range"],107.1,0)
-        self.assertAlmostEqual(res[1]["range"],111.3,0)
+        self.assertAlmostEqual(res[0].Eout,932.24,0)
+        self.assertAlmostEqual(res[1].Eout,926.3,0)
+        self.assertAlmostEqual(res[0].sigma_a,0.0025,3)
+        self.assertAlmostEqual(res[1].sigma_a,0.000774,4)
+        self.assertAlmostEqual(res[0].range,107.1,0)
+        self.assertAlmostEqual(res[1].range,111.3,0)
     
     def test_energy_table(self):
         table = catima.get_energy_table()
@@ -257,7 +256,7 @@ class TestStructures(unittest.TestCase):
         
     def test_storage(self):
         p = catima.Projectile(12,6)
-        water = catima.get_material(catima.material.WATER)
+        water = catima.get_material(catima.material.Water)
         water.thickness(10.0)
         graphite = catima.get_material(6)
         graphite.thickness(1.0)
@@ -270,33 +269,33 @@ class TestStructures(unittest.TestCase):
         
         res = catima.calculate(p(et[10]),water)
         self.assertAlmostEqual(res.range,data[0][10],6)
-        self.assertAlmostEqual(catima.projectile_range(p,water),data[0][10],6)
+        self.assertAlmostEqual(catima.range(p,water),data[0][10],6)
         #self.assertAlmostEqual(catima.domega2de(p,water),data[1][10],6)
         
         res = catima.calculate(p(et[100]),water)
         self.assertAlmostEqual(res.range,data[0][100],6)
-        self.assertAlmostEqual(catima.projectile_range(p,water),data[0][100],6)
+        self.assertAlmostEqual(catima.range(p,water),data[0][100],6)
         #self.assertAlmostEqual(catima.domega2de(p,water),data[1][100],6)
         
         res = catima.calculate(p(et[200]),water)
         self.assertAlmostEqual(res.range,data[0][200],6)
-        self.assertAlmostEqual(catima.projectile_range(p,water),data[0][200],6)
+        self.assertAlmostEqual(catima.range(p,water),data[0][200],6)
         #self.assertAlmostEqual(catima.domega2de(p,water),data[1][200],6)
         
         res = catima.calculate(p(et[401]),water)
         self.assertAlmostEqual(res.range,data[0][401],6)
-        self.assertAlmostEqual(catima.projectile_range(p,water),data[0][401],6)
+        self.assertAlmostEqual(catima.range(p,water),data[0][401],6)
         #self.assertAlmostEqual(catima.domega2de(p,water),data[1][401],6)
         
     def test_python_storage_access(self):
         
         p = catima.Projectile(12,6)
-        water = catima.get_material(catima.material.WATER)
+        water = catima.get_material(catima.material.Water)
         water.thickness(10.0)
         graphite = catima.get_material(6)
         graphite.thickness(1.0)
         data = catima.get_data(p, water)
-        self.assertEqual(catima.max_storage_data,100) # assuming 50, this has to be changed manually
+        self.assertEqual(catima.max_storage_data,60) # assuming 60, this has to be changed manually
         r = catima.storage_info()
         
         #self.assertAlmostEqual(catima.da2de(p,water,et[100]),data[2][100],6)
