@@ -24,7 +24,7 @@ std::string  material_to_string(const Material &r){
                 for(int i = 0; i < n; i++){
                     auto el = r.get_element(i);
                     s += "#"+std::to_string(i);
-                    s += ": A = "+std::to_string(el.A) + ", Z = "+std::to_string(el.A)+ ", stn = "+std::to_string(el.stn)+"\n";
+                    s += ": A = "+std::to_string(el.A) + ", Z = "+std::to_string(el.Z)+ ", stn = "+std::to_string(el.stn)+"\n";
                  }
                 return s;
             };
