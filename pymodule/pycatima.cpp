@@ -18,24 +18,29 @@ void catima_info(){
     printf("max energy point = 10^%lf MeV/u\n",logEmax);
 }
 
+std::string  material_to_string(const Material &r){
+                std::string s;
+                auto n = r.ncomponents();
+                for(int i = 0; i < n; i++){
+                    auto el = r.get_element(i);
+                    s += "#"+std::to_string(i);
+                    s += ": A = "+std::to_string(el.A) + ", Z = "+std::to_string(el.A)+ ", stn = "+std::to_string(el.stn)+"\n";
+                 }
+                return s;
+            };
+
 py::list storage_info(){
     py::list res;
     for(int i=0; i<max_storage_data;i++){
         auto& data = _storage.Get(i);
         if(data.p.A>0 && data.p.Z && data.m.ncomponents()>0){
             py::list mat;
-            for(int j=0; j<data.m.ncomponents();j++){
-                auto e = data.m.get_element(j);
-                mat.append(e.A);
-                mat.append(e.Z);
-                mat.append(e.stn);
-            }
             py::dict d;
             py::list p;
             p.append(data.p.A);
             p.append(data.p.Z);
             d["projectile"] = p;
-            d["matter"] = mat;
+            d["matter"] = material_to_string(data.m);
             d["config"] = py::cast(data.config);
             res.append(d);
         }
@@ -130,16 +135,7 @@ PYBIND11_MODULE(pycatima,m){
              .def("thickness_cm",&Material::thickness_cm,"set thickness in cm unit")
              .def("I",py::overload_cast<>(&Material::I, py::const_), "get I")
              .def("I",py::overload_cast<double>(&Material::I), "set I")
-             .def("__str__",[](const Material &r){
-                std::string s;
-                auto n = r.ncomponents();
-                for(int i = 0; i < n; i++){
-                    auto el = r.get_element(i);
-                    s += "#"+std::to_string(i);
-                    s += ": A = "+std::to_string(el.A) + ", Z = "+std::to_string(el.A)+ ", stn = "+std::to_string(el.stn)+"\n";
-                 }
-                return s;
-            });
+             .def("__str__",&material_to_string);
 
      py::class_<Layers>(m,"Layers")
              .def(py::init<>(),"constructor")
