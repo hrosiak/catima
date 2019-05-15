@@ -7,6 +7,7 @@
 #include "catima/srim.h"
 #include "catima/nucdata.h"
 #include <iostream>
+#include <string>
 namespace py = pybind11;
 using namespace catima;
 
@@ -128,7 +129,17 @@ PYBIND11_MODULE(pycatima,m){
              .def("thickness",py::overload_cast<double>(&Material::thickness), "set thickness")
              .def("thickness_cm",&Material::thickness_cm,"set thickness in cm unit")
              .def("I",py::overload_cast<>(&Material::I, py::const_), "get I")
-             .def("I",py::overload_cast<double>(&Material::I), "set I");
+             .def("I",py::overload_cast<double>(&Material::I), "set I")
+             .def("__str__",[](const Material &r){
+                std::string s;
+                auto n = r.ncomponents();
+                for(int i = 0; i < n; i++){
+                    auto el = r.get_element(i);
+                    s += "#"+std::to_string(i);
+                    s += ": A = "+std::to_string(el.A) + ", Z = "+std::to_string(el.A)+ ", stn = "+std::to_string(el.stn)+"\n";
+                 }
+                return s;
+            });
 
      py::class_<Layers>(m,"Layers")
              .def(py::init<>(),"constructor")
@@ -265,7 +276,14 @@ PYBIND11_MODULE(pycatima,m){
                d["calculation"] = r.calculation;
                d["skip"] = r.skip;
                return d;
-               });
+               })
+            .def("__str__",[](const Config &r){
+                std::string s;
+                s = "z_effective = "+std::to_string(r.z_effective);
+                s += ", corrections = "+std::to_string(r.corrections);
+                s += ", calculation = "+std::to_string(r.calculation);
+                return s;
+            });
 
     m.def("srim_dedx_e",&srim_dedx_e);
     m.def("sezi_dedx_e",&sezi_dedx_e, "sezi_dedx_e",  py::arg("projectile"), py::arg("material"), py::arg("config")=default_config);
