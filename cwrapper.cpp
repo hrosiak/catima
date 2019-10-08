@@ -7,7 +7,6 @@ extern "C" {
 
     CatimaResult catima_calculate(double pa, int pz, double T, double ta, double tz, double thickness, double density){
         catima::default_config.z_effective = catima_defaults.z_effective;
-        catima::default_config.skip = catima_defaults.skip;
         catima::Material mat;
         catima::Projectile p(pa,pz);
         if(tz>200){

@@ -15,28 +15,26 @@ struct CatimaResult{
         double sigma_E;
         double sigma_a;
         double sigma_r;
-        double tof;   
+        double tof;
 };
 
 
     enum z_eff_type {
         none = 0,
-        atima = 1
-    };
-
-    enum skip_calculation{
-        skip_none = 0,
-        skip_tof = 1,
-        skip_sigma_a = 2,
-        skip_sigma_r = 4
+        pierce_blann = 1,
+        anthony_landorf = 2,
+        hubert = 3,
+        winger = 4,
+        schiwietz = 5,
+        global = 6,
+        atima14 = 7
     };
 
 struct CatimaConfig {
         char z_effective;
-        char skip;
 };
 
-struct CatimaConfig catima_defaults = {none,skip_none};
+struct CatimaConfig catima_defaults = {none};
 
 typedef struct CatimaResult CatimaResult;
 
