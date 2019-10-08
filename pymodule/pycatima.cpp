@@ -213,13 +213,6 @@ PYBIND11_MODULE(pycatima,m){
             .value("global", z_eff_type::global)
             .value("atima14", z_eff_type::atima14);
 
-    py::enum_<skip_calculation>(m,"skip_calculation")
-            .value("skip_none", skip_calculation::skip_none)
-            .value("skip_tof", skip_calculation::skip_tof)
-            .value("skip_sigma_a", skip_calculation::skip_sigma_a)
-            .value("skip_sigma_r", skip_calculation::skip_sigma_r)
-            .value("skip_reactions", skip_calculation::skip_reactions);
-
     py::enum_<corrections>(m,"corrections")
             .value("no_barkas", corrections::no_barkas)
             .value("no_lindhard", corrections::no_lindhard)
@@ -264,13 +257,11 @@ PYBIND11_MODULE(pycatima,m){
             .def_readwrite("z_effective", &Config::z_effective)
             .def_readwrite("corrections", &Config::corrections)
             .def_readwrite("calculation", &Config::calculation)
-            .def_readwrite("skip", &Config::skip)
             .def("get",[](const Config &r){
                py::dict d;
                d["z_effective"] = r.z_effective;
                d["corrections"] = r.corrections;
                d["calculation"] = r.calculation;
-               d["skip"] = r.skip;
                return d;
                })
             .def("__str__",[](const Config &r){

@@ -20,17 +20,6 @@ namespace catima{
     };
 
     /**
-      * enum to select which calculation to skip
-      */
-    enum skip_calculation:unsigned char{
-        skip_none = 0,
-        skip_tof = 1,
-        skip_sigma_a = 2,
-        skip_sigma_r = 4,
-        skip_reactions = 128
-    };
-
-    /**
       * enum to select which dEdx correction to skip
       */
     enum corrections:unsigned char{
@@ -58,23 +47,12 @@ namespace catima{
 
     /**
       * structure to store calculation configuration
-      * each group of options are grouped and enum are suppose to use
-      * see catima::z_eff_type, catima::skip_calculation, catima::corrections
-      *
-      * check catima::z_effective()
-      * 
       */
     struct Config{
         #ifndef GLOBAL
         unsigned char z_effective=z_eff_type::pierce_blann;
         #else
         unsigned char z_effective=z_eff_type::atima14;
-        #endif
-
-        #ifdef REACTIONS
-        unsigned char skip=skip_none;
-        #else
-        unsigned char skip=skip_calculation::skip_reactions;
         #endif
 
         unsigned char corrections = 0;

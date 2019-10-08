@@ -254,7 +254,7 @@ Result calculate(Projectile &p, const Material &t, const Config &c){
         spline_type angular_variance_spline = get_angular_variance_spline(data);
         res.sigma_a = sqrt(angular_variance_spline(T) - angular_variance_spline(res.Eout));
         #endif
-        if( !(c.skip&skip_tof) && t.thickness()>0){
+        if( t.thickness()>0){
             //auto tofdata = calculate_tof(p,t,c);
             //Interpolator tof_spline(energy_table.values, tofdata.data(), energy_table.num,interpolation_t::linear);
             //res.tof = tof_spline(res.Ein) - tof_spline(res.Eout);
