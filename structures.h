@@ -87,6 +87,7 @@ namespace catima{
               * Maetrial water({
                   {1,1,2},
                   {16,8,1},
+		  1.0,  // optional density
                 });
               * \endcode
               */

@@ -1,4 +1,4 @@
-PROGRAMS=simple dedx example2 materials ls_coefficients reactions
+PROGRAMS=simple dedx materials ls_coefficients
 
 GCC=g++ -Wall -std=c++14
 INCDIR=-I$(CATIMAPATH)/include
