@@ -26,7 +26,7 @@ compile options, enable or disable with cmake:
 
 available options:
   * BUILD_SHARED_LIBS - if ON shared library is build, otherwise static
-  * PYTHON_MODULE - enable/disable building of the python bindigs, cython and numpy are required to build the catima python module, default OFF
+  * PYTHON_MODULE - enable/disable building of the python bindigs, pybind11 is required to build the catima python module, default OFF
   * TESTS - build tests
   * EXAMPLES - build examples
   * DOCS - prepare doxygen documentation (after cmake, __make docs__ needs to be executed)
