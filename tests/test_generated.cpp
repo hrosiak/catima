@@ -1,25 +1,14 @@
-#include "lest.hpp"
+#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
+#define DOCTEST_CONFIG_SUPER_FAST_ASSERTS
+#include "doctest.h"
 #include <math.h>
+#include "testutils.h"
 #include "catima/catima.h"
 //#include "nucdata.h"
 
 using namespace std;
-using lest::approx;
-bool rcompare(double a, double b,double eps){
-    if(fabs((a-b)/fabs(b))<eps){
-      return true;
-    }
-    else{
-      std::cout<<"\033[1;31m"<<a<<" == "<<b<<"\033[0m"<<std::endl;
-      return false;
-    }
-      
-}
 
-const lest::test specification[] =
-{
-    
-    CASE("LS generated is equal to calculated"){
+    TEST_CASE("LS generated is equal to calculated"){
       catima::Projectile p;
       double a,b;
       
@@ -29,7 +18,7 @@ const lest::test specification[] =
           p.T = e;
           a = catima::bethek_lindhard(p);
           b = catima::precalculated_lindhard(p);
-          EXPECT(a==approx(b).epsilon(0.001));
+          CHECK(a==approx(b).epsilon(0.001));
       }
       
       p.A = 220;
@@ -38,7 +27,7 @@ const lest::test specification[] =
           p.T = e;
           a = catima::bethek_lindhard(p);
           b = catima::precalculated_lindhard(p);
-          EXPECT(a==approx(b).epsilon(0.01));
+          CHECK(a==approx(b).epsilon(0.01));
       }
       
       p.A = 250;
@@ -47,7 +36,7 @@ const lest::test specification[] =
           p.T = e;
           a = catima::bethek_lindhard(p);
           b = catima::precalculated_lindhard(p);
-          EXPECT(a==approx(b).epsilon(0.01));
+          CHECK(a==approx(b).epsilon(0.01));
       }
       
       
@@ -57,7 +46,7 @@ const lest::test specification[] =
           p.T = e;
           a = catima::bethek_lindhard(p);
           b = catima::precalculated_lindhard(p);
-          EXPECT(a==approx(b).epsilon(0.01));
+          CHECK(a==approx(b).epsilon(0.01));
       }
       
       p.A = 100;
@@ -66,12 +55,12 @@ const lest::test specification[] =
           p.T = e;
           a = catima::bethek_lindhard(p);
           b = catima::precalculated_lindhard(p);
-          EXPECT(a==approx(b).epsilon(0.01));
+          CHECK(a==approx(b).epsilon(0.01));
       }
       
-    },
+    }
     
-    CASE("LS X generated is equal to calculated"){
+    TEST_CASE("LS X generated is equal to calculated"){
       catima::Projectile p;
       double a,b;
       
@@ -81,7 +70,7 @@ const lest::test specification[] =
           p.T = e;
           a = catima::bethek_lindhard_X(p);
           b = catima::precalculated_lindhard_X(p);
-          EXPECT(a==approx(b).epsilon(0.001));
+          CHECK(a==approx(b).epsilon(0.001));
       }
       
       p.A = 220;
@@ -90,7 +79,7 @@ const lest::test specification[] =
           p.T = e;
           a = catima::bethek_lindhard_X(p);
           b = catima::precalculated_lindhard_X(p);
-          EXPECT(a==approx(b).epsilon(0.02));
+          CHECK(a==approx(b).epsilon(0.02));
       }
       
       p.A = 250;
@@ -99,7 +88,7 @@ const lest::test specification[] =
           p.T = e;
           a = catima::bethek_lindhard_X(p);
           b = catima::precalculated_lindhard_X(p);
-          EXPECT(a==approx(b).epsilon(0.03));
+          CHECK(a==approx(b).epsilon(0.03));
       }
       
       
@@ -109,7 +98,7 @@ const lest::test specification[] =
           p.T = e;
           a = catima::bethek_lindhard_X(p);
           b = catima::precalculated_lindhard_X(p);
-          EXPECT(a==approx(b).epsilon(0.03));
+          CHECK(a==approx(b).epsilon(0.03));
       }
       
       p.A = 100;
@@ -118,15 +107,7 @@ const lest::test specification[] =
           p.T = e;
           a = catima::bethek_lindhard_X(p);
           b = catima::precalculated_lindhard_X(p);
-          EXPECT(a==approx(b).epsilon(0.03));
+          CHECK(a==approx(b).epsilon(0.03));
       }
       
     }
-};
-
-int main( int argc, char * argv[] )
-{
-    return lest::run( specification, argc, argv );
-}
-
-

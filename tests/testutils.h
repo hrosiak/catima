@@ -1,5 +1,6 @@
-namespace catima{
-
+#include <cmath>
+#include <stdio.h>
+#include <iostream>
 class approx
 {
 public:
@@ -19,7 +20,6 @@ public:
 
     approx & epsilon( double epsilon ) { epsilon_ = epsilon; return *this; }
     approx & R( double relative ) { epsilon_ = relative*magnitude_; return *this; }
-
 
     friend bool operator == ( double lhs, approx const & rhs )
     {
@@ -41,31 +41,5 @@ public:
 };
 
 std::ostream & operator<<(std::ostream &os, approx const &a){
-    using lest::to_string;
-    return os<<to_string(a.magnitude_)<<" +- "<<a.epsilon_;
-}
-
-
-bool rdiff(double a, double b,double eps){
-    if(fabs((a-b)/fabs(b))<eps){
-      return true;
-    }
-    else{
-      std::cout<<"\033[1;31m"<<a<<" == "<<b<<"\033[0m"<<std::endl;
-      return false;
-    }
-      
-}
-
-bool diff(double a, double b,double eps){
-    if(fabs((a-b))<eps){
-      return true;
-    }
-    else{
-      std::cout<<"\033[1;31m"<<a<<" == "<<b<<"\033[0m"<<std::endl;
-      return false;
-    }
-      
-}
-
+    return os<<a.magnitude_<<" +- "<<a.epsilon_;
 }
