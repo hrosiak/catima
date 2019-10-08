@@ -1,10 +1,10 @@
-CATima library manual                   {#mainpage}
+CATima library manual
 =====================
 
 Compiling and Instalation
 -------------------------
 See [README.md](README.md) for details.
-
+[link2](catima_calculator.md)
 Units
 ------
 The following units are used for input and outputs:
@@ -41,27 +41,29 @@ There are 2 ways to define materials: specifying all elements in constructor or 
 The example of water definition:
 
 ```cpp
+
+catima::Material carbon({0,6,1}); // carbon with elemental atomic weight 
+
 catima::Material water1({
-	{1,1,2}, // 2 atoms of 1H
-	{16,8,1} // 1 atom of 16O
+	{1,1,2}, // {weight, Z, stn or weight fraction}
+	{16,8,1}
 	});
 water1.density(1.0);
-water1.thickness(2.0); 
+water1.thickness(2.0);
+water1.I(78.); // set custom ionization potential in eV
 
 catima::Material water2;
 water2.add_element(1,1,2);
 water2.add_element(16,8,1);
 water2.density(1.0).thickness(2.0);
 ```
-If mass number is equal to 0, the mass number of the element is taken as atomic weight of the element with provided Z
-Other methods which can be used for Material:
+If mass number is equal to 0, the mass number of the element is taken as atomic weight of the element.
+Compound elements can be defined either via stoichiometric number or via weight fraction. If the number is less than 1
+it is assumed weight fraction is being used, otherwise stoichiometric number or molar fraction is being used.
 ```cpp
-double den = water2.density(); //den equals 1.0
-double th = water2.thickness(); //th equals 2.0
-double molar_mass = water2.M(); // get molar mass of water
-int ncomp = water2.ncomponents(); // ncomp equals 2
+catima::Material air ({{0,7,0.755267},{0,8,0.231781},{0,18,0.012827},{0,6,0.000124}},0.001205); // weight fractions
+catima::Material water ({{0,1,2},{0,8,1}},1); // mole fraction
 ```
-
 ### predefined materials ###
 If the library is compiled with predefined materials database, the Material can be retrieved from the database as:
 ```cpp
@@ -69,32 +71,9 @@ using namespace catimal
 Material water = get_material(material::WATER);
 Material graphite = get_material(6);
 ```
-currently all meterial up to Z=98 are predefined plus compounds from MOCADI:
-```
-        enum material{
-            PLASTIC = 201,
-            AIR = 202,
-            CH2,
-            LH2,
-            LD2,
-            WATER,
-            DIAMOND,
-            GLASS,
-            ALMG3,
-            ARCO2_30,
-            CF4,
-            ISOBUTANE,
-            KAPTON,
-            MYLAR,
-            NAF,
-            P10,
-            POLYOLEFIN,
-            CMO2,
-            SUPRASIL,
-            HAVAR
-        };
-```
-	
+
+The list of predefined material can be found at __material_database.h__ file
+
 
 Calculation
 -----------
@@ -117,7 +96,7 @@ Both function returns structure ___Result___ which contains all calculated varia
         double sigma_E=0.0;
         double sigma_a=0.0;
         double sigma_r=0.0;
-        double tof=0.0;   
+        double tof=0.0;
     };
 ```
 
@@ -130,7 +109,6 @@ double domega2dx(Projectile &p, double T, const Material &t, Config c=default_co
 double range(Projectile &p, double T, const Material &t, Config c=default_config);
 double range_straggling(Projectile &p, double T, const Material &t, Config c=default_config);
 double angular_straggling(Projectile &p, double T, const Material &t, Config c=default_config);
-\end{verbatim}
 ```
 
 Example calculation:
@@ -162,7 +140,7 @@ Layers can be copied from existing Layes:
 ```cpp
 catima::Layers matter2;
 matter2 = matter1; //matter2 contain 3 layers
-matter2.add(nitrogen); 
+matter2.add(nitrogen);
 matter2.add(graphite); //matter2 contains 5 layers now
 ```
 
@@ -179,9 +157,20 @@ This __default_config__ is supplied as default argument to functions like catima
 the structure Config is defined as:
 ```cpp
     struct Config{
-        char z_effective=z_eff_type::atima;
-        char skip=skip_none;
-        char dedx = 0;
+        #ifndef GLOBAL
+        unsigned char z_effective=z_eff_type::pierce_blann;
+        #else
+        unsigned char z_effective=z_eff_type::atima14;
+        #endif
+
+        #ifdef REACTIONS
+        unsigned char skip=skip_none;
+        #else
+        unsigned char skip=skip_calculation::skip_reactions;
+        #endif
+
+        unsigned char corrections = 0;
+        unsigned char calculation = 1;
     };
 ```
 
@@ -223,7 +212,7 @@ For example check examples directory and makefile inside to see how to link.
 All functions and classes are inside __catima namespace__
 
 Normally including main file is enough:
-```cppp
+```cpp
 #include "catima/catima.h"
 ```
 

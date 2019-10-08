@@ -12,9 +12,11 @@ int main(){
     graphite.thickness(2.0);      // thickness in g/cm2
        
     catima::Material water({ // material with 2 atoms
-        {1,1,2}, // 1H - two atoms
-        {16,8,1} // 16O - 1 atom
-    });
+        {0,1,2}, // H - two atoms
+        {0,8,1} // O - 1 atom
+    },
+    1.0 // density in g/cm3
+    );
     water.density(1.0).thickness(2.0);
     
     catima::Projectile p(12,6); // define projectile, ie 12C
