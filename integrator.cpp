@@ -1,9 +1,9 @@
 #include "integrator.h"
 
-//#ifdef GSL_INTEGRATION
+#ifdef GSL_INTEGRATION
 #include "gsl/gsl_integration.h"
 #include "gsl/gsl_errno.h"
-//#endif
+#endif
 
 namespace catima{
     integrator_type integrator;
