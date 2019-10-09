@@ -3,9 +3,9 @@
 #define CONFIG
 #include <cstring>
 namespace catima{
-    
-    /** 
-      * \enum z_eff_type 
+
+    /**
+      * \enum z_eff_type
       * enum to select formulat to calculate effective charge of the Projectile
       */
     enum z_eff_type:unsigned char {
@@ -30,7 +30,7 @@ namespace catima{
     };
 
     /**
-      * enum to select which dEdx straggling options
+      * enum to select dEdx straggling options
       */
     enum omega_types:unsigned char{
         atima = 0,
@@ -38,7 +38,7 @@ namespace catima{
     };
 
     /**
-      * enum to select which how low energy part is calculated
+      * enum to select how low energy part is calculated
       */
     enum low_energy_types:unsigned char{
         srim_85 = 0,
@@ -57,25 +57,10 @@ namespace catima{
 
         unsigned char corrections = 0;
         unsigned char calculation = 1;
+        unsigned char low_energy = 0;
     };
 
-    inline void set_config_lowenergy(Config c, low_energy_types lt){
-      c.calculation = c.calculation & (lt<<2);
-    }
 
-    inline unsigned char config_lowenergy(const Config c){
-      return (c.calculation>>2) & 0x7;
-    }
-
-    inline void set_config_omega(Config c, omega_types ot){
-      c.calculation = c.calculation & ot;
-    }
-
-    inline unsigned char config_omega(const Config c){
-      return c.calculation & 0x3;
-    }
-
-    
     extern Config default_config;
 }
 

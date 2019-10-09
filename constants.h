@@ -4,22 +4,16 @@
 #include "catima/build_config.h"
 namespace catima {
 
+// config
 constexpr double Ezero = 1E-3; // lowest E to calculate, below taken as 0
 constexpr double logEmin = -3; // log of minimum energy
 constexpr double logEmax = 7.0;  // log of max energy
 constexpr int max_datapoints = 500; // how many datapoints between logEmin and logEmax
 constexpr int max_storage_data = 60; // number of datapoints which can be stored in cache
-constexpr double numeric_epsilon = std::numeric_limits<double>::epsilon();
-
-/// required integration precision (relative units)
-/*
-constexpr double int_eps_range = 0.001;
-constexpr double int_eps_range_str = 0.001;
-constexpr double int_eps_ang_str = 0.01;
-constexpr double int_eps_tof = 0.01;
-*/
+constexpr double numeric_epsilon = 10*std::numeric_limits<double>::epsilon();
 
 constexpr double thin_target_limit = 1 - 1e-3;
+
 #ifdef REACTIONS
 constexpr double emin_reaction = 30.0;
 constexpr bool reactions = true;
@@ -27,6 +21,7 @@ constexpr bool reactions = true;
 constexpr bool reactions = false;
 #endif
 
+// constants
 constexpr double PI = 3.1415926535897932384626433832795;
 constexpr double Avogadro = 6.022140857; // 10^23
 constexpr double electron_mass = 0.510998928;   // MeV/c^2
