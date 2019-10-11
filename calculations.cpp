@@ -9,7 +9,7 @@
 #include "catima/generated_LS_coeff.h"
 #include "catima/nucdata.h"
 #include "catima/storage.h"
-#include "catima/srim.h" 
+#include "catima/srim.h"
 #ifdef GLOBAL
 extern "C"
 {
@@ -35,11 +35,11 @@ double dedx_n(const Projectile &p, const Material &mat){
         w = mat.weight_fraction(i);
         sum += w*dedx_n(p,t);
     }
-    return sum;   
+    return sum;
 }
 
 double dedx_n(const Projectile &p, const Target &t){
-    
+
     double zpowers = pow(p.Z,0.23)+pow(t.Z,0.23);
     double asum = p.A + t.A;
     double epsilon = 32.53*t.A*1000*p.T*p.A/(p.Z*t.Z*asum*zpowers); //projectile energy is converted from MeV/u to keV
@@ -69,7 +69,7 @@ double bethek_dedx_e(Projectile &p,const Material &mat, const Config &c){
         w = mat.weight_fraction(i);
         sum += w*bethek_dedx_e(p,t,c,mat.I());
     }
-    return sum;   
+    return sum;
 }
 
 double bethek_dedx_e(Projectile &p, const Target &t, const Config &c, double I){
@@ -80,7 +80,7 @@ double bethek_dedx_e(Projectile &p, const Target &t, const Config &c, double I){
     double gamma=1.0 + p.T/atomic_mass_unit;
     double beta2=1.0-1.0/(gamma*gamma);
     double beta = sqrt(beta2);
-    double zp_eff = z_effective(p,t,c);    
+    double zp_eff = z_effective(p,t,c);
     assert(zp_eff>=0);
     double Ipot = (I>0.0)?I:ipot(t.Z);
     assert(Ipot>0);
@@ -91,21 +91,21 @@ double bethek_dedx_e(Projectile &p, const Target &t, const Config &c, double I){
     if(!(c.corrections&corrections::no_shell_correction) &&  eta>=0.13){ //shell corrections
         double cor = (+0.422377*pow(eta,-2)
                     +0.0304043*pow(eta,-4)
-                    -0.00038106*pow(eta,-6))*1e-6*pow(Ipot,2) 
-                  +(+3.858019*pow(eta,-2) 
+                    -0.00038106*pow(eta,-6))*1e-6*pow(Ipot,2)
+                  +(+3.858019*pow(eta,-2)
                     -0.1667989*(pow(eta,-4))
-                    +0.00157955*(pow(eta,-6)))*1.0e-9*pow(Ipot,3); 
+                    +0.00157955*(pow(eta,-6)))*1.0e-9*pow(Ipot,3);
         f2 = f2 -cor/t.Z;
     }
     f2+=2*log(gamma) -beta2;
-    
+
     double barkas=1.0;
     if(!(c.corrections&corrections::no_barkas)){
         barkas = bethek_barkas(zp_eff,eta,t.Z);
         }
-    
+
     double delta = bethek_density_effect(beta, t.Z);
-    
+
     double LS = 0.0;
     if(!(c.corrections&corrections::no_lindhard)){
         //double LS = bethek_lindhard(p);
@@ -118,7 +118,7 @@ double bethek_dedx_e(Projectile &p, const Target &t, const Config &c, double I){
         result += pair_production(p,t);
         result += bremsstrahlung(p,t);
     }
-    
+
     return result;
 }
 
@@ -149,12 +149,12 @@ double bethek_density_effect(double beta, int zt){
     double x = log(beta * gamma) / 2.3025851;
     int i;
     double del = 0;
-    
+
     if(zt>97){  // check if data are available, if not take highest z data
         zt=97;
         }
     i = zt-1;
-    
+
     if (x < density_effect::x0[i] ){
         if(density_effect::del_0[i] > 0.)del = density_effect::del_0[i] * pow(10.0,(2.*(x-density_effect::x0[i])));
         }
@@ -176,7 +176,7 @@ double bethek_lindhard(const Projectile &p){
     double beta_gamma_R = beta*gamma*rho;
     double sum = 0;
     int n=1;
-    
+
     if(gamma < 10.0/rho){
         double dk[3];
         double dmk = 0;
@@ -199,7 +199,7 @@ double bethek_lindhard(const Projectile &p){
                 std::complex<double> cpiske(0.0,(M_PI*(l-sk)/2.0) - lngamma(csketa).imag());
                 std::complex<double> cedr = cexir*std::exp(cpiske);
                 double H=0;
-                
+
                 //std::complex<double> ceds(0.0,0.0);
                 // finite struct part
                 std::complex<double> cmsketa (-sk + 1.0, eta);
@@ -215,10 +215,10 @@ double bethek_lindhard(const Projectile &p){
                 std::complex<double> clambda_s = cexis*std::exp(cmbeta_gamma_R)*hyperg(cmsketa,cm2sk_1,c2beta_gamma_R);
                 std::complex<double> cGrGs = lngamma(cm2sk_1);
                 double GrGs = clambda_r.imag()/clambda_s.imag();
-                GrGs *= exp( lngamma(csketa).real() 
-                             - lngamma(cmsketa).real() 
+                GrGs *= exp( lngamma(csketa).real()
+                             - lngamma(cmsketa).real()
                              - lngamma(c2sk_1).real()
-                             + cGrGs.real() 
+                             + cGrGs.real()
                              + 2.0*sk*log(2.0*beta_gamma_R));
                 if(cos(cGrGs.imag()) < 1.0)GrGs*=-1;
                 if(fabs(GrGs)>1.0e-9){
@@ -247,16 +247,16 @@ double bethek_lindhard(const Projectile &p){
                     }
                     double figi= (k>0) ? asum/bsum : bsum/asum;
                     H = (FrGr - figi)/(figi-FsGs)* GrGs;
-                    
+
                 }
-                else 
+                else
                     H = 0;
-                
-                
+
+
                 dk[i] = std::arg(cedr + H*ceds);
             }
             if(n>1)dk[2] = dmk;
-        
+
             double sdm2 = sin(dk[2]-dk[1]);
             double term1 = k0*(k0+1.0)*sdm2*sdm2/(eta*eta*(2.0*k0 + 1.0));
             if(n>1){
@@ -270,13 +270,13 @@ double bethek_lindhard(const Projectile &p){
             n += 1;
             dmk = dk[1];
             dkm1 = dk[0];
-            
+
         }// end of while n<100
-        
+
     }
     else{ // ultrarelativistic limit
         sum = -log(beta_gamma_R) - 0.2;
-    }   
+    }
     return sum + (0.5*beta2);
 }
 
@@ -290,14 +290,14 @@ double bethek_lindhard_X(const Projectile &p){
     double beta_gamma_R = beta*gamma*rho;
     double sum = 0;
     int n=1;
-    
+
     if(1){
         double dk[4];
         double dmk = 0;
         double dmkp1 = 0;
         double dkm1 = 0;
         double dkm2 = 0;
-        
+
         while(n<1000){
             double k0 = n;
             //int max = (n==1)?4:2;
@@ -318,7 +318,7 @@ double bethek_lindhard_X(const Projectile &p){
                 std::complex<double> cpiske(0.0,(M_PI*(l-sk)/2.0) - lngamma(csketa).imag());
                 std::complex<double> cedr = cexir*std::exp(cpiske);
                 double H=0;
-                
+
                 //std::complex<double> ceds(0.0,0.0);
                 // finite struct part
                 std::complex<double> cmsketa (-sk + 1.0, eta);
@@ -334,10 +334,10 @@ double bethek_lindhard_X(const Projectile &p){
                 std::complex<double> clambda_s = cexis*std::exp(cmbeta_gamma_R)*hyperg(cmsketa,cm2sk_1,c2beta_gamma_R);
                 std::complex<double> cGrGs = lngamma(cm2sk_1);
                 double GrGs = clambda_r.imag()/clambda_s.imag();
-                GrGs *= exp( lngamma(csketa).real() 
-                             - lngamma(cmsketa).real() 
+                GrGs *= exp( lngamma(csketa).real()
+                             - lngamma(cmsketa).real()
                              - lngamma(c2sk_1).real()
-                             + cGrGs.real() 
+                             + cGrGs.real()
                              + 2.0*sk*log(2.0*beta_gamma_R));
                 if(cos(cGrGs.imag()) < 1.0)GrGs*=-1;
                 if(fabs(GrGs)>1.0e-9){
@@ -366,38 +366,38 @@ double bethek_lindhard_X(const Projectile &p){
                     }
                     double figi= (k>0) ? asum/bsum : bsum/asum;
                     H = (FrGr - figi)/(figi-FsGs)* GrGs;
-                    
+
                 }
-                else 
+                else
                     H = 0;
-                
-                
+
+
                 dk[i] = std::arg(cedr + H*ceds);
             }
             if(n>1)dk[2] = dmk;
-        
+
             double strterm1p = 0;
             double strterm1n = 0;
             double strterm2 = 0;
             double strterm3 = 0;
             double eta2 = eta*eta;
-            
+
             double sdm2 = sin(dk[0]-dkm2);
             if(n>2){
                 strterm1p = sdm2*sdm2*(k0-1)*(k0-2)/((2.0*k0 - 1.0)*(2.0*k0-3.0));
             }
-            
+
             sdm2 = sin(dk[2]-dk[3]);
             strterm1n = sdm2*sdm2*(-k0-1)*(-k0-2)/((-2.0*k0 - 1.0)*(-2.0*k0-3.0));
-            
+
             if(n>1){
                 double sd2 = sin(dk[0]-dmkp1);
                 strterm2 += (k0-1.0)*sd2*sd2/((2.0*k0 - 3.0)*(4.0*k0*k0 - 1.0));
             }
-            
+
             double sdd = sin(dk[0]-dk[1]);
             strterm3 = sdd*sdd*(k0+1.0)*((1/(4.0*k0*k0 -1.0))+(1/(4*(k0+1.0)*(k0+1.0) - 1.0)))/(2.0*k0 + 1.0);
-            
+
             //sum += k0*(strterm1p + strterm1n + (strterm2*2) + strterm3)/eta2;
             sum += k0*(strterm1p + strterm1n + (strterm2*2) + strterm3)/eta2;
             sum += - (2.0/k0);
@@ -407,12 +407,12 @@ double bethek_lindhard_X(const Projectile &p){
             dkm2 = dkm1;
             dkm1 = dk[0];
             dmkp1 = dk[2];
-            
+
         }// end of while n<100
-        
+
     }
     else{ // ultrarelativistic limit
-        
+
     }
     double res = 2*bethek_lindhard(p) - sum - beta2;
     return (res>=0)?res:0.0;
@@ -447,7 +447,7 @@ double bremsstrahlung(const Projectile &p, const Target &t){
 double sezi_dedx_e(const Projectile &p, const Material &mat, const Config &c){
     double w;
     double sum=0.0;
-    bool use95 = config_lowenergy(c) == low_energy_types::srim_95;
+    bool use95 = c.low_energy == low_energy_types::srim_95;
     for(int i=0;i<mat.ncomponents();i++){
         auto t = mat.get_element(i);
         w = mat.weight_fraction(i);
@@ -507,13 +507,13 @@ double radiation_length(int z, double m){
     if(z==29){return 12.86;}
     if(z==32){return 12.25;}
     if(z==50){return 8.82;}
-    if(z==54){return 8.48;} 
+    if(z==54){return 8.48;}
     if(z==74){return 6.76;}
     if(z==78){return 6.54;}
     if(z==79){return 6.46;}
     if(z==82){return 6.37;}
     if(z==92){return 6.00;}
-    
+
     double z2 = z*z;
     double z_13 = 1.0/pow(z,1./3.);
     double z_23 = z_13*z_13;
@@ -530,7 +530,7 @@ double precalculated_lindhard(const Projectile &p){
     int z = (int)p.Z ;
     if(z>LS_MAX_Z)z=LS_MAX_Z;
     if(p.T<ls_coefficients::ls_energy_table(0))T=ls_coefficients::ls_energy_table(0);
-    
+
     double da = (p.A - element_atomic_weight(z))/element_atomic_weight(z);
     z = z-1;
     //catima::Interpolator ls_a(ls_coefficients::ls_energy_points,ls_coefficients::ls_coefficients_a[z],LS_NUM_ENERGY_POINTS,interpolation_t::linear);
@@ -544,7 +544,7 @@ double precalculated_lindhard(const Projectile &p){
     //return ls_a(T)+(dif*da/ls_coefficients::a_rel_increase);
     double dif = v2 - v1;
     return v1+(dif*da/ls_coefficients::a_rel_increase);
-    
+
 }
 
 double precalculated_lindhard_X(const Projectile &p){
@@ -556,12 +556,12 @@ double precalculated_lindhard_X(const Projectile &p){
 		return 1.0;
     double da = (p.A - element_atomic_weight(z))/element_atomic_weight(z);
     z = z-1;
-    
+
     //catima::Interpolator ls_X_a(ls_coefficients::ls_energy_table.values,ls_coefficients::ls_X_coefficients_a[z],LS_NUM_ENERGY_POINTS,interpolation_t::linear);
     //catima::Interpolator ls_X_ahi(ls_coefficients::ls_energy_table.values,ls_coefficients::ls_X_coefficients_ahi[z],LS_NUM_ENERGY_POINTS,interpolation_t::linear);
     double v1 = EnergyTable_interpolate(ls_coefficients::ls_energy_table,T,ls_coefficients::ls_X_coefficients_a[z]);
     double v2 = EnergyTable_interpolate(ls_coefficients::ls_energy_table,T,ls_coefficients::ls_X_coefficients_ahi[z]);
-    
+
     //double dif = ls_X_ahi(T) - ls_X_a(T);
     //return ls_X_a(T)+(dif*da/ls_coefficients::a_rel_increase);
     double dif = v2 - v1;
@@ -576,7 +576,7 @@ double dedx_variance(Projectile &p, Target &t, const Config &c){
     double zp_eff = z_effective(p,t,c);
     double f = domega2dx_constant*pow(zp_eff,2)*t.Z/t.A;
 
-    if(config_omega(c) == omega_types::atima){
+    if( (c.calculation == omega_types::atima) ){
         cor = 24.89 * pow(t.Z,1.2324)/(electron_mass*1e6 * beta2)*
 			log( 2.0*electron_mass*1e6*beta2/(33.05*pow(t.Z,1.6364)));
 	    cor = std::max(cor, 0.0 );
@@ -603,7 +603,7 @@ double z_effective(const Projectile &p,const Target &t, const Config &c){
     else if(c.z_effective == z_eff_type::anthony_landorf){
         return z_eff_Anthony_Landford(p.Z, beta, t.Z);
     }
-    
+
     else if(c.z_effective == z_eff_type::hubert){
         return z_eff_Hubert(p.Z, p.T, t.Z);
     }
@@ -625,13 +625,13 @@ double z_effective(const Projectile &p,const Target &t, const Config &c){
 }
 
 double z_eff_Pierce_Blann(double z, double beta){
-    return z*(1.0-exp(-0.95*fine_structure_inverted*beta/pow(z,2.0/3.0))); 
+    return z*(1.0-exp(-0.95*fine_structure_inverted*beta/pow(z,2.0/3.0)));
 }
 
 double z_eff_Anthony_Landford(double pz, double beta, double tz){
     double B = 1.18-tz*(7.5e-03 - 4.53e-05*tz);
     double A = 1.16-tz*(1.91e-03 - 1.26e-05*tz);
-    return pz*(1.0-(A*exp(-fine_structure_inverted*B*beta/pow(pz,2.0/3.0)))); 
+    return pz*(1.0-(A*exp(-fine_structure_inverted*B*beta/pow(pz,2.0/3.0))));
 }
 
 double z_eff_Hubert(double pz, double E, double tz){
@@ -658,13 +658,13 @@ double z_eff_Hubert(double pz, double E, double tz){
         x3 = 0.314 + 0.01072*lntz;
         x4 = 0.5218 + 0.02521*lntz;
     }
-     
+
     return pz*(1-x1*exp(-x2*catima::power(E,x3)*catima::power(pz,-x4)));
 }
 
 double z_eff_Winger(double pz, double beta, double tz){
 	double c0,c1,c2,c3,c4,c5,c6,c7,c8,c9,c10,c11,c12,c13;
-	double x, lnz, lnzt, a0,a1,a2,a3,a4; 
+	double x, lnz, lnzt, a0,a1,a2,a3,a4;
 
 	c0 = 0.4662;
 	c1 = 0.5491;
@@ -697,7 +697,7 @@ double z_eff_Winger(double pz, double beta, double tz){
 	a3 = -c10 * exp( c11*lnz - c12*lnz*lnz*lnz);
 	a4 = -c13;
 
-    return pz * (1. - exp(a0 +a1*x +a2*x*x +a3*x*x*x +a4*x*x*x*x));	
+    return pz * (1. - exp(a0 +a1*x +a2*x*x +a3*x*x*x +a4*x*x*x*x));
 	}
 
 double z_eff_global(double pz, double E, double tz){
@@ -742,7 +742,7 @@ double z_eff_atima14(double pz, double T, double tz){
         qglobal = z_eff_global(pz,T,tz);
         qglobal = (qglobal - qpb)*c1/catima::power(tz+1,c2)*(1-exp(-c3*T)) + qpb;
     }
-    
+
     emax = 1500.;
     emin = 1000.;
     if(T>emax){
