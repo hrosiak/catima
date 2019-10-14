@@ -251,7 +251,7 @@ Material json_material(json &j){
             cout<<"Warning: material thickness = "<<th<<"\n";
             }
         
-        if(z<200 && z>0){
+        if(z<200){
             Material m(a,z,density,th);
             if(ipot>0)m.I(ipot);
             return m;
