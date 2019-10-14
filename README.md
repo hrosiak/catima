@@ -1,3 +1,4 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/dc251db65f7a4c06ae07380544ea08fc)](https://www.codacy.com/manual/hrosiak/catima?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=hrosiak/catima&amp;utm_campaign=Badge_Grade)
 CATima
 =======
 C++ library for caclulalaton of energy loss, range, angular scattering and time of flight of the particle passing through matter.
