@@ -1,4 +1,5 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/dc251db65f7a4c06ae07380544ea08fc)](https://www.codacy.com/manual/hrosiak/catima?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=hrosiak/catima&amp;utm_campaign=Badge_Grade)
+[![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/hrosiak/catima.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/hrosiak/catima/context:cpp)
 
 CATima
 =======
