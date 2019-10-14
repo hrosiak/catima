@@ -50,7 +50,7 @@ double dedx_n(const Projectile &p, const Target &t){
     else if(epsilon<=30){
         assert(p.A>0);
         assert(epsilon>0);
-        sn = log(1+(1.1383*epsilon))/ (2*(epsilon + 0.01321*pow(epsilon,0.21226) + 0.19593*pow(epsilon,0.5)));
+        sn = log1p(1.1383*epsilon)/ (2*(epsilon + 0.01321*pow(epsilon,0.21226) + 0.19593*pow(epsilon,0.5)));
     }
     else{
         assert(p.A>0);
@@ -134,9 +134,11 @@ double bethek_barkas(double zp_eff,double eta, double zt){
     else if((v1 >= 1) && v1 < 4){//VALUES FROM THE JACKSON MC CARTHY FUNCTION //PHYS. REV. B 6 4131 P4136
         int i;
         for(i=1; i<4; i++){
-	          if( VA[i] >= v1) break;
+	          if( VA[i] >= v1){
+                  v2fv = V2FVA[i-1]+(v1-VA[i-1])*(V2FVA[i]-V2FVA[i-1])/(VA[i]-VA[i-1]);
+                  break;
+              }
           }
-	     v2fv = V2FVA[i-1]+(v1-VA[i-1])*(V2FVA[i]-V2FVA[i-1])/(VA[i]-VA[i-1]);
     }
     else{
         v2fv=0;
@@ -185,8 +187,7 @@ double bethek_lindhard(const Projectile &p){
             double k0 = n;
             int max = (n==1)?3:2;
             for(int i=0;i<max;i++){
-                double k;
-                if(i==0)k=k0;
+                double k = k0;
                 if(i==1)k=-k0 - 1.0;
                 if(i==2)k=-k0;
                 double l = (k>0)?k:-k-1.0;
@@ -303,8 +304,7 @@ double bethek_lindhard_X(const Projectile &p){
             //int max = (n==1)?4:2;
             int max = 4;
             for(int i=0;i<max;i++){
-                double k;
-                if(i==0)k=k0;
+                double k=k0;
                 if(i==1)k=-k0 - 1.0;
                 if(i==2 && n==1)k=-k0;
                 if(i==3)k=-k0 - 2.0;
@@ -354,7 +354,7 @@ double bethek_lindhard_X(const Projectile &p){
                     double asum = a0;
                     double bsum = b0;
                     double nn = 1.0;
-                    while(fabs(anm1/asum)>1e-6 && fabs(anm1/asum)>1e-6){
+                    while(fabs(anm1/asum)>1e-6 ){
                         double bn = ((rho-gz)*an + fine_structure*z1*anm1/2.0)/(2.0*nn+2.0*fabs(k)+1.0);
                         double anp1 = ((gz+rho)*bn - fine_structure*z1*bnm1/2.0)/(2.0*nn + 2.0);
                         asum += an;
@@ -419,7 +419,6 @@ double bethek_lindhard_X(const Projectile &p){
 }
 
 double pair_production(const Projectile &p, const Target &t){
-    double s=0.0;
     double gamma=1.0 + p.T/atomic_mass_unit;
     double d = 1.0/sqrt(gamma);
     double logd2 = log(d*d);
@@ -432,14 +431,14 @@ double pair_production(const Projectile &p, const Target &t){
                 + ( ((28.0*l0/(9.0)) - 446.0/27.0)*logd2/(M_PI*M_PI))
                 + (14.0*logd2*logd2/(9.0*M_PI*M_PI));
     L1 *= d;
-    s = 0.25*dedx_constant*fine_structure*fine_structure*p.Z*p.Z*t.Z*t.Z*gamma*(1.0+(1.0/t.Z))*(L0screen + L1)/t.A;
+    double s = 0.25*dedx_constant*fine_structure*fine_structure*p.Z*p.Z*t.Z*t.Z*gamma*(1.0+(1.0/t.Z))*(L0screen + L1)/t.A;
     return (s<0.0)?0.0:s;
 };
 
 double bremsstrahlung(const Projectile &p, const Target &t){
     double gamma=1.0 + p.T/atomic_mass_unit;
     double R = 1.18*(catima::power(p.A, 1.0/3.0) + catima::power(t.A, 1.0/3.0));
-    double Lbs = log(1.0 + 2.0*gamma*0.1*hbar*c_light/atomic_mass_unit/R/p.A);
+    double Lbs = log1p(2.0*gamma*0.1*hbar*c_light/atomic_mass_unit/R/p.A);
     double C = dedx_constant*fine_structure*(electron_mass/atomic_mass_unit);
     return 16.0*C*gamma*p.Z*p.Z*p.Z*p.Z*t.Z*t.Z*Lbs/(t.A*p.A*3.0*4.0*M_PI);
 };
@@ -730,15 +729,15 @@ double z_eff_atima14(double pz, double T, double tz){
     #ifdef GLOBAL
     double qpb;
     double qhigh,qwinger,qglobal=0.0;
-    double c1 = 1.4;
-    double c2 = 0.28;
-    double c3 = 0.04;
     double beta = beta_from_T(T);
     double gamma = gamma_from_T(T);
     double emax, emin;
     qpb = z_eff_Pierce_Blann(pz,beta);
 
     if(T>30.0 && T<1500.0 && pz>28){
+        double c1 = 1.4;
+        double c2 = 0.28;
+        double c3 = 0.04;
         qglobal = z_eff_global(pz,T,tz);
         qglobal = (qglobal - qpb)*c1/catima::power(tz+1,c2)*(1-exp(-c3*T)) + qpb;
     }

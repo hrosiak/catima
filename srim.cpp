@@ -82,7 +82,7 @@ double srim_dedx_e(int pZ, int tZ, double energy, bool use_new){
         return se;
     }
     else{ // heavy ion
-        double h1,h4;
+        double h1;
         double a,q,b;
         double l1,l0,l;
         double YRmin = 0.130; //  YRmin = VR / ZP**0.67 <= 0.13 OR VR <= 1.0
@@ -134,7 +134,7 @@ double srim_dedx_e(int pZ, int tZ, double energy, bool use_new){
         i = (pZ>92)?91:pZ-1;
         l = std::max(l1,l0*atima_lambda_screening[i]);
         h1 =4.0*l*vfermi/1.919;
-        zeta = q + (1./(2.*(vfermi*vfermi)))*(1. - q)* log(1. + h1*h1); 
+        zeta = q + (1./(2.*(vfermi*vfermi)))*(1. - q)* log1p(h1*h1); 
          // ZP**3 EFFECT AS IN REF. 779?
         a = 7.6 - std::max(0.0, log(e));
         zeta = zeta*(1. + (1./(pZ*pZ))*(0.18 + .0015*tZ)*exp(-a*a));
@@ -150,7 +150,7 @@ double srim_dedx_e(int pZ, int tZ, double energy, bool use_new){
             else eval = 0.5;
             
             h1 = zeta *pZ;
-            h4 = std::pow(e / eee,eval);
+            double h4 = std::pow(e / eee,eval);
             se = (*fp_se)(tZ, eee*0.001) * h1*h1*h4;
             return se;
         }
