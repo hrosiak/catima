@@ -48,11 +48,10 @@ double dedx(Projectile &p, const Material &mat, const  Config &c){
 
 double domega2dx(Projectile &p, double T, const Material &mat, const Config &c){
     double sum = 0;
-    double w=0;
     
     for(int i=0;i<mat.ncomponents();i++){
         auto t= mat.get_element(i);
-        w = mat.weight_fraction(i);
+        double w = mat.weight_fraction(i);
         p.T = T;
         sum += w*dedx_variance(p,t,c);
     }
@@ -61,11 +60,10 @@ double domega2dx(Projectile &p, double T, const Material &mat, const Config &c){
 
 double da2dx(Projectile &p, double T, const Material &mat, const Config &c){
     double sum = 0;
-    double w=0;
     
     for(int i=0;i<mat.ncomponents();i++){
         auto t = mat.get_element(i);
-        w = mat.weight_fraction(i);
+        double w = mat.weight_fraction(i);
         p.T = T;
         sum += w*angular_scattering_variance(p,t);
     }
@@ -156,7 +154,6 @@ double energy_out(double T, double thickness, const Interpolator &range_spline){
     double range;
     double dedx;
     double e,r;
-    double step;
     
     range = range_spline(T);
     dedx = 1.0/range_spline.derivative(T);
@@ -166,7 +163,7 @@ double energy_out(double T, double thickness, const Interpolator &range_spline){
     while(1){
         r = range - range_spline(e) - thickness;
         if(fabs(r)<epsilon)return e;
-        step = -r*dedx;
+        double step = -r*dedx;
         e = e-step;
         if(e<Ezero)return 0.0;
         dedx = 1.0/range_spline.derivative(e);
@@ -378,13 +375,13 @@ DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
             return domega2dx(p,x,t,c)/catima::power(dedx(p(x),t,c),3);
             };
 
-    double res=0.0;
+    //double res=0.0;
     //calculate 1st point to have i-1 element ready for loop
     //res = integrator.integrate(fdedx,Ezero,energy_table(0));
     //res = p.A*res;
     //dp.range[0] = res;
+    
     dp.range[0] = 0.0;
-
     dp.angular_variance[0] = 0.0;
 
     //res = integrator.integrate(fomega,Ezero,energy_table(0));
@@ -392,7 +389,7 @@ DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
     dp.range_straggling[0]=0.0;
     //p.T = energy_table(0);
     for(int i=1;i<max_datapoints;i++){
-        res = p.A*integrator.integrate(fdedx,energy_table(i-1),energy_table(i));
+        double res = p.A*integrator.integrate(fdedx,energy_table(i-1),energy_table(i));
         dp.range[i] = res + dp.range[i-1];
         res = da2dx(p,energy_table(i),t)*res;
         dp.angular_variance[i] = res + dp.angular_variance[i-1];
