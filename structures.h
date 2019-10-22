@@ -38,9 +38,15 @@ namespace catima{
         double Z=0;
         double Q=0;
         double T=0;
-        Projectile& operator()(double e){T=e;return *this;}
-        Projectile(){}
+
+        /// constructor
+        /// @param a - mass
+        /// @param z - proton number
+        /// @param q - charge state
+        /// @param t - energy in MeV/u
         Projectile(double a, double z, double q=0, double t=0):A(a),Z(z),Q(q),T(t){if(q==0)Q=Z;}
+        Projectile& operator()(double e){T=e;return *this;}
+        Projectile() = default;
     };
 
     bool operator==(const Projectile &a, const Projectile&b);
@@ -85,10 +91,10 @@ namespace catima{
               * constructor to add 1 or multiple element into the Material
               * \code{.cpp}
               * Maetrial water({
-                  {1,1,2},
-                  {16,8,1},
-		  1.0,  // optional density
-                });
+              *   {1,1,2},
+              *   {16,8,1},
+              *   1.0,  // optional density
+              *  });
               * \endcode
               */
             Material(std::initializer_list<std::array<double,3>>list,double _density=0.0, double ipot = 0.0, double mass=0.0);

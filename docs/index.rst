@@ -17,6 +17,24 @@ Content
 
    README
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Manual
+
+   catima_manual
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Console App
+
+   catima_calculator
+
+.. toctree::
+   :maxdepth: 1
+   :caption: API Reference
+
+   api
+
 
 Indices and tables
 ==================
