@@ -1,13 +1,3 @@
-CATima
-=======
-C++ library for caclulalaton of energy loss, range, angular scattering and time of flight of the particle passing through matter.
-The library is based on physics used in the ATIMA code,however its not 100% copy of ATIMA physics.
- see CREDITS for more details.
-
-The WebAtima UI to this library can be found here:
-  * https://web-docs.gsi.de/~aprochaz/webatima (only inside GSI)
-  * https://isotopea.com/webatima
-
 Installation
 ------------
 CMake is used to build the library. For default build use:
@@ -45,7 +35,7 @@ available options:
   * THIN_TARGET_APPROXIMATION - compile the library with thin target approximation, default: ON
   * GSL_INTEGRATION - use GSL integration functions, otherwise use built-in integrator, default: OFF
   * GLOBAL - compile with GLOBAL code (source not included at the moment, needs to be manually added to __global__ directory, default:OFF)
-  * STORE_SPLINES - store splines in cache, if disabled datapoints are stored and splines are recreated, default ON 
+  * STORE_SPLINES - store splines in cache, if disabled datapoints are stored and splines are recreated, default ON
 
 ie:
 > cmake -DPYTHON_MODULE=ON -DEXAMPLES=ON ../
