@@ -4,8 +4,8 @@
 
 CATima
 =======
-C++ library for caclulalaton of energy loss, range, angular scattering and time of flight of the particle passing through matter.
-The library is based on physics used in the ATIMA code,however its not 100% copy of ATIMA physics.
+C++ library for calculation of energy loss, range, angular scattering and time of flight of the particle passing through matter.
+The library is based on physics used in the ATIMA code,however its not a 100% copy of the ATIMA physics.
  see CREDITS for more details.
 
 The WebAtima UI to this library can be found here:
@@ -14,7 +14,7 @@ The WebAtima UI to this library can be found here:
 
 Installation
 ------------
-CMake is used to build the library. For default build use:
+CMake is used to build the library. For default build:
 
 ```
 > mkdir build
