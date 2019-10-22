@@ -44,7 +44,7 @@ namespace catima{
     };
 
     bool operator==(const Projectile &a, const Projectile&b);
-    
+
     /**
       * Target class is used to store constituents of the Material class
       * its just to hold A,Z data for individual atoms.
@@ -58,7 +58,7 @@ namespace catima{
     /**
      * Material
      * class to store Material information
-     * This class defines the material with which projectile will interact. 
+     * This class defines the material with which projectile will interact.
      * The class store nuclei constituents, density, thickness etc.
      */
     class Material{
@@ -92,20 +92,20 @@ namespace catima{
               * \endcode
               */
             Material(std::initializer_list<std::array<double,3>>list,double _density=0.0, double ipot = 0.0, double mass=0.0);
-            
+
             /**
              * calculates internal variables if needed
              */
             void calculate();
-            
+
             /**
-             * add atom with mass number _a and proton number _z to the Material 
+             * add atom with mass number _a and proton number _z to the Material
              * @param _a - mass number of the atom, is 0 the atomic weight of element _z is taken
              * @param _z - proton number of the atom
              * @param _stn - stoichiomatric number
              */
             void add_element(double _a, int _z, double _stn);
-            
+
             /**
              * returns i-th element of the Material as a std::pair of Target and corresponding stoichiometric number
              * @param i - index of element to return
@@ -139,7 +139,7 @@ namespace catima{
               * sets molar mass of the Material
               */
             Material& M(double mass){molar_mass=mass; return *this;}
-            
+
             /**
               * @return returns density in g/cm^3
               */
@@ -149,7 +149,7 @@ namespace catima{
               * sets density in g/cm^3
               */
             Material& density(double val){rho = val;return *this;};
-            
+
             /**
               * @return returns thickness in g/cm^2
               */
@@ -169,7 +169,7 @@ namespace catima{
               * set the mean ionization potential, if non elemental I should be used
               */
             Material& I(double val){i_potential = val;return *this;};
-            
+
             /**
               * 0 if default elemental potential is used
               * @return returns ionisation potential in ev
@@ -187,7 +187,7 @@ namespace catima{
               * return number density of atoms of i-th element in 10^23 units
               */
             double number_density(int i)const{
-              if(i>=atoms.size())return 0.0;  
+              if(i>=atoms.size())return 0.0;
               return number_density()*molar_fraction(i);
             }
 
@@ -227,14 +227,14 @@ namespace catima{
         double sigma_E=0.0;
         double sigma_a=0.0;
         double sigma_r=0.0;
-        double tof=0.0;   
+        double tof=0.0;
         #ifdef REACTIONS
         double sp = 1.0;
         #endif
     };
 
     /**
-      * structure to store results for calculation for multiple layers of materials, ie in catima::Layers 
+      * structure to store results for calculation for multiple layers of materials, ie in catima::Layers
       */
     struct MultiResult{
         std::vector<Result> results;
@@ -247,12 +247,11 @@ namespace catima{
      * class to store multiple material layers
      */
 
-    class Layers{        
+    class Layers{
         private:
         std::vector<Material> materials;
         public:
-        Layers(){};
-        Layers& operator=(const Layers& other);
+        Layers() = default;
 
         /**
           * @return reference to the std::vector of stored Materials
@@ -261,7 +260,7 @@ namespace catima{
 
         /**
           * add Material m to the Layers
-          * @param m Material 
+          * @param m Material
           */
         void add(Material m);
 
@@ -269,11 +268,11 @@ namespace catima{
           * @return number of stored Materials
           */
         int num()const{return materials.size();};
-        
+
         Material& operator[](int i){return materials[i];}
 
         friend Layers operator+(const Layers &a, const Layers&b);
-        
+
         friend Layers operator+(const Layers &a, const Material&b);
     };
 }

@@ -62,16 +62,6 @@ void Material::calculate(){
     }
 }
 
-
-Layers& Layers::operator=(const Layers& other){
-    
-    materials.clear();
-    for(auto&e : other.get_materials()){
-        materials.push_back(e);
-    }
-    return *this;
-}
-
 void Layers::add(Material m){
     materials.push_back(m);
 }
@@ -81,7 +71,7 @@ Layers operator+(const Layers &a, const Layers&b){
     for(auto &e:a.materials){
         res.add(e);
     }
-    
+
     for(auto &e:b.materials){
         res.add(e);
     }
