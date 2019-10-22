@@ -5,7 +5,7 @@ project(catima)
 option(BUILD_SHARED_LIBS "build as shared library" ON)
 option(PYTHON_MODULE "compile the Catima python module(requires numpy and cython installed)" OFF)
 option(TESTS "build tests" OFF)
-option(EXAMPLES "build examples" ON)
+option(EXAMPLES "build examples" OFF)
 option(APPS "build catima applications" ON)
 option(GLOBAL "build with global, sources are required" OFF)
 option(REACTIONS "enable/disable nuclear reaction rate" ON)
@@ -14,7 +14,6 @@ option(GSL_INTEGRATION "use GSL integration" OFF)
 option(GSL_INTERPOLATION "use GSL inteRPOLATION" OFF)
 option(THIN_TARGET_APPROXIMATION "thin target approximation" ON)
 option(GENERATE_DATA "make data tables generator" OFF)
-option(DOCS "build documentation (requires doxygen)" OFF)
 
 ######## build type ############
 if(NOT CMAKE_BUILD_TYPE  STREQUAL "Debug")
@@ -83,7 +82,7 @@ set_target_properties(catima PROPERTIES
 
 target_link_libraries(catima ${EXTRA_LIBS})
 
-target_include_directories(catima 
+target_include_directories(catima
                            PUBLIC  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
                                    $<BUILD_INTERFACE:${GSL_INCLUDE_DIRS}>
                           )
@@ -92,7 +91,7 @@ add_library(catima::catima ALIAS catima)
 
 FILE(COPY ${HEADERS} DESTINATION ${PROJECT_BINARY_DIR}/include/catima)
 
-# the compiler used for C++ files 
+# the compiler used for C++ files
 MESSAGE( STATUS "CMAKE_CXX_COMPILER: " ${CMAKE_CXX_COMPILER} )
 
 ######## for python module
@@ -102,7 +101,7 @@ if(PYTHONINTERP_FOUND)
 endif()
 if(PYTHON_MODULE)
     if(NOT PYTHONINTERP_FOUND)
-        MESSAGE(SEND_ERROR "Python is required to build nurex python modules") 
+        MESSAGE(SEND_ERROR "Python is required to build nurex python modules")
     endif(NOT PYTHONINTERP_FOUND)
     find_package(pybind11 REQUIRED)
     set(PYBIND11_CPP_STANDARD -std=c++14)
@@ -133,7 +132,7 @@ add_executable(generate_ls_coeff utils/generator.cpp)
 target_link_libraries(generate_ls_coeff catima)
 #add_custom_command(
 #    OUTPUT ${CMAKE_CURRENT_BINARY_DIR/include/generated_LS_coeff.h}
-#    COMMAND 
+#    COMMAND
 #)
 endif(GENERATE_DATA)
 
@@ -141,8 +140,8 @@ endif(GENERATE_DATA)
 if(DOCS)
 find_package(Doxygen REQUIRED)
 if(DOXYGEN_FOUND)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/doxygen.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-add_custom_target(docs 
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/doxygen.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
+add_custom_target(docs
                    COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile COMMENT "Generating API documentation with Doxygen" VERBATIM )
 endif(DOXYGEN_FOUND)
 endif(DOCS)
@@ -159,14 +158,14 @@ install (TARGETS catima
         EXPORT catimaConfig
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-        
+
 install (FILES ${headers} DESTINATION include/catima)
 
 install(EXPORT catimaConfig
         NAMESPACE catima::
         DESTINATION lib/cmake/catima
          )
-         
+
 export(TARGETS catima NAMESPACE catima:: FILE catimaConfig.cmake)
 export(PACKAGE catima)
 
