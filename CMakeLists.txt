@@ -136,16 +136,6 @@ target_link_libraries(generate_ls_coeff catima)
 #)
 endif(GENERATE_DATA)
 
-####### DOCS generation #########
-if(DOCS)
-find_package(Doxygen REQUIRED)
-if(DOXYGEN_FOUND)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/docs/doxygen.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-add_custom_target(docs
-                   COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile COMMENT "Generating API documentation with Doxygen" VERBATIM )
-endif(DOXYGEN_FOUND)
-endif(DOCS)
-
 ###### subdirectories ######
 if(APPS)
 add_subdirectory("bin")
