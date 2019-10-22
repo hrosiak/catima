@@ -7,31 +7,20 @@ using namespace std;
 #include "catima/catima.h"
 #include "catima/material_database.h"
 
-bool rcompare(double a, double b,double eps){
-    if(fabs((a-b)/fabs(b))<eps){
-      return true;
-    }
-    else{
-      std::cout<<"\033[1;31m"<<a<<" == "<<b<<"\033[0m"<<std::endl;
-      return false;
-    }
-      
-}
-
     TEST_CASE("atima material basic tests"){
             catima::Material water({
                 {1,1,2},
                 {16,8,1}
                 });
-                
+
             catima::Material water2;
             water2.add_element(1,1,2);
             water2.add_element(16,8,1);
-                
+
             catima::Material graphite;
             graphite.add_element(12,6,1);
             graphite.density(1.8);
-            
+
             CHECK(graphite.ncomponents()==1);
             CHECK(water.ncomponents()==2);
 
@@ -39,13 +28,13 @@ bool rcompare(double a, double b,double eps){
             CHECK(water.ncomponents()==2);
             CHECK(water.M()==18);
             CHECK(water2.ncomponents()==2);
-            CHECK(water2.M()==18);    
-            CHECK(graphite.I()==0.0);  
-  
+            CHECK(water2.M()==18);
+            CHECK(graphite.I()==0.0);
+
             graphite.add_element(18,40,1);
             CHECK(graphite.ncomponents()==2);
-            CHECK_FALSE(graphite.M()==approx(12,0.1));      
-            
+            CHECK_FALSE(graphite.M()==approx(12,0.1));
+
             CHECK(water==water2);
             CHECK(!(water==graphite));
             water.density(1.0);
@@ -84,7 +73,7 @@ bool rcompare(double a, double b,double eps){
         water2.add_element(1,1,2);
         water2.add_element(16,8,1);
         water2.density(1.0).thickness(2.0);
-                
+
         catima::Material graphite;
         graphite.add_element(12,6,1);
         graphite.density(1.8).thickness(1.0);
@@ -119,7 +108,7 @@ bool rcompare(double a, double b,double eps){
 
         catima::Layers focal_material = detector1 + detector2;
         CHECK(focal_material.num() == 8);
-    
+
     }
     TEST_CASE("basic projectile tests"){
       catima::Projectile p{12,6,6,1000};
@@ -127,7 +116,7 @@ bool rcompare(double a, double b,double eps){
       CHECK(p.Z==6);
       CHECK(p.Q==6);
       CHECK(p.T==1000);
-      
+
       catima::Projectile p2(12,6);
       CHECK(p.A==12);
       CHECK(p2.Z==6);
@@ -139,7 +128,7 @@ bool rcompare(double a, double b,double eps){
       CHECK(p2.T==500);
 
       catima::Projectile p3(12,6,5);
-      
+
       CHECK(p==p2);
       CHECK( !(p==p3));
     }
@@ -153,12 +142,12 @@ bool rcompare(double a, double b,double eps){
       CHECK(c1==c2);
       CHECK( !(c1==c3));
       CHECK(c1==c4);
-      
+
       c4.z_effective = catima::z_eff_type::global;
       CHECK(!(c1==c4));
       auto c5 = c4;
       CHECK(c4==c5);
-      
+
       c4.z_effective = catima::z_eff_type::hubert;
       CHECK(!(c4==c5) );
       CHECK(!(c4==c1));
@@ -184,7 +173,7 @@ bool rcompare(double a, double b,double eps){
         CHECK(mat5.get_element(0).Z==6);
         CHECK(mat5.get_element(1).A==16.0);
         CHECK(mat5.get_element(1).stn==2);
-        
+
         catima::Material mat6;
         mat6 = mat5;
         CHECK(mat5==mat6);
@@ -194,8 +183,8 @@ bool rcompare(double a, double b,double eps){
         CHECK(mat5.get_element(1).A==mat6.get_element(1).A);
         mat5.add_element(12,6,1);
         CHECK(mat5.ncomponents()==mat6.ncomponents()+1);
-        
-        // constructor with custom Ipot 
+
+        // constructor with custom Ipot
         catima::Material water1({
                 {1,1,2},
                 {16,8,1}
@@ -207,10 +196,10 @@ bool rcompare(double a, double b,double eps){
         CHECK(water1.ncomponents()==2);
         CHECK(water2.ncomponents()==2);
         CHECK(water1.density()==1.0);
-        CHECK(water2.density()==1.0); 
-        CHECK(water1.I()==0.0); 
-        CHECK(water2.I()==78.0); 
-        CHECK_FALSE(water1==water2); 
+        CHECK(water2.density()==1.0);
+        CHECK(water1.I()==0.0);
+        CHECK(water2.I()==78.0);
+        CHECK_FALSE(water1==water2);
 
     }
     TEST_CASE("fraction vs stn init"){
@@ -286,7 +275,7 @@ bool rcompare(double a, double b,double eps){
         c.thickness_cm(2.0);
         CHECK(c.number_density()==approx(1.7662,0.01));
         CHECK(c.number_density_cm2()==approx(2.0*1.7662,0.01));
-        
+
         water.thickness_cm(1.0);
         CHECK(water.number_density()==approx(0.3336,0.001));
         CHECK(water.number_density_cm2()==approx(0.3336,0.001));
@@ -296,7 +285,7 @@ bool rcompare(double a, double b,double eps){
         CHECK(water.number_density_cm2(1)==approx(0.3336,0.001));
         water.thickness_cm(3.0);
         CHECK(water.number_density_cm2()==approx(3.0*0.3336,0.001));
-    
+
         air.thickness_cm(1.0);
         CHECK(air.number_density(0)==approx(air.molar_fraction(0)*2*0.0002504,0.00001));
         CHECK(air.number_density(1)==approx(air.molar_fraction(1)*2*0.0002504,0.00001));
