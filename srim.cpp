@@ -7,7 +7,7 @@ namespace catima{
   * @param Z - proton number of material
   * @param energy - energy per nuclein in MeV/u
   */
- 
+
 double p_se(int Z, double energy){
     double sp = -1;
     double e = 1000*energy; //e in keV/u
@@ -23,7 +23,7 @@ double p_se(int Z, double energy){
     if(e<=25){
         sp *=(Z>6)?std::pow(e/25.0,0.45):std::pow(e/25.0,0.25);
     }
-    
+
     return sp;
 };
 /**
@@ -46,12 +46,12 @@ double p_se85(int Z, double energy){
     if(e<=25){
         sp *=(Z>6)?std::pow(e/25.0,0.45):std::pow(e/25.0,0.25);
     }
-    
+
     return sp;
 };
 
 /**
-  * return srim stopping power 
+  * return srim stopping power
   * @param pZ - projectile Z
   * @param pZ - material Z
   * @param energy - projectile energy in MeV/u unit
@@ -67,7 +67,7 @@ double srim_dedx_e(int pZ, int tZ, double energy, bool use_new){
     else if(pZ == 2){
         double a=0;
         double b=0;
-        
+
         if(e<=1)e=1;
         // He Zeff
         b = log(e);
@@ -82,7 +82,6 @@ double srim_dedx_e(int pZ, int tZ, double energy, bool use_new){
         return se;
     }
     else{ // heavy ion
-        double h1;
         double a,q,b;
         double l1,l0,l;
         double YRmin = 0.130; //  YRmin = VR / ZP**0.67 <= 0.13 OR VR <= 1.0
@@ -93,31 +92,30 @@ double srim_dedx_e(int pZ, int tZ, double energy, bool use_new){
         double zeta = 0;
         double se;
         int i;
-        
+        double pZ13_inv = 1.0/std::pow(pZ,1.0/3.0);
+        double pZ23_inv = pZ13_inv*pZ13_inv;
+
         i = tZ - 1;
         if(tZ>92){
             i = 91;
             }
         vfermi = atima_vfermi[i];
-        
+
         v = sqrt(e/25.0)/vfermi;
         double v2=v*v;
-        
-        double vr = (v >= 1)? v*vfermi*(1.+ 1./(5.*v2)) : 3.0*vfermi/4.0*(1.0+v2*(2.0/3.0-v2/15.0));
-        
-        h1= 1./std::pow(pZ,0.6667);
-        yr = std::max(YRmin,vr*h1);
-        yr = std::max(yr, VRmin*h1);
-        
+
+        double vr = (v >= 1)? v*vfermi*(1.+ 0.2/v2) : 3.0*vfermi/4.0*(1.0+v2*(2.0/3.0-v2/15.0));
+
+        yr = std::max(YRmin,vr * pZ23_inv);
+        yr = std::max(yr,VRmin * pZ23_inv);
+
         //--  CALCULATE ZEFF
         a = -0.803*std::pow(yr,0.3) + 1.3167*std::pow(yr,0.6) + 0.38157*yr + 0.008983*yr*yr;
         q = std::min(1.0, std::max(0.0 , (1.0 - exp(-std::min(a, 50.0))))); //-- Q = IONIZATION LEVEL OF THE ION AT RELATIVE VELOCITY YR
-        
+
         //-- IONIZATION LEVEL TO EFFECTIVE CHARGE
-        h1 = 1./ std::pow(pZ,0.3333);
-        
-        b = (std::min(0.43, std::max(0.32,0.12 + 0.025*pZ)))*h1;
-        l0 = (.8 - q * std::min(1.2,0.6 +pZ/30.0))*h1;
+        b = (std::min(0.43, std::max(0.32,0.12 + 0.025*pZ)))*pZ13_inv;
+        l0 = (.8 - q * std::min(1.2,0.6 +pZ/30.0))*pZ13_inv;
         if(q < 0.2){
             l1 = 0;
             }
@@ -133,14 +131,14 @@ double srim_dedx_e(int pZ, int tZ, double energy, bool use_new){
         // calculate screening
         i = (pZ>92)?91:pZ-1;
         l = std::max(l1,l0*atima_lambda_screening[i]);
-        h1 =4.0*l*vfermi/1.919;
-        zeta = q + (1./(2.*(vfermi*vfermi)))*(1. - q)* log1p(h1*h1); 
+        double h1 =4.0*l*vfermi/1.919;
+        zeta = q + (1./(2.*(vfermi*vfermi)))*(1. - q)* log1p(h1*h1);
          // ZP**3 EFFECT AS IN REF. 779?
         a = 7.6 - std::max(0.0, log(e));
         zeta = zeta*(1. + (1./(pZ*pZ))*(0.18 + .0015*tZ)*exp(-a*a));
-        h1= 1./std::pow(pZ,0.6667);
-        if (yr <= ( std::max(YRmin, VRmin*h1))){
-            VRmin=std::max(VRmin, YRmin/h1);
+        double c1 = zeta *pZ;
+        if (yr <= ( std::max(YRmin, VRmin * pZ23_inv))){
+            VRmin=std::max(VRmin, YRmin/pZ23_inv);
             //--C        ..CALCULATE VELOCITY STOPPING FOR YR < YRmin
             double vmin =.5*(VRmin + sqrt(std::max(0.0,VRmin*VRmin - .8*vfermi*vfermi)));
             double eee = 25.0*vmin*vmin;
@@ -148,14 +146,13 @@ double srim_dedx_e(int pZ, int tZ, double energy, bool use_new){
 //              if((tZ == 6) || (((tZ == 14) || (tZ == 32)) &&  (pZ <= 19))) eval = 0.375;
             if((tZ == 6) || (((tZ == 14) || (tZ == 32)) &&  (pZ <= 19))) eval = 0.35;
             else eval = 0.5;
-            
-            h1 = zeta *pZ;
+
             double h4 = std::pow(e / eee,eval);
-            se = (*fp_se)(tZ, eee*0.001) * h1*h1*h4;
+            se = (*fp_se)(tZ, eee*0.001) * c1*c1*h4;
             return se;
         }
         else {
-            return (*fp_se)(tZ,energy)*std::pow(zeta*pZ,2.0);
+            return (*fp_se)(tZ,energy)*std::pow(c1,2.0);
         }
         return 0;
     }
@@ -390,36 +387,36 @@ const double atima_lambda_screening[92]= {
  0.96,
  0.93,
  0.91,
- 0.9, 
+ 0.9,
  0.88,
- 0.9, 
- 0.9, 
- 0.9, 
- 0.9, 
+ 0.9,
+ 0.9,
+ 0.9,
+ 0.9,
  0.85,
- 0.9, 
- 0.9, 
+ 0.9,
+ 0.9,
  0.91,
  0.92,
- 0.9, 
- 0.9, 
- 0.9, 
- 0.9, 
- 0.9, 
+ 0.9,
+ 0.9,
+ 0.9,
+ 0.9,
+ 0.9,
  0.88,
- 0.9, 
+ 0.9,
  0.88,
  0.88,
- 0.9, 
- 0.9, 
+ 0.9,
+ 0.9,
  0.88,
- 0.9, 
- 0.9, 
- 0.9, 
- 0.9, 
+ 0.9,
+ 0.9,
+ 0.9,
+ 0.9,
  0.96,
- 1.2, 
- 0.9, 
+ 1.2,
+ 0.9,
  0.88,
  0.88,
  0.85,
@@ -556,16 +553,16 @@ const double proton_stopping_coef[92][8] = { // proton in material stopping coef
 };
 
 const double  atima_vfermi[92] = {
-1.0309, 
+1.0309,
 0.15976,
 0.59782,
-1.0781, 
-1.0486, 
-1.00,   
-1.058,  
+1.0781,
+1.0486,
+1.00,
+1.058,
 0.93942,
 0.74562,
-0.3424, 
+0.3424,
 0.45259,
 0.71074,
 0.90519,
@@ -577,48 +574,48 @@ const double  atima_vfermi[92] = {
 0.36552,
 0.62712,
 0.81707,
-0.9943, 
-1.1423, 
-1.2381, 
-1.1222, 
+0.9943,
+1.1423,
+1.2381,
+1.1222,
 0.92705,
-1.0047, 
-1.2,    
-1.0661, 
+1.0047,
+1.2,
+1.0661,
 0.97411,
 0.84912,
-0.95,   
-1.0903, 
-1.0429, 
+0.95,
+1.0903,
+1.0429,
 0.49715,
 0.37755,
 0.35211,
 0.57801,
 0.77773,
-1.0207, 
-1.029,  
-1.2542, 
-1.122,  
-1.1241, 
-1.0882, 
-1.2709, 
-1.2542, 
+1.0207,
+1.029,
+1.2542,
+1.122,
+1.1241,
+1.0882,
+1.2709,
+1.2542,
 0.90094,
 0.74093,
 0.86054,
 0.93155,
-1.0047, 
+1.0047,
 0.55379,
 0.43289,
 0.32636,
-0.5131, 
-0.6950, 
+0.5131,
+0.6950,
 0.72591,
 0.71202,
 0.67413,
 0.71418,
 0.71453,
-0.5911, 
+0.5911,
 0.70263,
 0.68049,
 0.68203,
@@ -628,13 +625,13 @@ const double  atima_vfermi[92] = {
 0.61884,
 0.71801,
 0.83048,
-1.1222, 
-1.2381, 
-1.045,  
-1.0733, 
-1.0953, 
-1.2381, 
-1.2879, 
+1.1222,
+1.2381,
+1.045,
+1.0733,
+1.0953,
+1.2381,
+1.2879,
 0.78654,
 0.66401,
 0.84912,
@@ -646,7 +643,7 @@ const double  atima_vfermi[92] = {
 0.51464,
 0.73087,
 0.81065,
-1.9578, 
+1.9578,
 1.0257};
 
 }  // namespace catima

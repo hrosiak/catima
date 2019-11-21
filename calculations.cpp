@@ -532,10 +532,6 @@ double precalculated_lindhard(const Projectile &p){
 
     double da = (p.A - element_atomic_weight(z))/element_atomic_weight(z);
     z = z-1;
-    //catima::Interpolator ls_a(ls_coefficients::ls_energy_points,ls_coefficients::ls_coefficients_a[z],LS_NUM_ENERGY_POINTS,interpolation_t::linear);
-    //catima::Interpolator ls_ahi(ls_coefficients::ls_energy_points,ls_coefficients::ls_coefficients_ahi[z],LS_NUM_ENERGY_POINTS,interpolation_t::linear);
-    //catima::Interpolator ls_a(ls_coefficients::ls_energy_table.values,ls_coefficients::ls_coefficients_a[z],LS_NUM_ENERGY_POINTS,interpolation_t::cspline);
-    //catima::Interpolator ls_ahi(ls_coefficients::ls_energy_table.values,ls_coefficients::ls_coefficients_ahi[z],LS_NUM_ENERGY_POINTS,interpolation_t::cspline);
     double v1 = EnergyTable_interpolate(ls_coefficients::ls_energy_table,T,ls_coefficients::ls_coefficients_a[z]);
     double v2 = EnergyTable_interpolate(ls_coefficients::ls_energy_table,T,ls_coefficients::ls_coefficients_ahi[z]);
 
@@ -551,13 +547,10 @@ double precalculated_lindhard_X(const Projectile &p){
     int z = (int)p.Z ;
     if(z>LS_MAX_Z)z=LS_MAX_Z;
     //if(p.T<ls_coefficients::ls_energy_table(0))T=ls_coefficients::ls_energy_table(0);
-    if(p.T<ls_coefficients::ls_energy_table(0))
-		return 1.0;
+    if(p.T<ls_coefficients::ls_energy_table(0))return 1.0;
     double da = (p.A - element_atomic_weight(z))/element_atomic_weight(z);
     z = z-1;
 
-    //catima::Interpolator ls_X_a(ls_coefficients::ls_energy_table.values,ls_coefficients::ls_X_coefficients_a[z],LS_NUM_ENERGY_POINTS,interpolation_t::linear);
-    //catima::Interpolator ls_X_ahi(ls_coefficients::ls_energy_table.values,ls_coefficients::ls_X_coefficients_ahi[z],LS_NUM_ENERGY_POINTS,interpolation_t::linear);
     double v1 = EnergyTable_interpolate(ls_coefficients::ls_energy_table,T,ls_coefficients::ls_X_coefficients_a[z]);
     double v2 = EnergyTable_interpolate(ls_coefficients::ls_energy_table,T,ls_coefficients::ls_X_coefficients_ahi[z]);
 
