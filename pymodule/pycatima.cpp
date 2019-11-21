@@ -120,6 +120,13 @@ PYBIND11_MODULE(pycatima,m){
              //.def_readwrite("T", &Projectile::T)
              //.def_readwrite("Q", &Projectile::Q);
 
+     py::class_<Target>(m,"Target")
+             .def(py::init<>(),"constructor")
+             .def_readwrite("A",&Target::A)
+             .def_readwrite("Z",&Target::Z)
+             .def_readwrite("stn",&Target::stn);
+             
+
      py::class_<Material>(m,"Material")
              .def(py::init<>(),"constructor")
              .def(py::init<const Material&>(),"constructor")
@@ -210,7 +217,7 @@ PYBIND11_MODULE(pycatima,m){
             .value("hubert", z_eff_type::hubert)
             .value("winger", z_eff_type::winger)
             .value("schiwietz", z_eff_type::schiwietz)
-            .value("global", z_eff_type::global)
+            .value("cglobal", z_eff_type::global)
             .value("atima14", z_eff_type::atima14);
 
     py::enum_<corrections>(m,"corrections")
@@ -295,6 +302,7 @@ PYBIND11_MODULE(pycatima,m){
     m.def("storage_info",&storage_info);
     m.def("get_energy_table",&get_energy_table);
     m.def("energy_table",[](int i){return energy_table(i);});
+    m.def("z_effective",&z_effective);
     m.attr("max_datapoints") = max_datapoints;
     m.attr("max_storage_data") = max_storage_data;
     m.attr("logEmin")=logEmin;

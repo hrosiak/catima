@@ -371,7 +371,6 @@ DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
             return 1.0/dedx(p(x),t,c);
             };
     auto fomega = [&](double x)->double{
-            //return 1.0*domega2dx(p,x,t)/pow(dedx(p(x),t,c),3);
             return domega2dx(p,x,t,c)/catima::power(dedx(p(x),t,c),3);
             };
 
