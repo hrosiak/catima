@@ -1,17 +1,19 @@
-add_definitions(-Dlest_FEATURE_COLOURISE=1)
+find_package(doctest REQUIRED)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
 set(CATIMA_TESTS test_calculations test_generated test_storage test_structures test_dedx_range test_abundances)
 
 foreach(entry ${CATIMA_TESTS})
     add_executable(${entry} ${entry}.cpp)
-    target_link_libraries(${entry} catima)
+    target_link_libraries(${entry} PRIVATE catima)
+    target_compile_features(${entry} PRIVATE cxx_std_17)
     add_test(${entry} ${PROJECT_BINARY_DIR}/tests/${entry})
 endforeach(entry in ${CATIMA_TESTS})
 
 if(REACTIONS)
     add_executable(test_reaction test_reaction.cpp)
     target_link_libraries(test_reaction catima)
+    target_compile_features(test_reaction PRIVATE cxx_std_17)
     add_test(test_reaction ${PROJECT_BINARY_DIR}/tests/test_reaction)
 endif(REACTIONS)
 
@@ -20,4 +22,5 @@ MESSAGE( STATUS "CMAKE_C_COMPILER: " ${CMAKE_C_COMPILER} )
 foreach(entry ${C_TESTS})
     add_executable(${entry} ${entry}.c)
     target_link_libraries(${entry} catima)
+    target_compile_features(${entry} PRIVATE cxx_std_17)
 endforeach(entry in ${C_TESTS})

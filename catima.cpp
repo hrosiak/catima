@@ -149,7 +149,6 @@ double energy_straggling_from_E(Projectile &p, double T, double Tout,const Mater
 }
 
 double energy_out(double T, double thickness, const Interpolator &range_spline){
-    constexpr double epsilon = 1E-5;
     int counter = 0;
     double range;
     double dedx;
@@ -162,13 +161,14 @@ double energy_out(double T, double thickness, const Interpolator &range_spline){
     e = T - (thickness*dedx);
     while(1){
         r = range - range_spline(e) - thickness;
-        if(fabs(r)<epsilon)return e;
+        if(fabs(r)<Eout_epsilon)return e;
         double step = -r*dedx;
         e = e-step;
         if(e<Ezero)return 0.0;
         dedx = 1.0/range_spline.derivative(e);
         counter++;
-        if(counter>100){printf("too many iterations finding Eout");return -1;}
+        assert(counter<=100);
+        if(counter>100)return -1;
     }
     return -1;
 }
