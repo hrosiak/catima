@@ -125,7 +125,7 @@ PYBIND11_MODULE(pycatima,m){
              .def_readwrite("A",&Target::A)
              .def_readwrite("Z",&Target::Z)
              .def_readwrite("stn",&Target::stn);
-             
+
 
      py::class_<Material>(m,"Material")
              .def(py::init<>(),"constructor")
@@ -289,6 +289,8 @@ PYBIND11_MODULE(pycatima,m){
     m.def("range",py::overload_cast<Projectile&, const Material&, const Config&>(&range), "range",py::arg("projectile"), py::arg("material"), py::arg("config")=default_config);
     m.def("energy_out",py::overload_cast<Projectile&, const std::vector<double>&, const Material&, const Config&>(&energy_out),"energy_out",py::arg("projectile"), py::arg("energy") ,py::arg("material"), py::arg("config")=default_config);
     m.def("energy_out",py::overload_cast<Projectile&, const Material&, const Config&>(&energy_out),"energy_out",py::arg("projectile"), py::arg("material"), py::arg("config")=default_config);
+    m.def("lindhard",&bethek_lindhard);
+    m.def("lindhard_X",&bethek_lindhard_X);
     m.def("get_material",py::overload_cast<int>(&get_material));
     m.def("get_data",py::overload_cast<Projectile&, const Material&, const Config&>(get_data),"list of data",py::arg("projectile"),py::arg("material"),py::arg("config")=default_config);
     m.def("w_magnification",[](Projectile& p, double energy, const Material& m, const Config& c){
