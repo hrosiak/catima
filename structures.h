@@ -162,6 +162,11 @@ namespace catima{
             double thickness() const {return th;};
 
             /**
+              * @return returns thickness in cm
+              */
+            double thickness_cm() const {return th/rho;};
+
+            /**
               * sets thickness in g/cm^2
               */
             Material& thickness(double val){th = val;return *this;};
@@ -233,6 +238,7 @@ namespace catima{
         double sigma_E=0.0;
         double sigma_a=0.0;
         double sigma_r=0.0;
+        double sigma_x=0.0;
         double tof=0.0;
         #ifdef REACTIONS
         double sp = 1.0;

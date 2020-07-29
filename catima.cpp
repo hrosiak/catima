@@ -215,7 +215,7 @@ Result calculate(Projectile &p, const Material &t, const Config &c){
 
     //Interpolator range_straggling_spline(energy_table.values,data.range_straggling.data(),energy_table.num);
     spline_type range_straggling_spline = get_range_straggling_spline(data);
-
+    spline_type angular_variance_spline = get_angular_variance_spline(data);
     if(res.Eout<Ezero){
         res.dEdxo = 0.0;
         res.sigma_a = 0.0;
@@ -223,25 +223,19 @@ Result calculate(Projectile &p, const Material &t, const Config &c){
         res.sigma_E = 0.0;
     }
     else{
-        res.dEdxo = p.A/range_spline.derivative(res.Eout);
-        
+        res.dEdxo = p.A/range_spline.derivative(res.Eout);        
         #ifdef THIN_TARGET_APPROXIMATION
         if(thin_target_limit*res.Ein<res.Eout){
             double edif = (res.Ein-res.Eout);
             double s1 = range_straggling_spline.derivative(T);
             double s2 = range_straggling_spline.derivative(res.Eout);
             res.sigma_E = res.dEdxo*sqrt(edif*0.5*(s1+s2))/p.A;
-        
-            //Interpolator angular_variance_spline(energy_table.values,data.angular_variance.data(),energy_table.num);
-            spline_type angular_variance_spline = get_angular_variance_spline(data);
             s1 = angular_variance_spline.derivative(T);
             s2 = angular_variance_spline.derivative(res.Eout);
             res.sigma_a = sqrt(0.5*(s1+s2)*edif);
         }
         else{
-            res.sigma_E = res.dEdxo*sqrt(range_straggling_spline(T) - range_straggling_spline(res.Eout))/p.A;
-            //Interpolator angular_variance_spline(energy_table.values,data.angular_variance.data(),energy_table.num);
-            spline_type angular_variance_spline = get_angular_variance_spline(data);
+            res.sigma_E = res.dEdxo*sqrt(range_straggling_spline(T) - range_straggling_spline(res.Eout))/p.A;            
             res.sigma_a = sqrt(angular_variance_spline(T) - angular_variance_spline(res.Eout));    
         }
         
@@ -258,8 +252,14 @@ Result calculate(Projectile &p, const Material &t, const Config &c){
             res.tof = calculate_tof_from_E(p,res.Eout,t);
             }
     }
-    res.sigma_r = sqrt(range_straggling_spline(T));
+    res.sigma_r = sqrt(range_straggling_spline(T));    
     res.Eloss = (res.Ein - res.Eout)*p.A;
+
+    auto fx2 = [&](double x)->double{ 
+            double tt = range_spline(T)-range_spline(x);      
+            return (tt-t.thickness())*(tt-t.thickness())*angular_variance_spline.derivative(x);
+            };
+    res.sigma_x = sqrt(integrator.integrate(fx2,res.Eout, res.Ein));
     #ifdef REACTIONS
     res.sp = nonreaction_rate(p,t,c);
     #endif
@@ -280,6 +280,7 @@ MultiResult calculate(Projectile &p, const Layers &layers, const Config &c){
         res.total_result.sigma_E += r.sigma_E*r.sigma_E; 
         res.total_result.tof += r.tof;
         res.total_result.Eout = r.Eout;
+        res.total_result.sigma_x += r.sigma_x*r.sigma_x; 
         #ifdef REACTIONS
         res.total_result.sp = (r.sp>=0.0)?res.total_result.sp*r.sp:-1;
         #endif
@@ -288,6 +289,8 @@ MultiResult calculate(Projectile &p, const Layers &layers, const Config &c){
     if(e>Ezero){
         res.total_result.sigma_a = sqrt(res.total_result.sigma_a);
         res.total_result.sigma_E = sqrt(res.total_result.sigma_E);
+        res.total_result.sigma_x = sqrt(res.total_result.sigma_x);
+        
     }
     else{
         res.total_result.sigma_a = 0.0;
