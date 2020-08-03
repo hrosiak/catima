@@ -32,11 +32,11 @@ double dedx(Projectile &p, const Material &mat, const  Config &c){
     sum += dedx_n(p,mat);
     double se=0;
     if(p.T<=10){
-        se = sezi_dedx_e(p,mat);
+        se = sezi_dedx_e(p,mat,c );
     }
     else if(p.T>10 && p.T<30){
         double factor = 0.05 * ( p.T - 10.0 );
-        se = (1-factor)*sezi_dedx_e(p,mat) + factor*bethek_dedx_e(p,mat,c);
+        se = (1-factor)*sezi_dedx_e(p,mat,c) + factor*bethek_dedx_e(p,mat,c);
     }
     else {
         se = bethek_dedx_e(p,mat,c);
@@ -256,8 +256,10 @@ Result calculate(Projectile &p, const Material &t, const Config &c){
     res.Eloss = (res.Ein - res.Eout)*p.A;
 
     auto fx2 = [&](double x)->double{ 
-            double tt = range_spline(T)-range_spline(x);      
-            return (tt-t.thickness())*(tt-t.thickness())*angular_variance_spline.derivative(x);
+	    double range = range_spline(T);
+            double tt = range - range_spline(x);      
+            double t0 = std::min(range, t.thickness());
+	    return (tt-t0)*(tt-t0)*angular_variance_spline.derivative(x);
             };
     res.sigma_x = sqrt(integrator.integrate(fx2,res.Eout, res.Ein));
     #ifdef REACTIONS
