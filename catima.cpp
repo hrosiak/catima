@@ -261,7 +261,8 @@ Result calculate(Projectile &p, const Material &t, const Config &c){
             double t0 = std::min(range, t.thickness());
 	    return (tt-t0)*(tt-t0)*angular_variance_spline.derivative(x);
             };
-    res.sigma_x = sqrt(integrator.integrate(fx2,res.Eout, res.Ein));
+    res.sigma_x = integrator.integrate(fx2,res.Eout, res.Ein)/t.density()/t.density();
+    res.sigma_x = sqrt(res.sigma_x);
     #ifdef REACTIONS
     res.sp = nonreaction_rate(p,t,c);
     #endif
@@ -273,8 +274,9 @@ MultiResult calculate(Projectile &p, const Layers &layers, const Config &c){
     double e = p.T;
     res.total_result.Ein = e;
     res.results.reserve(layers.num());
-
+    double z = 0;
     for(auto&m:layers.get_materials()){
+        z += m.thickness_cm();
         Result r = calculate(p,m,e,c);
         e = r.Eout;
         res.total_result.sigma_a += r.sigma_a*r.sigma_a;
@@ -282,7 +284,9 @@ MultiResult calculate(Projectile &p, const Layers &layers, const Config &c){
         res.total_result.sigma_E += r.sigma_E*r.sigma_E; 
         res.total_result.tof += r.tof;
         res.total_result.Eout = r.Eout;
-        res.total_result.sigma_x += r.sigma_x*r.sigma_x; 
+        double temp = r.sigma_a*(layers.thickness_cm() - z); 
+        res.total_result.sigma_x += (r.sigma_x*r.sigma_x) + (temp*temp);
+        //res.total_result.sigma_x += r.sigma_x*r.sigma_x;
         #ifdef REACTIONS
         res.total_result.sp = (r.sp>=0.0)?res.total_result.sp*r.sp:-1;
         #endif
@@ -297,6 +301,7 @@ MultiResult calculate(Projectile &p, const Layers &layers, const Config &c){
     else{
         res.total_result.sigma_a = 0.0;
         res.total_result.sigma_E = 0.0;
+        res.total_result.sigma_x = sqrt(res.total_result.sigma_x);
         }
     return res;
 }

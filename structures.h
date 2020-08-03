@@ -281,6 +281,16 @@ namespace catima{
           */
         int num()const{return materials.size();};
 
+        /**
+         * @ return total thickness 
+         */ 
+        double thickness() const;
+
+        /**
+         * @ return total thickness in cm
+         */ 
+        double thickness_cm() const;
+
         Material& operator[](int i){return materials[i];}
 
         friend Layers operator+(const Layers &a, const Layers&b);

@@ -66,6 +66,22 @@ void Layers::add(Material m){
     materials.push_back(m);
 }
 
+double Layers::thickness() const {
+    double sum = 0;
+    for(auto &m : materials){
+        sum += m.thickness();
+    }
+    return sum;
+}
+
+double Layers::thickness_cm() const {
+    double sum = 0;
+    for(auto &m : materials){
+        sum += m.thickness_cm();
+    }
+    return sum;
+}
+
 Layers operator+(const Layers &a, const Layers&b){
     Layers res;
     for(auto &e:a.materials){

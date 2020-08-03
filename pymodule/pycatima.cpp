@@ -139,7 +139,7 @@ PYBIND11_MODULE(pycatima,m){
              .def("molar_mass",py::overload_cast<>(&Material::M, py::const_), "get mass")
              .def("thickness",py::overload_cast<>(&Material::thickness, py::const_), "get thickness")
              .def("thickness",py::overload_cast<double>(&Material::thickness), "set thickness")
-             .def("thickness_cm",&Material::thickness_cm,"set thickness in cm unit")
+             .def("thickness_cm",py::overload_cast<double>(&Material::thickness_cm),"set thickness in cm unit")
              .def("I",py::overload_cast<>(&Material::I, py::const_), "get I")
              .def("I",py::overload_cast<double>(&Material::I), "set I")
              .def("__str__",&material_to_string);
