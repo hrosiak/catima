@@ -7,6 +7,8 @@
 
 namespace catima{
     integrator_type integrator;
+    integrator_adaptive_type integrator_adaptive;
+
 #ifdef GSL_INTEGRATION
     double funcwrapper3(double x, void *_c){
     std::function<double(double)> *f = (std::function<double(double)> *)_c;

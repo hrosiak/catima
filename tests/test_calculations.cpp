@@ -241,6 +241,7 @@ using namespace std;
       water.thickness_cm(7.4);      
       ll.add(water);
       res2 = catima::calculate(p,ll);
+      CHECK(ll.thickness_cm() == approx(17,0.00001));
       CHECK(res2.total_result.sigma_x == approx(0.25,0.05));
       CHECK(res2.total_result.sigma_x == approx(res17.sigma_x,0.001));
 
@@ -251,6 +252,16 @@ using namespace std;
       l.add(water);
       res2 = catima::calculate(p,l);
       CHECK(res2.total_result.sigma_x == approx(res.sigma_x).R(0.01));
+
+      catima::Layers lll;
+      water.thickness_cm(29.4/4);
+      lll.add(water);
+      lll.add(water);
+      lll.add(water);
+      lll.add(water);
+      res2 = catima::calculate(p,lll);
+      CHECK(res2.total_result.sigma_x == approx(res29.sigma_x).R(0.01));
+
     }
     TEST_CASE("result from stopped material"){
         catima::Projectile p{12,6,6,1000};

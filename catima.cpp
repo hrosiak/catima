@@ -257,12 +257,25 @@ Result calculate(Projectile &p, const Material &t, const Config &c){
 
     auto fx2 = [&](double x)->double{ 
 	    double range = range_spline(T);
-            double tt = range - range_spline(x);      
-            double t0 = std::min(range, t.thickness());
+        double tt = range - range_spline(x);      
+        double t0 = std::min(range, t.thickness());
 	    return (tt-t0)*(tt-t0)*angular_variance_spline.derivative(x);
             };
-    res.sigma_x = integrator.integrate(fx2,res.Eout, res.Ein)/t.density()/t.density();
+           
+    
+    res.sigma_x = integrator_adaptive.integrate(fx2,res.Eout, res.Ein,1e-3, 1e-3,4)/t.density()/t.density();    
+    //res.sigma_x = integrator_adaptive.integrate(fx2p,0, t.thickness_cm(),1e-3, 1e-3,4)/t.density()/t.density();    
     res.sigma_x = sqrt(res.sigma_x);
+
+    auto fx1 = [&](double x)->double{ 
+	    double range = range_spline(T);
+        double tt = range - range_spline(x);      
+        double t0 = std::min(range, t.thickness());
+	    return (t0-tt)*angular_variance_spline.derivative(x);
+            };
+    
+    res.cov = integrator_adaptive.integrate(fx1,res.Eout, res.Eout, 1e-6, 1e-3,4)/t.density();
+
     #ifdef REACTIONS
     res.sp = nonreaction_rate(p,t,c);
     #endif
@@ -275,18 +288,20 @@ MultiResult calculate(Projectile &p, const Layers &layers, const Config &c){
     res.total_result.Ein = e;
     res.results.reserve(layers.num());
     double z = 0;
+    double cov = 0;
     for(auto&m:layers.get_materials()){
         z += m.thickness_cm();
         Result r = calculate(p,m,e,c);
-        e = r.Eout;
-        res.total_result.sigma_a += r.sigma_a*r.sigma_a;
+        e = r.Eout;        
         res.total_result.Eloss += r.Eloss;
         res.total_result.sigma_E += r.sigma_E*r.sigma_E; 
         res.total_result.tof += r.tof;
-        res.total_result.Eout = r.Eout;
-        double temp = r.sigma_a*(layers.thickness_cm() - z); 
-        res.total_result.sigma_x += (r.sigma_x*r.sigma_x) + (temp*temp);
-        //res.total_result.sigma_x += r.sigma_x*r.sigma_x;
+        res.total_result.Eout = r.Eout;        
+        double a2 = res.total_result.sigma_a;
+        res.total_result.sigma_x += (2*m.thickness_cm()*res.total_result.cov) + (a2*m.thickness_cm()*m.thickness_cm()) + r.sigma_x*r.sigma_x;
+        //res.total_result.sigma_x += (a2*m.thickness_cm()*m.thickness_cm()) + r.sigma_x*r.sigma_x;
+        res.total_result.cov += a2*m.thickness_cm() + r.cov;
+        res.total_result.sigma_a += r.sigma_a*r.sigma_a;
         #ifdef REACTIONS
         res.total_result.sp = (r.sp>=0.0)?res.total_result.sp*r.sp:-1;
         #endif

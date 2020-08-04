@@ -447,10 +447,11 @@ double sezi_dedx_e(const Projectile &p, const Material &mat, const Config &c){
     double w;
     double sum=0.0;
     bool use95 = c.low_energy == low_energy_types::srim_95;
+    double T = p.T;
     for(int i=0;i<mat.ncomponents();i++){
         auto t = mat.get_element(i);
         w = mat.weight_fraction(i);
-        sum += w*srim_dedx_e(p.Z,t.Z,p.T, use95)/t.A;
+        sum += w*srim_dedx_e(p.Z,t.Z,T, use95)/t.A;
     }
     return 100*sum*Avogadro; // returning MeV/g/cm2
 }

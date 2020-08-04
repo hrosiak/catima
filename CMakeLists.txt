@@ -72,7 +72,7 @@ if(GLOBAL)
 file(GLOB GLOBAL_SOURCES global/*.c)
 LIST (APPEND SOURCES ${GLOBAL_SOURCES})
 endif(GLOBAL)
-file(GLOB HEADERS *.h)
+file(GLOB HEADERS *.h libs/*.h)
 
 add_library(catima ${SOURCES})
 set_target_properties(catima PROPERTIES
