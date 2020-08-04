@@ -259,23 +259,35 @@ Result calculate(Projectile &p, const Material &t, const Config &c){
 	    double range = range_spline(T);
         double tt = range - range_spline(x);      
         double t0 = std::min(range, t.thickness());
-	    return (tt-t0)*(tt-t0)*angular_variance_spline.derivative(x);
+	    return (tt-t0)*(tt-t0)*da2dx(p,x, t, c);
             };
-           
+    auto fx2p = [&](double x)->double{ 
+	    double range = range_spline(T);
+        double e =energy_out(T,x*t.density(),range_spline);
+        double t0 = std::min(range/t.density(), t.thickness_cm());
+	    return (t0-x)*(t0-x)*da2dx(p,e, t, c)*t.density();
+            };           
     
-    res.sigma_x = integrator_adaptive.integrate(fx2,res.Eout, res.Ein,1e-3, 1e-3,4)/t.density()/t.density();    
-    //res.sigma_x = integrator_adaptive.integrate(fx2p,0, t.thickness_cm(),1e-3, 1e-3,4)/t.density()/t.density();    
+    //res.sigma_x = integrator_adaptive.integrate(fx2,res.Eout, res.Ein,1e-3, 1e-3,4)/t.density();    
+    res.sigma_x = integrator_adaptive.integrate(fx2p,0, t.thickness_cm(),1e-3, 1e-3,4);    
     res.sigma_x = sqrt(res.sigma_x);
 
     auto fx1 = [&](double x)->double{ 
 	    double range = range_spline(T);
         double tt = range - range_spline(x);      
         double t0 = std::min(range, t.thickness());
-	    return (t0-tt)*angular_variance_spline.derivative(x);
+	    return (t0-tt)*da2dx(p,x, t, c);
+            };
+    auto fx1p = [&](double x)->double{ 
+	    double range = range_spline(T);
+        double e =energy_out(T,x*t.density(),range_spline);
+        double t0 = std::min(range/t.density(), t.thickness_cm());
+	    return (t0-x)*da2dx(p,e, t, c)*t.density();
             };
     
-    res.cov = integrator_adaptive.integrate(fx1,res.Eout, res.Eout, 1e-6, 1e-3,4)/t.density();
-
+    //res.cov = integrator_adaptive.integrate(fx1,res.Eout, res.Eout, 1e-6, 1e-3,4);
+    res.cov = integrator_adaptive.integrate(fx1p,0, t.thickness_cm(), 1e-6, 1e-3,4);
+    p.T = T;
     #ifdef REACTIONS
     res.sp = nonreaction_rate(p,t,c);
     #endif
@@ -298,7 +310,9 @@ MultiResult calculate(Projectile &p, const Layers &layers, const Config &c){
         res.total_result.tof += r.tof;
         res.total_result.Eout = r.Eout;        
         double a2 = res.total_result.sigma_a;
-        res.total_result.sigma_x += (2*m.thickness_cm()*res.total_result.cov) + (a2*m.thickness_cm()*m.thickness_cm()) + r.sigma_x*r.sigma_x;
+        res.total_result.sigma_x += (2*m.thickness_cm()*res.total_result.cov) 
+                                 + (a2*m.thickness_cm()*m.thickness_cm()) 
+                                 + r.sigma_x*r.sigma_x;
         //res.total_result.sigma_x += (a2*m.thickness_cm()*m.thickness_cm()) + r.sigma_x*r.sigma_x;
         res.total_result.cov += a2*m.thickness_cm() + r.cov;
         res.total_result.sigma_a += r.sigma_a*r.sigma_a;

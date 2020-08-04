@@ -217,6 +217,7 @@ using namespace std;
                 {1.00794,1,2},
                 {15.9994,8,1}
                 });
+      water2.thickness_cm(9.6);
       water2.density(2.0);
 
       water.thickness_cm(9.6);
@@ -250,7 +251,7 @@ using namespace std;
       l.add(water);
       l.add(water);
       l.add(water);
-      res2 = catima::calculate(p,l);
+      res2 = catima::calculate(p(215),l);
       CHECK(res2.total_result.sigma_x == approx(res.sigma_x).R(0.01));
 
       catima::Layers lll;
@@ -259,7 +260,7 @@ using namespace std;
       lll.add(water);
       lll.add(water);
       lll.add(water);
-      res2 = catima::calculate(p,lll);
+      res2 = catima::calculate(p(215),lll);
       CHECK(res2.total_result.sigma_x == approx(res29.sigma_x).R(0.01));
 
     }
