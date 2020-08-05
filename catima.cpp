@@ -314,10 +314,7 @@ MultiResult calculate(const Projectile &p, const Layers &layers, const Config &c
     double e = p.T;
     res.total_result.Ein = e;
     res.results.reserve(layers.num());
-    double z = 0;
-    double cov = 0;
     for(auto&m:layers.get_materials()){
-        z += m.thickness_cm();
         Result r = calculate(p,m,e,c);
         e = r.Eout;        
         res.total_result.Eloss += r.Eloss;
