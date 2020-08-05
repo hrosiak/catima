@@ -61,7 +61,7 @@ double dedx_n(const Projectile &p, const Target &t){
     return sn;
 }
 
-double bethek_dedx_e(Projectile &p,const Material &mat, const Config &c){
+double bethek_dedx_e(const Projectile &p,const Material &mat, const Config &c){
     double w;
     double sum=0.0;
     for(int i=0;i<mat.ncomponents();i++){
@@ -72,7 +72,7 @@ double bethek_dedx_e(Projectile &p,const Material &mat, const Config &c){
     return sum;
 }
 
-double bethek_dedx_e(Projectile &p, const Target &t, const Config &c, double I){
+double bethek_dedx_e(const Projectile &p, const Target &t, const Config &c, double I){
     assert(t.Z>0 && p.Z>0);
     assert(t.A>0 && p.A>0);
     assert(p.T>0.0);
@@ -477,7 +477,7 @@ double energy_straggling_firsov(double z1,double energy, double z2, double m2){
     return factor*beta2/fine_structure/fine_structure;
     }
 
-double angular_scattering_variance(Projectile &p, Target &t){
+double angular_scattering_variance(const Projectile &p, const Target &t){
     if(p.T<=0)return 0.0;
     double e=p.T;
     double _p = p_from_T(e,p.A);
@@ -561,7 +561,7 @@ double precalculated_lindhard_X(const Projectile &p){
     return v1+(dif*da/ls_coefficients::a_rel_increase);
 }
 
-double dedx_variance(Projectile &p, Target &t, const Config &c){
+double dedx_variance(const Projectile &p, const Target &t, const Config &c){
     double gamma = gamma_from_T(p.T);
     double cor=0;
     double beta = beta_from_T(p.T);

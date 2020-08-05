@@ -244,7 +244,7 @@ using namespace std;
       res2 = catima::calculate(p,ll);
       CHECK(ll.thickness_cm() == approx(17,0.00001));
       CHECK(res2.total_result.sigma_x == approx(0.25,0.05));
-      CHECK(res2.total_result.sigma_x == approx(res17.sigma_x,0.001));
+      CHECK(res2.total_result.sigma_x == approx(res17.sigma_x).R(0.03));
 
       catima::Layers l;
       water.thickness_cm(9.6/3);
@@ -252,7 +252,7 @@ using namespace std;
       l.add(water);
       l.add(water);
       res2 = catima::calculate(p(215),l);
-      CHECK(res2.total_result.sigma_x == approx(res.sigma_x).R(0.01));
+      CHECK(res2.total_result.sigma_x == approx(res.sigma_x).R(0.03));
 
       catima::Layers lll;
       water.thickness_cm(29.4/4);

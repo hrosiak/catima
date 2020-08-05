@@ -34,7 +34,7 @@ using namespace std;
             graphite.add_element(18,40,1);
             CHECK(graphite.ncomponents()==2);
             CHECK_FALSE(graphite.M()==approx(12,0.1));
-
+            CHECK( water.density() == approx(water2.density(),1e-6) );
             CHECK(water==water2);
             CHECK(!(water==graphite));
             water.density(1.0);

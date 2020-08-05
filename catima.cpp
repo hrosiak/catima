@@ -26,7 +26,7 @@ bool operator==(const Config &a, const Config&b){
     }
 
 
-double dedx(Projectile &p, const Material &mat, const  Config &c){
+double dedx(const Projectile &p, const Material &mat, const  Config &c){
     double sum = 0;
     if(p.T<=0)return 0.0;
     sum += dedx_n(p,mat);
@@ -46,46 +46,44 @@ double dedx(Projectile &p, const Material &mat, const  Config &c){
     return sum;
 }
 
-double domega2dx(Projectile &p, double T, const Material &mat, const Config &c){
+double domega2dx(const Projectile &p, const Material &mat, const Config &c){
     double sum = 0;
     
     for(int i=0;i<mat.ncomponents();i++){
         auto t= mat.get_element(i);
         double w = mat.weight_fraction(i);
-        p.T = T;
         sum += w*dedx_variance(p,t,c);
     }
     return sum;
 }
 
-double da2dx(Projectile &p, double T, const Material &mat, const Config &c){
+double da2dx(const Projectile &p, const Material &mat, const Config &c){
     double sum = 0;
     
     for(int i=0;i<mat.ncomponents();i++){
         auto t = mat.get_element(i);
         double w = mat.weight_fraction(i);
-        p.T = T;
         sum += w*angular_scattering_variance(p,t);
     }
     return sum;
 }
 
 
-double range(Projectile &p, const Material &t, const Config &c){
+double range(const Projectile &p, const Material &t, const Config &c){
     auto& data = _storage.Get(p,t,c);
     //Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
     spline_type range_spline = get_range_spline(data);
     return range_spline(p.T);
 }
 
-double dedx_from_range(Projectile &p, const Material &t, const Config &c){
+double dedx_from_range(const Projectile &p, const Material &t, const Config &c){
     auto& data = _storage.Get(p,t,c);
     //Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
     spline_type range_spline = get_range_spline(data);
     return p.A/range_spline.derivative(p.T);
 }
 
-std::vector<double> dedx_from_range(Projectile &p, const std::vector<double> &T, const Material &t, const Config &c){
+std::vector<double> dedx_from_range(const Projectile &p, const std::vector<double> &T, const Material &t, const Config &c){
     auto& data = _storage.Get(p,t,c);
     //Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
     spline_type range_spline = get_range_spline(data);
@@ -102,42 +100,42 @@ std::vector<double> dedx_from_range(Projectile &p, const std::vector<double> &T,
     return dedx;
 }
 
-double range_straggling(Projectile &p, double T, const Material &t, const Config &c){
+double range_straggling(const Projectile &p, double T, const Material &t, const Config &c){
     auto& data = _storage.Get(p,t,c);
     //Interpolator range_straggling_spline(energy_table.values,data.range_straggling.data(),energy_table.num);
     spline_type range_straggling_spline = get_range_straggling_spline(data);
     return sqrt(range_straggling_spline(T));
 }
 
-double range_variance(Projectile &p, double T, const Material &t, const Config &c){
+double range_variance(const Projectile &p, double T, const Material &t, const Config &c){
     auto& data = _storage.Get(p,t,c);
     //Interpolator range_straggling_spline(energy_table.values,data.range_straggling.data(),energy_table.num);
     spline_type range_straggling_spline = get_range_straggling_spline(data);
     return range_straggling_spline(T);
 }
 
-double domega2de(Projectile &p, double T, const Material &t, const Config &c){
+double domega2de(const Projectile &p, double T, const Material &t, const Config &c){
     auto& data = _storage.Get(p,t,c);
     //Interpolator range_straggling_spline(energy_table.values,data.range_straggling.data(),energy_table.num);
     spline_type range_straggling_spline = get_range_straggling_spline(data);
     return range_straggling_spline.derivative(T);
 }
 
-double da2de(Projectile &p, double T, const Material &t, const Config &c){
+double da2de(const Projectile &p, double T, const Material &t, const Config &c){
     auto& data = _storage.Get(p,t,c);
     //Interpolator angular_variance_spline(energy_table.values,data.angular_variance.data(),energy_table.num);
     spline_type angular_variance_spline = get_angular_variance_spline(data);
     return angular_variance_spline.derivative(T);
 }
 
-double angular_straggling_from_E(Projectile &p, double T, double Tout, const Material &t, const Config &c){
+double angular_straggling_from_E(const Projectile &p, double T, double Tout, const Material &t, const Config &c){
     auto& data = _storage.Get(p,t,c);
     //Interpolator angular_straggling_spline(energy_table.values,data.angular_variance.data(),energy_table.num);
     spline_type angular_variance_spline = get_angular_variance_spline(data);
     return sqrt(angular_variance_spline(T) - angular_variance_spline(Tout));
 }
 
-double energy_straggling_from_E(Projectile &p, double T, double Tout,const Material &t, const Config &c){
+double energy_straggling_from_E(const Projectile &p, double T, double Tout,const Material &t, const Config &c){
     auto& data = _storage.Get(p,t,c);
 
     //Interpolator range_straggling_spline(energy_table.values,data.range_straggling.data(),energy_table.num);
@@ -173,14 +171,14 @@ double energy_out(double T, double thickness, const Interpolator &range_spline){
     return -1;
 }
 
-double energy_out(Projectile &p, const Material &t, const Config &c){
+double energy_out(const Projectile &p, const Material &t, const Config &c){
     auto& data = _storage.Get(p,t,c);
     //Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
     spline_type range_spline = get_range_spline(data);
     return energy_out(p.T,t.thickness(),range_spline);
     }
 
-std::vector<double> energy_out(Projectile &p, const std::vector<double> &T, const Material &t, const Config &c){
+std::vector<double> energy_out(const Projectile &p, const std::vector<double> &T, const Material &t, const Config &c){
     auto& data = _storage.Get(p,t,c);
     //Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
     spline_type range_spline = get_range_spline(data);
@@ -199,7 +197,24 @@ std::vector<double> energy_out(Projectile &p, const std::vector<double> &T, cons
     return eout;
     }
 
-Result calculate(Projectile &p, const Material &t, const Config &c){
+std::vector<double> calculate_tof(Projectile p, const Material &t, const Config &c){
+    double res;
+    std::vector<double> values;
+    values.reserve(max_datapoints);
+    auto function = [&](double x)->double{return 1.0/(dedx(p(x),t,c)*beta_from_T(x));};
+    res = integrator.integrate(function,Ezero,energy_table(0));
+    res = res*10.0*p.A/(c_light*t.density());
+    values.push_back(res);
+    for(int i=1;i<max_datapoints;i++){
+        res = integrator.integrate(function,energy_table(i-1),energy_table(i));
+        res = res*10.0*p.A/(c_light*t.density());
+        res += values[i-1];
+        values.push_back(res);
+    }
+    return values;
+}
+
+Result calculate(Projectile p, const Material &t, const Config &c){
     Result res;
     double T = p.T;
     if(T<catima::Ezero && T<catima::Ezero-catima::numeric_epsilon){return res;}
@@ -259,34 +274,34 @@ Result calculate(Projectile &p, const Material &t, const Config &c){
 	    double range = range_spline(T);
         double tt = range - range_spline(x);      
         double t0 = std::min(range, t.thickness());
-	    return (tt-t0)*(tt-t0)*da2dx(p,x, t, c);
+	    return (tt-t0)*(tt-t0)*da2dx(p(x),t, c);
             };
     auto fx2p = [&](double x)->double{ 
 	    double range = range_spline(T);
         double e =energy_out(T,x*t.density(),range_spline);
         double t0 = std::min(range/t.density(), t.thickness_cm());
-	    return (t0-x)*(t0-x)*da2dx(p,e, t, c)*t.density();
+	    return (t0-x)*(t0-x)*da2dx(p(e), t, c)*t.density();
             };           
     
     //res.sigma_x = integrator_adaptive.integrate(fx2,res.Eout, res.Ein,1e-3, 1e-3,4)/t.density();    
-    res.sigma_x = integrator_adaptive.integrate(fx2p,0, t.thickness_cm(),1e-3, 1e-3,4);    
+    res.sigma_x = integrator_adaptive.integrate(fx2p,0, t.thickness_cm(),1e-3, 1e-3,2);    
     res.sigma_x = sqrt(res.sigma_x);
 
     auto fx1 = [&](double x)->double{ 
 	    double range = range_spline(T);
         double tt = range - range_spline(x);      
         double t0 = std::min(range, t.thickness());
-	    return (t0-tt)*da2dx(p,x, t, c);
+	    return (t0-tt)*da2dx(p(x), t, c);
             };
     auto fx1p = [&](double x)->double{ 
 	    double range = range_spline(T);
         double e =energy_out(T,x*t.density(),range_spline);
         double t0 = std::min(range/t.density(), t.thickness_cm());
-	    return (t0-x)*da2dx(p,e, t, c)*t.density();
+	    return (t0-x)*da2dx(p(e), t, c)*t.density();
             };
     
     //res.cov = integrator_adaptive.integrate(fx1,res.Eout, res.Eout, 1e-6, 1e-3,4);
-    res.cov = integrator_adaptive.integrate(fx1p,0, t.thickness_cm(), 1e-6, 1e-3,4);
+    res.cov = integrator_adaptive.integrate(fx1p,0, t.thickness_cm(), 1e-3, 1e-3,2);
     p.T = T;
     #ifdef REACTIONS
     res.sp = nonreaction_rate(p,t,c);
@@ -294,7 +309,7 @@ Result calculate(Projectile &p, const Material &t, const Config &c){
     return res;
 }
 
-MultiResult calculate(Projectile &p, const Layers &layers, const Config &c){
+MultiResult calculate(const Projectile &p, const Layers &layers, const Config &c){
     MultiResult res;
     double e = p.T;
     res.total_result.Ein = e;
@@ -341,66 +356,6 @@ Result calculate(double pa, int pz, double T, double ta, double tz, double thick
     return calculate(p(T),m);
 }
 
-
-std::vector<double> calculate_tof(Projectile p, const Material &t, const Config &c){
-    double res;
-    std::vector<double> values;
-    values.reserve(max_datapoints);
-    auto function = [&](double x)->double{return 1.0/(dedx(p(x),t,c)*beta_from_T(x));};
-    res = integrator.integrate(function,Ezero,energy_table(0));
-    res = res*10.0*p.A/(c_light*t.density());
-    values.push_back(res);
-    for(int i=1;i<max_datapoints;i++){
-        res = integrator.integrate(function,energy_table(i-1),energy_table(i));
-        res = res*10.0*p.A/(c_light*t.density());
-        res += values[i-1];
-        values.push_back(res);
-    }
-    return values;
-}
-/*
-DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
-    DataPoint dp(p,t,c);
-    dp.range.resize(max_datapoints);
-    dp.range_straggling.resize(max_datapoints);
-    dp.angular_variance.resize(max_datapoints);
-    auto fdedx = [&](double x)->double{
-            return 1.0/dedx(p(x),t,c);    
-            };
-    auto fomega = [&](double x)->double{
-            //return 1.0*domega2dx(p,x,t)/pow(dedx(p(x),t),3);
-            return domega2dx(p,x,t,c)/catima::power(dedx(p(x),t,c),3);
-            };
-
-    double res;
-    //calculate 1st point to have i-1 element ready for loop
-    //res = integrator.integrate(fdedx,Ezero,energy_table(0));
-    //res = p.A*res;
-    //dp.range[0] = res;
-    dp.range[0] = 0.0;
-
-    res = da2dx(p,energy_table(0),t)*res;
-    dp.angular_variance[0] = 0.0;
-
-    //res = integrator.integrate(fomega,Ezero,energy_table(0));
-    //res = p.A*res;
-    dp.range_straggling[0]=0.0;
-
-    for(int i=1;i<max_datapoints;i++){
-        res = p.A*integrator.integrate(fdedx,energy_table(i-1),energy_table(i));
-        dp.range[i] = res + dp.range[i-1];
-        res = da2dx(p,energy_table(i),t)*res;
-        dp.angular_variance[i] = res + dp.angular_variance[i-1];
-    
-        res = integrator.integrate(fomega,energy_table(i-1),energy_table(i));
-        res = p.A*res;
-        dp.range_straggling[i] = res + dp.range_straggling[i-1];
-    }
-    return dp;
-}
-*/
-
-
 DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
     DataPoint dp(p,t,c);
     dp.range.resize(max_datapoints);
@@ -410,7 +365,7 @@ DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
             return 1.0/dedx(p(x),t,c);
             };
     auto fomega = [&](double x)->double{
-            return domega2dx(p,x,t,c)/catima::power(dedx(p(x),t,c),3);
+            return domega2dx(p(x),t,c)/catima::power(dedx(p(x),t,c),3);
             };
 
     //double res=0.0;
@@ -429,7 +384,7 @@ DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
     for(int i=1;i<max_datapoints;i++){
         double res = p.A*integrator.integrate(fdedx,energy_table(i-1),energy_table(i));
         dp.range[i] = res + dp.range[i-1];
-        res = da2dx(p,energy_table(i),t)*res;
+        res = da2dx(p(energy_table(i)),t)*res;
         dp.angular_variance[i] = res + dp.angular_variance[i-1];
 
         res = integrator.integrate(fomega,energy_table(i-1),energy_table(i));
@@ -441,15 +396,13 @@ DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c){
 
 double calculate_tof_from_E(Projectile p, double Eout, const Material &t, const Config &c){
     double res;
-    //double beta_in = beta_from_T(p.T);
-    //double beta_out = beta_from_T(Eout);
     auto function = [&](double x)->double{return 1.0/(dedx(p(x),t,c)*beta_from_T(x));};
     res = integrator.integrate(function,Eout,p.T);
     res = res*10.0*p.A/(c_light*t.density());
     return res;
 }
 
-std::pair<double,double> w_magnification(Projectile p, double Ein, const Material &t, const Config &c){
+std::pair<double,double> w_magnification(const Projectile &p, double Ein, const Material &t, const Config &c){
     std::pair<double, double> res{1.0,1.0};
     if(t.density()<= 0.0 || t.thickness()<=0){
         return res;

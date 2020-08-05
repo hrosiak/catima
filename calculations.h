@@ -31,7 +31,7 @@ namespace catima{
     /**
       * returns energy loss straggling
       */
-    double dedx_variance(Projectile &p, Target &t, const Config &c=default_config);
+    double dedx_variance(const Projectile &p, const Target &t, const Config &c=default_config);
 
     /**
       * returns reduced energy loss unit for projectile-target combination
@@ -43,10 +43,17 @@ namespace catima{
      * @brief bethek_dedx_e - electronics stopping power
      * @return stopping power
      */
-    double bethek_dedx_e(Projectile &p,const Target &t, const Config &c=default_config, double I=0.0);
-    double bethek_dedx_e(Projectile &p,const Material &mat, const Config &c=default_config);
+    double bethek_dedx_e(const Projectile &p,const Target &t, const Config &c=default_config, double I=0.0);
+    double bethek_dedx_e(const Projectile &p,const Material &mat, const Config &c=default_config);
 
+    /** 
+      * calculates barkas effect
+      */
     double bethek_barkas(double zp_eff,double eta, double zt);
+    
+    /** 
+      * calculates density effect
+      */
     double bethek_density_effect(double beta, int zt);
     
     /**
@@ -94,7 +101,7 @@ namespace catima{
     double sezi_dedx_e(const Projectile &p, const Material &mat, const Config &c=default_config);
 
 
-    double angular_scattering_variance(Projectile &p, Target &t);
+    double angular_scattering_variance(const Projectile &p, const Target &t);
 
     /**
       * returns radiation length of the (M,Z) material
