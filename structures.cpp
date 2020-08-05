@@ -1,6 +1,7 @@
 #include "structures.h"
 #include "catima/nucdata.h"
 #include <algorithm>
+#include <cmath>
 
 
 namespace catima{
@@ -14,7 +15,7 @@ bool operator==(const Projectile &a, const Projectile&b){
 }
 
 bool operator==(const Material &a, const Material&b){
-    if(a.density() != b.density())return false;
+    if(std::fabs(a.density() - b.density())> 1e-6)return false;
     if(a.ncomponents() != b.ncomponents())return false;
     if(a.I() != b.I())return false;
     for(int i=0;i<a.ncomponents();i++){
@@ -64,6 +65,22 @@ void Material::calculate(){
 
 void Layers::add(Material m){
     materials.push_back(m);
+}
+
+double Layers::thickness() const {
+    double sum = 0;
+    for(auto &m : materials){
+        sum += m.thickness();
+    }
+    return sum;
+}
+
+double Layers::thickness_cm() const {
+    double sum = 0;
+    for(auto &m : materials){
+        sum += m.thickness_cm();
+    }
+    return sum;
 }
 
 Layers operator+(const Layers &a, const Layers&b){

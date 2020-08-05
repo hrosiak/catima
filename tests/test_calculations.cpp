@@ -138,6 +138,7 @@ using namespace std;
         catima::Material graphite({
                 {12.011,6,1},
                 });
+          graphite.density(2);
 
         auto res = catima::calculate(p(1000),graphite);
         CHECK(catima::dedx(p(1000), graphite) == approx(res.dEdxi).R(0.001) );
@@ -182,6 +183,93 @@ using namespace std;
       auto res = catima::calculate(p,water);
       dif = res.tof - 0.038;
       CHECK( fabs(dif) < 0.01);
+    }
+    TEST_CASE("angular scattering"){
+      catima::Projectile p{1,1,1,158.6};
+      catima::Material cu = catima::get_material(29);
+          
+      
+      cu.thickness_cm(0.02963);
+      auto res = catima::calculate(p,cu);
+      CHECK( 1000*res.sigma_a == approx(7.2,0.5));
+
+      cu.thickness_cm(0.2963);
+      res = catima::calculate(p,cu);
+      CHECK( 1000*res.sigma_a == approx(23.5,3));
+      
+      catima::Layers ll;
+      cu.thickness_cm(0.2963/2.);
+      ll.add(cu);
+      ll.add(cu);
+      auto res2 = catima::calculate(p,ll);
+      CHECK( 1000*res2.total_result.sigma_a == approx(23.5,3));
+      CHECK( 1000*res2.total_result.sigma_a == approx(1000*res.sigma_a,0.05));
+      }
+
+    TEST_CASE("displacement test"){
+      catima::Projectile p{1,1,1,215};
+      catima::Material water({
+                {1.00794,1,2},
+                {15.9994,8,1}
+                });
+      water.density(1.0);
+      catima::Material water2({
+                {1.00794,1,2},
+                {15.9994,8,1}
+                });
+      water2.thickness_cm(9.6);
+      water2.density(2.0);
+
+      water.thickness_cm(9.6);
+      auto res = catima::calculate(p,water);
+      CHECK( res.sigma_x == approx(0.1,0.03));
+      auto resb = catima::calculate(p,water2);
+      CHECK( res.sigma_x > resb.sigma_x);
+
+      water.thickness_cm(17.0);
+      auto res17 = catima::calculate(p,water);
+      CHECK( res17.sigma_x == approx(0.25,0.05));
+
+      water.thickness_cm(29.4);
+      auto res29 = catima::calculate(p,water);
+      CHECK( res29.sigma_x == approx(0.66,0.08));
+
+      catima::Layers ll;
+      water.thickness_cm(9.6);
+      ll.add(water);
+      auto res2 = catima::calculate(p,ll);
+      CHECK(res2.total_result.sigma_x == approx(0.1,0.03));
+      water.thickness_cm(7.4);      
+      ll.add(water);
+      res2 = catima::calculate(p,ll);
+      CHECK(ll.thickness_cm() == approx(17,0.00001));
+      CHECK(res2.total_result.sigma_x == approx(0.25,0.05));
+      CHECK(res2.total_result.sigma_x == approx(res17.sigma_x).R(0.03));
+
+      catima::Layers l;
+      water.thickness_cm(9.6/3);
+      l.add(water);
+      l.add(water);
+      l.add(water);
+      res2 = catima::calculate(p(215),l);
+      CHECK(res2.total_result.sigma_x == approx(res.sigma_x).R(0.03));
+
+      for(int n=2;n<10;n++){
+        catima::Layers lll;
+        water.thickness_cm(29.4/n);
+        for(int i=0;i<n;i++)lll.add(water);        
+        res2 = catima::calculate(p(215),lll);
+        CHECK(res2.total_result.sigma_x == approx(res29.sigma_x).R(0.01));
+        }
+      
+
+      /// position sigma is taken from range thickness if particle stoppped inside
+      water.thickness_cm(30);
+      auto r1 = catima::calculate(p,water);
+      water.thickness_cm(40);
+      auto r2 = catima::calculate(p,water);
+      CHECK(r1.sigma_x == approx(r2.sigma_x).R(0.01));
+
     }
     TEST_CASE("result from stopped material"){
         catima::Projectile p{12,6,6,1000};

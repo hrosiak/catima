@@ -69,7 +69,7 @@ namespace catima{
      */
     class Material{
         private:
-            double rho=0;
+            double rho=1e-5;
             double th=0;
             double molar_mass=0;
             double i_potential=0;
@@ -84,7 +84,7 @@ namespace catima{
               * @param _rho - density of the material in g/cm3, default 0.0
               * @param _th - thickness of the material in g/cm2, default 0.0
               */
-            Material(double _a, int _z, double _rho=0.0, double _th=0.0, double _ipot = 0.0);
+            Material(double _a, int _z, double _rho=1e-5, double _th=0.0, double _ipot = 0.0);
 
 
             /**
@@ -97,7 +97,7 @@ namespace catima{
               *  });
               * \endcode
               */
-            Material(std::initializer_list<std::array<double,3>>list,double _density=0.0, double ipot = 0.0, double mass=0.0);
+            Material(std::initializer_list<std::array<double,3>>list,double _density=1e-5, double ipot = 0.0, double mass=0.0);
 
             /**
              * calculates internal variables if needed
@@ -162,6 +162,11 @@ namespace catima{
             double thickness() const {return th;};
 
             /**
+              * @return returns thickness in cm
+              */
+            double thickness_cm() const {return th/rho;};
+
+            /**
               * sets thickness in g/cm^2
               */
             Material& thickness(double val){th = val;return *this;};
@@ -212,9 +217,6 @@ namespace catima{
               return number_density_cm2()*molar_fraction(i);
             }
 
-
-
-
             friend bool operator==(const Material &a, const Material&b);
     };
 
@@ -233,6 +235,8 @@ namespace catima{
         double sigma_E=0.0;
         double sigma_a=0.0;
         double sigma_r=0.0;
+        double sigma_x=0.0;
+	double cov = 0.0;
         double tof=0.0;
         #ifdef REACTIONS
         double sp = 1.0;
@@ -274,6 +278,16 @@ namespace catima{
           * @return number of stored Materials
           */
         int num()const{return materials.size();};
+
+        /**
+         * @ return total thickness 
+         */ 
+        double thickness() const;
+
+        /**
+         * @ return total thickness in cm
+         */ 
+        double thickness_cm() const;
 
         Material& operator[](int i){return materials[i];}
 

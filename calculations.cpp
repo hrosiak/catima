@@ -61,7 +61,7 @@ double dedx_n(const Projectile &p, const Target &t){
     return sn;
 }
 
-double bethek_dedx_e(Projectile &p,const Material &mat, const Config &c){
+double bethek_dedx_e(const Projectile &p,const Material &mat, const Config &c){
     double w;
     double sum=0.0;
     for(int i=0;i<mat.ncomponents();i++){
@@ -72,7 +72,7 @@ double bethek_dedx_e(Projectile &p,const Material &mat, const Config &c){
     return sum;
 }
 
-double bethek_dedx_e(Projectile &p, const Target &t, const Config &c, double I){
+double bethek_dedx_e(const Projectile &p, const Target &t, const Config &c, double I){
     assert(t.Z>0 && p.Z>0);
     assert(t.A>0 && p.A>0);
     assert(p.T>0.0);
@@ -447,10 +447,11 @@ double sezi_dedx_e(const Projectile &p, const Material &mat, const Config &c){
     double w;
     double sum=0.0;
     bool use95 = c.low_energy == low_energy_types::srim_95;
+    double T = p.T;
     for(int i=0;i<mat.ncomponents();i++){
         auto t = mat.get_element(i);
         w = mat.weight_fraction(i);
-        sum += w*srim_dedx_e(p.Z,t.Z,p.T, use95)/t.A;
+        sum += w*srim_dedx_e(p.Z,t.Z,T, use95)/t.A;
     }
     return 100*sum*Avogadro; // returning MeV/g/cm2
 }
@@ -476,7 +477,7 @@ double energy_straggling_firsov(double z1,double energy, double z2, double m2){
     return factor*beta2/fine_structure/fine_structure;
     }
 
-double angular_scattering_variance(Projectile &p, Target &t){
+double angular_scattering_variance(const Projectile &p, const Target &t){
     if(p.T<=0)return 0.0;
     double e=p.T;
     double _p = p_from_T(e,p.A);
@@ -485,7 +486,7 @@ double angular_scattering_variance(Projectile &p, Target &t){
     return 198.81 * pow(p.Z,2)/(lr*pow(_p*beta,2));
 }
 
-/// radioation lengths are taken frm Particle Data Group 2014
+/// radiation lengths are taken from Particle Data Group 2014
 double radiation_length(int z, double m){
     double lr = 0;
     if(z==1){return 63.04;}
@@ -560,7 +561,7 @@ double precalculated_lindhard_X(const Projectile &p){
     return v1+(dif*da/ls_coefficients::a_rel_increase);
 }
 
-double dedx_variance(Projectile &p, Target &t, const Config &c){
+double dedx_variance(const Projectile &p, const Target &t, const Config &c){
     double gamma = gamma_from_T(p.T);
     double cor=0;
     double beta = beta_from_T(p.T);

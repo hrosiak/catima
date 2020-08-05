@@ -34,7 +34,7 @@ using namespace std;
             graphite.add_element(18,40,1);
             CHECK(graphite.ncomponents()==2);
             CHECK_FALSE(graphite.M()==approx(12,0.1));
-
+            CHECK( water.density() == approx(water2.density(),1e-6) );
             CHECK(water==water2);
             CHECK(!(water==graphite));
             water.density(1.0);
@@ -42,8 +42,15 @@ using namespace std;
             CHECK(water.thickness()==approx(1.0,0.0001));
             water.thickness_cm(1.0);
             CHECK(water.thickness()==approx(1.0,0.0001));
+            CHECK(water.thickness_cm()==approx(1.0,0.0001));
             water.thickness_cm(2.0);
             CHECK(water.thickness()==approx(2.0,0.0001));
+            CHECK(water.thickness_cm()==approx(2.0,0.0001));
+            water.density(2.0);
+            CHECK(water.thickness()==approx(2.0,0.0001));
+            CHECK(water.thickness_cm()==approx(1.0,0.0001));
+            water.thickness(1.0);
+            CHECK(water.thickness_cm()==approx(0.5,0.0001));
     }
     TEST_CASE("Material automatic atomic weight"){
         catima::Material water({{0,1,2},{0,8,1}});
@@ -85,6 +92,7 @@ using namespace std;
         detector1.add(water2);
         detector1.add(graphite);
         CHECK(detector1.num() == 3);
+        CHECK(detector1.thickness() == approx(4.0,1e-6));
         // check correct density and thickness
         CHECK(detector1[0].density()==1.8);
         CHECK(detector1[0].thickness()==1.0);
