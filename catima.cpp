@@ -269,40 +269,25 @@ Result calculate(Projectile p, const Material &t, const Config &c){
     }
     res.sigma_r = sqrt(range_straggling_spline(T));    
     res.Eloss = (res.Ein - res.Eout)*p.A;
-
-    auto fx2 = [&](double x)->double{ 
-	    double range = range_spline(T);
-        double tt = range - range_spline(x);      
-        double t0 = std::min(range, t.thickness());
-	    return (tt-t0)*(tt-t0)*da2dx(p(x),t, c);
-            };
+    
+    double rrange = std::min(res.range/t.density(), t.thickness_cm());
     auto fx2p = [&](double x)->double{ 
 	    double range = range_spline(T);
         double e =energy_out(T,x*t.density(),range_spline);
-        double t0 = std::min(range/t.density(), t.thickness_cm());
-	    return (t0-x)*(t0-x)*da2dx(p(e), t, c)*t.density();
+	    return (rrange-x)*(rrange-x)*da2dx(p(e), t, c)*t.density();
             };           
     
-    //res.sigma_x = integrator_adaptive.integrate(fx2,res.Eout, res.Ein,1e-3, 1e-3,4)/t.density();    
-    res.sigma_x = integrator_adaptive.integrate(fx2p,0, t.thickness_cm(),1e-3, 1e-3,2);    
+    //res.sigma_x = integrator_adaptive.integrate(fx2p,0, rrange,1e-3, 1e-3,1);    
+    res.sigma_x = integrator_adaptive.integrate(fx2p,0, rrange);    
     res.sigma_x = sqrt(res.sigma_x);
 
-    auto fx1 = [&](double x)->double{ 
-	    double range = range_spline(T);
-        double tt = range - range_spline(x);      
-        double t0 = std::min(range, t.thickness());
-	    return (t0-tt)*da2dx(p(x), t, c);
-            };
     auto fx1p = [&](double x)->double{ 
-	    double range = range_spline(T);
-        double e =energy_out(T,x*t.density(),range_spline);
-        double t0 = std::min(range/t.density(), t.thickness_cm());
-	    return (t0-x)*da2dx(p(e), t, c)*t.density();
+        double e =energy_out(T,x*t.density(),range_spline);        
+	    return (rrange-x)*da2dx(p(e), t, c)*t.density();
             };
     
-    //res.cov = integrator_adaptive.integrate(fx1,res.Eout, res.Eout, 1e-6, 1e-3,4);
-    res.cov = integrator_adaptive.integrate(fx1p,0, t.thickness_cm(), 1e-3, 1e-3,2);
-    p.T = T;
+    //res.cov = integrator_adaptive.integrate(fx1p,0, t.thickness_cm(), 1e-3, 1e-3,1);
+    res.cov = integrator.integrate(fx1p,0, rrange);
     #ifdef REACTIONS
     res.sp = nonreaction_rate(p,t,c);
     #endif

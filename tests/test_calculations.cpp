@@ -254,14 +254,21 @@ using namespace std;
       res2 = catima::calculate(p(215),l);
       CHECK(res2.total_result.sigma_x == approx(res.sigma_x).R(0.03));
 
-      catima::Layers lll;
-      water.thickness_cm(29.4/4);
-      lll.add(water);
-      lll.add(water);
-      lll.add(water);
-      lll.add(water);
-      res2 = catima::calculate(p(215),lll);
-      CHECK(res2.total_result.sigma_x == approx(res29.sigma_x).R(0.01));
+      for(int n=2;n<10;n++){
+        catima::Layers lll;
+        water.thickness_cm(29.4/n);
+        for(int i=0;i<n;i++)lll.add(water);        
+        res2 = catima::calculate(p(215),lll);
+        CHECK(res2.total_result.sigma_x == approx(res29.sigma_x).R(0.01));
+        }
+      
+
+      /// position sigma is taken from range thickness if particle stoppped inside
+      water.thickness_cm(30);
+      auto r1 = catima::calculate(p,water);
+      water.thickness_cm(40);
+      auto r2 = catima::calculate(p,water);
+      CHECK(r1.sigma_x == approx(r2.sigma_x).R(0.01));
 
     }
     TEST_CASE("result from stopped material"){

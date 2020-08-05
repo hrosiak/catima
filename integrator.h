@@ -62,7 +62,7 @@ using integrator_type = IntegratorGSL;
 #else
 using integrator_type = GaussLegendreIntegration<8>;
 #endif
-using integrator_adaptive_type = GaussKronrodIntegration<21>;
+using integrator_adaptive_type = GaussKronrodIntegration<15>;
 
 extern integrator_type integrator;
 extern integrator_adaptive_type integrator_adaptive;
