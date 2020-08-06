@@ -274,6 +274,12 @@ namespace catima{
           */
         void add(Material m);
 
+	/**
+	 * append Layers
+	 * @para, l Layers
+	 */ 
+	void add(const Layers& l);
+
         /**
           * @return number of stored Materials
           */
