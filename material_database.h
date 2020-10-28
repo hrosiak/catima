@@ -148,7 +148,9 @@ namespace catima{
 		 Urea = 341,
 		 Valine = 342,
 		 Iodonaphthalene = 343,
-		 C21H24O4 = 344
+		 C21H24O4 = 344,
+		 CoRe_Alloy = 345,
+		 LLZO_electrolyte = 346
         };
 
       Material get_compound(material m);
