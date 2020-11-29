@@ -146,7 +146,8 @@ PYBIND11_MODULE(pycatima,m){
 
      py::class_<Layers>(m,"Layers")
              .def(py::init<>(),"constructor")
-             .def("add",&Layers::add)
+             .def("add",py::overload_cast<Material>(&Layers::add))
+             .def("add_layers",py::overload_cast<const Layers&>(&Layers::add))
              .def("num",&Layers::num)
 //             .def("__getitem__",&Layers::operator[],  py::is_operator())
              .def("__getitem__",[](Layers &r, int i)->Material*
