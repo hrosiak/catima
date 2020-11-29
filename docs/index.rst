@@ -25,6 +25,12 @@ Content
 
 .. toctree::
    :maxdepth: 1
+   :caption: Python Catima module
+
+   pycatima
+
+.. toctree::
+   :maxdepth: 1
    :caption: Console App
 
    catima_calculator
