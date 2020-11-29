@@ -42,18 +42,18 @@ Optional material object keywords are:
   * __thickness__ - material or layer thickness in g/cm2
 
 #### energy
-The __energy__ keyword can be
-1.a number specifying the kinetic energy:
+The __energy__ keyword can be:
+
+  * a number specifying the kinetic energy:
 ```
     "energy":"500.0"
 ```
 
-2. array of numbers for multiple energies:
+  * array of numbers for multiple energies:
 ```
     "energy":[100,200,500,1000]
 ```
-
-3. Object specifying minimum energy, maximum energy and energy step, to calculate multiple energies:
+  * Object specifying minimum energy, maximum energy and energy step, to calculate multiple energies:
 ```
     "energy":{
         "min": 100,
