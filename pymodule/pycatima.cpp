@@ -100,6 +100,7 @@ py::dict get_result_dict(const Result& r){
                     d["sigma_E"] = r.sigma_E;
                     d["sigma_r"] = r.sigma_r;
                     d["sigma_a"] = r.sigma_a;
+                    d["sigma_x"] = r.sigma_x;
                     d["tof"] = r.tof;
                     d["sp"] = r.sp;
                     return d;
@@ -171,6 +172,7 @@ PYBIND11_MODULE(pycatima,m){
              .def_readwrite("sigma_E", &Result::sigma_E)
              .def_readwrite("sigma_a", &Result::sigma_a)
              .def_readwrite("sigma_r", &Result::sigma_r)
+             .def_readwrite("sigma_x", &Result::sigma_x)
              .def_readwrite("tof", &Result::tof)
              .def_readwrite("sp", &Result::sp)
              .def("get_dict",&get_result_dict);
