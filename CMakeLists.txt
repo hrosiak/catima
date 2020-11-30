@@ -97,7 +97,7 @@ MESSAGE( STATUS "CMAKE_CXX_COMPILER: " ${CMAKE_CXX_COMPILER} )
 ######## for python module
 find_package(PythonInterp)
 if(PYTHONINTERP_FOUND)
-    message("-- Python found: ${PYTHON_EXECUTABLE}")
+    message(STATUS "Python found: ${PYTHON_EXECUTABLE}")
 endif()
 if(PYTHON_MODULE)
     if(NOT PYTHONINTERP_FOUND)

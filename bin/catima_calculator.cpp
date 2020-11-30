@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include "catima/catima.h"
 #include "catima/nucdata.h"
-#include "json.hpp"
+#include <nlohmann/json.hpp>
 
 using namespace std;
 using namespace catima;
