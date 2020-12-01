@@ -8,6 +8,7 @@
 
 using std::cout;
 using std::endl;
+using catima::LN10;
 
 double logEmax = catima::logEmax-0.01;
 double logEmin = catima::logEmin+0.001;
@@ -16,7 +17,7 @@ template<int N>
     struct EnergyTable{
 	constexpr EnergyTable():values(),num(N){
 	    for(auto i=0;i<N;i++){
-		values[i]=exp(M_LN10*(logEmin + ((double)i)*(logEmax-logEmin)/(N - 1.0)));
+		values[i]=exp(LN10*(logEmin + ((double)i)*(logEmax-logEmin)/(N - 1.0)));
 		}
 	    }
 	double operator()(int i)const{return values[i];}
