@@ -3,10 +3,10 @@
 #include "doctest.h"
 #include <math.h>
 #include "testutils.h"
-using namespace std;
-
 #include "catima/catima.h"   
 #include "catima/storage.h"   
+using namespace std;
+using catima::LN10;
 
     TEST_CASE("datapoints equal operator"){
       catima::Projectile p{12,6,6,1000};
@@ -116,13 +116,13 @@ using namespace std;
     TEST_CASE("energy table"){
       double step = (catima::logEmax - catima::logEmin)/(catima::max_datapoints-1);
       CHECK(catima::energy_table.step==step);
-      CHECK(catima::energy_table.values[0]==exp(M_LN10*(catima::logEmin)));
-      CHECK(catima::energy_table.values[1]==exp(M_LN10*(catima::logEmin+step)));
-      CHECK(catima::energy_table.values[2]==exp(M_LN10*(catima::logEmin+2.0*step)));
-      CHECK(catima::energy_table.values[3]==exp(M_LN10*(catima::logEmin+3.0*step)));
-      CHECK(catima::energy_table.values[4]==exp(M_LN10*(catima::logEmin+4.0*step)));
-      CHECK(catima::energy_table.values[5]==exp(M_LN10*(catima::logEmin+5.0*step)));
-      CHECK(catima::energy_table.values[catima::max_datapoints-1]==approx(exp(M_LN10*(catima::logEmax))).epsilon(1e-6));
+      CHECK(catima::energy_table.values[0]==approx(exp(LN10*(catima::logEmin))).R(1e-9));
+      CHECK(catima::energy_table.values[1]==approx(exp(LN10*(catima::logEmin+step))).R(1e-9));
+      CHECK(catima::energy_table.values[2]==approx(exp(LN10*(catima::logEmin+2.0*step))).R(1e-9));
+      CHECK(catima::energy_table.values[3]==approx(exp(LN10*(catima::logEmin+3.0*step))).R(1e-9));
+      CHECK(catima::energy_table.values[4]==approx(exp(LN10*(catima::logEmin+4.0*step))).R(1e-9));
+      CHECK(catima::energy_table.values[5]==approx(exp(LN10*(catima::logEmin+5.0*step))).R(1e-9));
+      CHECK(catima::energy_table.values[catima::max_datapoints-1]==approx(exp(LN10*(catima::logEmax))).epsilon(1e-6));
     }
     TEST_CASE("indexing"){
       double val, dif;

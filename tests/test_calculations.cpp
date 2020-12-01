@@ -478,6 +478,6 @@ using namespace std;
     TEST_CASE("constants"){
         using namespace catima;
         CHECK(0.1*hbar*c_light/atomic_mass_unit == approx(0.21183,0.0001));
-        CHECK(16.0*dedx_constant*electron_mass*fine_structure/(atomic_mass_unit*3.0*4.0*M_PI) == approx(5.21721169334564e-7).R(1e-3));
+        CHECK(16.0*dedx_constant*electron_mass*fine_structure/(atomic_mass_unit*3.0*4.0*PI) == approx(5.21721169334564e-7).R(1e-3));
         }
     

@@ -40,7 +40,7 @@ namespace catima{
 		EnergyTable(double logmin, double logmax):values(),step(0.0),num(N){
 		step = (logmax-logmin)/(N - 1.0);
 	    for(auto i=0;i<N;i++){
-			values[i]=exp(M_LN10*(logmin + ((double)i)*step));
+			values[i]=exp(LN10*(logmin + ((double)i)*step));
 		}
 	    }
 	double operator()(int i)const{return values[i];}
@@ -51,7 +51,7 @@ namespace catima{
 	double* begin(){return values;}
     double* end(){return &values[num];}
     int index(double v)const noexcept{
-        double lxval = (log(v/values[0])/M_LN10);
+        double lxval = (log(v/values[0])/LN10);
         if(v<values[0] || step==0.0)return -1;
         if(v>=values[N-1]-numeric_epsilon)return N-1;
         int i = static_cast<int> (std::floor(lxval/step));
@@ -66,7 +66,7 @@ namespace catima{
 	template<int N>
 	int EnergyTable_index(const EnergyTable<N> &table, double val){
 		if(val<table.values[0] || val>table.values[table.num-1])return -1;
-		double lxval = (log(val/table.values[0])/M_LN10);
+		double lxval = (log(val/table.values[0])/LN10);
         int i = static_cast<int>( std::floor(lxval/table.step));
         if(val >= table.values[i+1]-numeric_epsilon)i++; // this is correction for floating point precision
         return i;

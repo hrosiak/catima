@@ -197,7 +197,7 @@ double bethek_lindhard(const Projectile &p){
                 std::complex<double> cexir_den (sk,-eta);
                 std::complex<double> cexir = std::sqrt(cexir_n/cexir_den);
                 std::complex<double> csketa (sk + 1.0, eta);
-                std::complex<double> cpiske(0.0,(M_PI*(l-sk)/2.0) - lngamma(csketa).imag());
+                std::complex<double> cpiske(0.0,(PI*(l-sk)/2.0) - lngamma(csketa).imag());
                 std::complex<double> cedr = cexir*std::exp(cpiske);
                 double H=0;
 
@@ -206,7 +206,7 @@ double bethek_lindhard(const Projectile &p){
                 std::complex<double> cmsketa (-sk + 1.0, eta);
                 std::complex<double> cexis_den (-sk,-eta);
                 std::complex<double> cexis = std::sqrt(cexir_n/cexis_den);
-                std::complex<double> cpimske(0.0,(M_PI*(l+sk)/2.0) - lngamma(cmsketa).imag());
+                std::complex<double> cpimske(0.0,(PI*(l+sk)/2.0) - lngamma(cmsketa).imag());
                 std::complex<double> ceds = cexis*std::exp(cpimske);
                 std::complex<double> cmbeta_gamma_R(0,-beta_gamma_R);
                 std::complex<double> c2beta_gamma_R(0,2.0*beta_gamma_R);
@@ -315,7 +315,7 @@ double bethek_lindhard_X(const Projectile &p){
                 std::complex<double> cexir_den (sk,-eta);
                 std::complex<double> cexir = std::sqrt(cexir_n/cexir_den);
                 std::complex<double> csketa (sk + 1.0, eta);
-                std::complex<double> cpiske(0.0,(M_PI*(l-sk)/2.0) - lngamma(csketa).imag());
+                std::complex<double> cpiske(0.0,(PI*(l-sk)/2.0) - lngamma(csketa).imag());
                 std::complex<double> cedr = cexir*std::exp(cpiske);
                 double H=0;
 
@@ -324,7 +324,7 @@ double bethek_lindhard_X(const Projectile &p){
                 std::complex<double> cmsketa (-sk + 1.0, eta);
                 std::complex<double> cexis_den (-sk,-eta);
                 std::complex<double> cexis = std::sqrt(cexir_n/cexis_den);
-                std::complex<double> cpimske(0.0,(M_PI*(l+sk)/2.0) - lngamma(cmsketa).imag());
+                std::complex<double> cpimske(0.0,(PI*(l+sk)/2.0) - lngamma(cmsketa).imag());
                 std::complex<double> ceds = cexis*std::exp(cpimske);
                 std::complex<double> cmbeta_gamma_R(0,-beta_gamma_R);
                 std::complex<double> c2beta_gamma_R(0,2.0*beta_gamma_R);
@@ -425,11 +425,11 @@ double pair_production(const Projectile &p, const Target &t){
     double l0 = log(2.0*gamma);
     double Zt13 = 183.0*power(t.Z,-1.0/3.0);
     double L0screen = (19.0/9.0)*log(Zt13/(1.0 + 25.018803808*Zt13/gamma));
-    double L1 = (4178.0/(81.0*M_PI*M_PI))
+    double L1 = (4178.0/(81.0*PI*PI))
                 - (21.0/27.0)
-                - (248.0*l0/(27.0*M_PI*M_PI))
-                + ( ((28.0*l0/(9.0)) - 446.0/27.0)*logd2/(M_PI*M_PI))
-                + (14.0*logd2*logd2/(9.0*M_PI*M_PI));
+                - (248.0*l0/(27.0*PI*PI))
+                + ( ((28.0*l0/(9.0)) - 446.0/27.0)*logd2/(PI*PI))
+                + (14.0*logd2*logd2/(9.0*PI*PI));
     L1 *= d;
     double s = 0.25*dedx_constant*fine_structure*fine_structure*p.Z*p.Z*t.Z*t.Z*gamma*(1.0+(1.0/t.Z))*(L0screen + L1)/t.A;
     return (s<0.0)?0.0:s;
@@ -440,7 +440,7 @@ double bremsstrahlung(const Projectile &p, const Target &t){
     double R = 1.18*(catima::power(p.A, 1.0/3.0) + catima::power(t.A, 1.0/3.0));
     double Lbs = log1p(2.0*gamma*0.1*hbar*c_light/atomic_mass_unit/R/p.A);
     double C = dedx_constant*fine_structure*(electron_mass/atomic_mass_unit);
-    return 16.0*C*gamma*p.Z*p.Z*p.Z*p.Z*t.Z*t.Z*Lbs/(t.A*p.A*3.0*4.0*M_PI);
+    return 16.0*C*gamma*p.Z*p.Z*p.Z*p.Z*t.Z*t.Z*Lbs/(t.A*p.A*3.0*4.0*PI);
 };
 
 double sezi_dedx_e(const Projectile &p, const Material &mat, const Config &c){
@@ -817,7 +817,7 @@ std::complex<double> lngamma( const std::complex<double> &z )
         double aterm1=y*log(r);
         double aterm2=(x+0.5)*atan2(y,(x+5.5))-y;
         double lterm1=(x+0.5)*log(r);
-        double lterm2=-y*atan2(y,(x+5.5)) - (x+5.5) + 0.5*log(2.0*M_PI);
+        double lterm2=-y*atan2(y,(x+5.5)) - (x+5.5) + 0.5*log(2.0*PI);
         double num=0.0;
         double denom=1.000000000190015;
         for(int j=1;j<7;j++){
@@ -831,8 +831,8 @@ std::complex<double> lngamma( const std::complex<double> &z )
         double lterm3 = 0.5*log(num*num + denom*denom);
         std::complex<double> result(lterm1+lterm2+lterm3,aterm1+aterm2+aterm3);
         if(z.real() < 0){
-            std::complex<double> lpi(log(M_PI), 0.0);
-            result = lpi - (result + std::log(std::sin(M_PI*z)));
+            std::complex<double> lpi(log(PI), 0.0);
+            result = lpi - (result + std::log(std::sin(PI*z)));
         }
         return(result);
     }

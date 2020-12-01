@@ -24,6 +24,7 @@ constexpr bool reactions = false;
 
 // constants
 constexpr double PI = 3.1415926535897932384626433832795;
+constexpr double LN10 = 2.30258509299404568401799145468;
 constexpr double Avogadro = 6.022140857; // 10^23
 constexpr double electron_mass = 0.510998928;   // MeV/c^2
 constexpr double atomic_mass_unit = 931.4940954; // MeV/c^2
