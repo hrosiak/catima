@@ -140,6 +140,7 @@ PYBIND11_MODULE(pycatima,m){
              .def("molar_mass",py::overload_cast<>(&Material::M, py::const_), "get mass")
              .def("thickness",py::overload_cast<>(&Material::thickness, py::const_), "get thickness")
              .def("thickness",py::overload_cast<double>(&Material::thickness), "set thickness")
+             .def("thickness_cm",py::overload_cast<>(&Material::thickness_cm, py::const_),"get thickness in cm unit")
              .def("thickness_cm",py::overload_cast<double>(&Material::thickness_cm),"set thickness in cm unit")
              .def("I",py::overload_cast<>(&Material::I, py::const_), "get I")
              .def("I",py::overload_cast<double>(&Material::I), "set I")
@@ -150,6 +151,8 @@ PYBIND11_MODULE(pycatima,m){
              .def("add",py::overload_cast<Material>(&Layers::add))
              .def("add_layers",py::overload_cast<const Layers&>(&Layers::add))
              .def("num",&Layers::num)
+             .def("thickness",&Layers::thickness)
+             .def("thickness_cm",&Layers::thickness_cm)
 //             .def("__getitem__",&Layers::operator[],  py::is_operator())
              .def("__getitem__",[](Layers &r, int i)->Material*
                 {
