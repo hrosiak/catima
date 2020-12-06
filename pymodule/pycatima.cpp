@@ -270,11 +270,13 @@ PYBIND11_MODULE(pycatima,m){
             .def_readwrite("z_effective", &Config::z_effective)
             .def_readwrite("corrections", &Config::corrections)
             .def_readwrite("calculation", &Config::calculation)
+            .def_readwrite("low_energy", &Config::low_energy)
             .def("get",[](const Config &r){
                py::dict d;
                d["z_effective"] = r.z_effective;
                d["corrections"] = r.corrections;
                d["calculation"] = r.calculation;
+               d["low_energy"] = r.low_energy;
                return d;
                })
             .def("__str__",[](const Config &r){
@@ -282,6 +284,7 @@ PYBIND11_MODULE(pycatima,m){
                 s = "z_effective = "+std::to_string(r.z_effective);
                 s += ", corrections = "+std::to_string(r.corrections);
                 s += ", calculation = "+std::to_string(r.calculation);
+                s += ", low_energy = "+std::to_string(r.low_energy);
                 return s;
             });
 
