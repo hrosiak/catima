@@ -102,6 +102,7 @@ namespace catima{
 
 
     double angular_scattering_variance(const Projectile &p, const Target &t);
+    double angular_scattering_variance(const Projectile &p, const Material &material);
 
     /**
       * returns radiation length of the (M,Z) material
@@ -111,8 +112,20 @@ namespace catima{
       * @return radiation length in g/cm^2
       */
     double radiation_length(int z, double m);
+
+    /**
+      * returns radiation length of the Material class
+      * radiation length if calculated if not specified in Material
+      * or return specified radiation length      
+      * @param Material - Material class
+      * @return radiation length in g/cm^2
+      */
+    double radiation_length(const Material &material);
+
     
     /** returns effective Z of the projectile
+      * @param p - Projectile class
+      * @param t - Target class
       * @param c - Configuration, the z effective will be calculated according to c.z_effective value
       * @return - z effective
       */ 

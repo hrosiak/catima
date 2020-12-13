@@ -58,14 +58,7 @@ double domega2dx(const Projectile &p, const Material &mat, const Config &c){
 }
 
 double da2dx(const Projectile &p, const Material &mat, const Config &c){
-    double sum = 0;
-    
-    for(int i=0;i<mat.ncomponents();i++){
-        auto t = mat.get_element(i);
-        double w = mat.weight_fraction(i);
-        sum += w*angular_scattering_variance(p,t);
-    }
-    return sum;
+    return angular_scattering_variance(p,mat);    
 }
 
 
@@ -272,7 +265,6 @@ Result calculate(Projectile p, const Material &t, const Config &c){
     
     double rrange = std::min(res.range/t.density(), t.thickness_cm());
     auto fx2p = [&](double x)->double{ 
-	    double range = range_spline(T);
         double e =energy_out(T,x*t.density(),range_spline);
 	    return (rrange-x)*(rrange-x)*da2dx(p(e), t, c)*t.density();
             };           

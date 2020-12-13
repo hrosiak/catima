@@ -73,6 +73,7 @@ namespace catima{
             double th=0;
             double molar_mass=0;
             double i_potential=0;
+            double _X0=0;
             std::vector<Target>atoms;
 
         public:
@@ -188,6 +189,17 @@ namespace catima{
             double I() const {return i_potential;};
 
             /**
+             * set radiation length in g/cm2 unit
+             * @param value - radiation length in g/cm2 unit, if 0 default radiation length will be calculated  
+             */ 
+            Material& X0(double value){_X0 = value;return *this;}
+
+            /**
+             * return radiation length in g/cm2 unit             
+             */ 
+            double X0(){return _X0;}
+
+            /**
               * return number density of atoms/molecules per cm3 in 10^23 units
               */
             double number_density()const{
@@ -215,7 +227,7 @@ namespace catima{
             double number_density_cm2(int i)const{
               if(i>=atoms.size())return 0.0;
               return number_density_cm2()*molar_fraction(i);
-            }
+            }            
 
             friend bool operator==(const Material &a, const Material&b);
     };

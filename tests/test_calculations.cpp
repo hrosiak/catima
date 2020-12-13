@@ -404,6 +404,7 @@ using namespace std;
         auto water = catima::get_material(catima::material::Water);
         auto res2 = catima::calculate(p(600),water,600);
         CHECK(res2.dEdxi == approx(92.5).epsilon(2));
+        CHECK(catima::radiation_length(water)==approx(36.1,0.2));
     }
     TEST_CASE("z_eff"){
         using namespace catima;

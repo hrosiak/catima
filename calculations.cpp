@@ -486,6 +486,15 @@ double angular_scattering_variance(const Projectile &p, const Target &t){
     return 198.81 * pow(p.Z,2)/(lr*pow(_p*beta,2));
 }
 
+double angular_scattering_variance(const Projectile &p, const Material &mat){
+    if(p.T<=0)return 0.0;
+    double e=p.T;
+    double _p = p_from_T(e,p.A);
+    double beta = _p/((e+atomic_mass_unit)*p.A);
+    double X0 = radiation_length(mat);
+    return 198.81 * pow(p.Z,2)/(X0*pow(_p*beta,2));
+}
+
 /// radiation lengths are taken from Particle Data Group 2014
 double radiation_length(int z, double m){
     double lr = 0;
@@ -522,6 +531,16 @@ double radiation_length(int z, double m){
     double a6 = a4*a2;
     lr= 716.405*m/(z2* (log(184.15*z_13) + log(1194.0*z_23)/z - -1.202*a2 + 1.0369*a4 - 1.008*a6/(1+a2) ) );
     return lr;
+}
+
+double radiation_length(const Material &material){
+    double sum = 0;    
+    for(int i=0;i<material.ncomponents();i++){
+        auto t = material.get_element(i);
+        double w = material.weight_fraction(i);
+        sum += w/radiation_length(t.Z,t.A);
+    }
+    return 1/sum;
 }
 
 
