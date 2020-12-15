@@ -189,17 +189,6 @@ namespace catima{
             double I() const {return i_potential;};
 
             /**
-             * set radiation length in g/cm2 unit
-             * @param value - radiation length in g/cm2 unit, if 0 default radiation length will be calculated  
-             */ 
-            Material& X0(double value){_X0 = value;return *this;}
-
-            /**
-             * return radiation length in g/cm2 unit             
-             */ 
-            double X0(){return _X0;}
-
-            /**
               * return number density of atoms/molecules per cm3 in 10^23 units
               */
             double number_density()const{
