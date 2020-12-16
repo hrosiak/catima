@@ -185,10 +185,22 @@ using namespace std;
       CHECK( fabs(dif) < 0.01);
     }
     TEST_CASE("angular scattering"){
+      catima::Config conf;
       catima::Projectile p{1,1,1,158.6};
       catima::Material cu = catima::get_material(29);
-          
-      
+      catima::Material water = catima::get_material(catima::material::Water);      
+
+      p.T = 158.6;
+
+      for(double th = 0.01;th<3;th+=0.02){
+        cu.thickness(th);
+        conf.scattering = catima::scattering_types::fermi_rossi;
+        auto r1 = catima::calculate(p,cu,conf);
+        conf.scattering = catima::scattering_types::atima_scattering;
+        auto r2= catima::calculate(p,cu, conf);  
+        CHECK( r2.sigma_a == approx(r1.sigma_a).R(1e-3));
+      }
+
       cu.thickness_cm(0.02963);
       auto res = catima::calculate(p,cu);
       CHECK( 1000*res.sigma_a == approx(7.2,0.5));
@@ -259,7 +271,7 @@ using namespace std;
         water.thickness_cm(29.4/n);
         for(int i=0;i<n;i++)lll.add(water);        
         res2 = catima::calculate(p(215),lll);
-        CHECK(res2.total_result.sigma_x == approx(res29.sigma_x).R(0.01));
+        CHECK(res2.total_result.sigma_x == approx(res29.sigma_x).R(0.025));
         }
       
 
@@ -334,7 +346,7 @@ using namespace std;
         CHECK(res1.tof == res2.tof);
 
         auto ra = catima::angular_straggling_from_E(p,res1.Ein,res1.Eout,graphite);
-        CHECK(res1.sigma_a == ra);
+        CHECK(res1.sigma_a == approx(ra).R(1e-3));
 
         auto re = catima::energy_straggling_from_E(p,res1.Ein,res1.Eout,graphite);
         CHECK(res1.sigma_E == re);
@@ -404,6 +416,7 @@ using namespace std;
         auto water = catima::get_material(catima::material::Water);
         auto res2 = catima::calculate(p(600),water,600);
         CHECK(res2.dEdxi == approx(92.5).epsilon(2));
+        CHECK(catima::radiation_length(water)==approx(36.1,0.2));
     }
     TEST_CASE("z_eff"){
         using namespace catima;

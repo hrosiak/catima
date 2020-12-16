@@ -11,11 +11,8 @@
 namespace py = pybind11;
 using namespace catima;
 
-void catima_info(){
-    printf("CATIMA version = 1.5\n");
-    printf("number of energy points = %d\n",max_datapoints);
-    printf("min energy point = 10^%lf MeV/u\n",logEmin);
-    printf("max energy point = 10^%lf MeV/u\n",logEmax);
+std::string catima_info(){
+    return "CATIMA version = 1.54\n";
 }
 
 std::string  material_to_string(const Material &r){
@@ -239,6 +236,11 @@ PYBIND11_MODULE(pycatima,m){
     py::enum_<low_energy_types>(m,"low_energy_types")
             .value("srim_85", low_energy_types::srim_85)
             .value("srim_95", low_energy_types::srim_95);
+            
+    py::enum_<scattering_types>(m,"scattering_types")
+            .value("fermi_rossi", scattering_types::fermi_rossi)
+            .value("atima_scattering", scattering_types::atima_scattering);
+            
 
     py::enum_<material>(m,"material")
             .value("Plastics", material::Plastics)
@@ -262,7 +264,13 @@ PYBIND11_MODULE(pycatima,m){
             .value("Suprasil", material::Suprasil)
             .value("HAVAR", material::HAVAR)
             .value("Steel", material::Steel)
-            .value("CO2", material::CO2);
+            .value("CO2", material::CO2)
+            .value("Methane", material::Methane)
+            .value("Methanol", material::Methanol)
+            .value("Nylon", material::Nylon)
+            .value("Polystyrene", material::Polystyrene)
+            .value("Polycarbonate", material::Polycarbonate)
+            .value("Teflon", material::Teflon);
 
 
     py::class_<Config>(m,"Config")
@@ -271,12 +279,14 @@ PYBIND11_MODULE(pycatima,m){
             .def_readwrite("corrections", &Config::corrections)
             .def_readwrite("calculation", &Config::calculation)
             .def_readwrite("low_energy", &Config::low_energy)
+            .def_readwrite("scattering", &Config::scattering)
             .def("get",[](const Config &r){
                py::dict d;
                d["z_effective"] = r.z_effective;
                d["corrections"] = r.corrections;
                d["calculation"] = r.calculation;
                d["low_energy"] = r.low_energy;
+               d["scattering"] = r.scattering;
                return d;
                })
             .def("__str__",[](const Config &r){
@@ -285,9 +295,12 @@ PYBIND11_MODULE(pycatima,m){
                 s += ", corrections = "+std::to_string(r.corrections);
                 s += ", calculation = "+std::to_string(r.calculation);
                 s += ", low_energy = "+std::to_string(r.low_energy);
+                s += ", scattering = "+std::to_string(r.scattering);
                 return s;
             });
 
+    m.def("angular_scattering_power",py::overload_cast<const Projectile&, const Material&, double>(&angular_scattering_power),"angular scattering power in rad^2/g/cm^2",py::arg("projectile"),py::arg("material"),py::arg("Es2")=Es2_FR);
+    m.def("radiation_length",py::overload_cast<const Material&>(radiation_length));
     m.def("srim_dedx_e",&srim_dedx_e);
     m.def("sezi_dedx_e",&sezi_dedx_e, "sezi_dedx_e",  py::arg("projectile"), py::arg("material"), py::arg("config")=default_config);
     m.def("calculate",py::overload_cast<Projectile, const Material&, const Config&>(&calculate),"calculate",py::arg("projectile"), py::arg("material"), py::arg("config")=default_config);

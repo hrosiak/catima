@@ -114,6 +114,23 @@ namespace catima{
     double da2de(const Projectile &p, double T, const Material &t, const Config &c=default_config);
 
     /**
+      * returns the planar RMS angular straggling in rad
+      * @param p - Projectile
+      * @param t - Material class
+      * @param c - Config class
+      * @return angular RMS straggling in rad
+      */
+    double angular_straggling(Projectile p, const Material &t, const Config &c=default_config);
+    /**
+      * returns the planar RMS angular variance in rad
+      * @param p - Projectile
+      * @param t - Material class
+      * @param c - Config class
+      * @return angular RMS variance in rad
+      */
+    double angular_variance(Projectile p, const Material &t, const Config &c=default_config);
+
+    /**
       * calculates angular scattering in the material from difference of incoming a nd outgoing energies
       * @param p - Projectile
       * @param T - incoming energy
@@ -121,7 +138,7 @@ namespace catima{
       * @param mat - Material
       * @return angular straggling
       */
-    double angular_straggling_from_E(const Projectile &p, double T, double Tout,const Material &t, const Config &c=default_config);
+    double angular_straggling_from_E(const Projectile &p, double T, double Tout,Material t, const Config &c=default_config);
 
     /**
       * calculates Energy straggling in the material from difference of incoming a nd outgoing energies
@@ -132,7 +149,7 @@ namespace catima{
       * @return angular straggling
       */
     double energy_straggling_from_E(const Projectile &p, double T, double Tout,const Material &t, const Config &c=default_config);
-
+    
     /**
       * calculates outcoming energy from range spline
       * @param T - incoming energy

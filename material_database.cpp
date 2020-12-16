@@ -158,6 +158,7 @@ namespace catima{
 		 case material::C21H24O4:	 return Material({{0,6,21},{0,1,24},{0,8,4}},1.18);
 		 case material::CoRe_Alloy:	 return Material({{0,27,17},{0,75,23},{0,24,1}},11.5);
 		 case material::LLZO_electrolyte:	 return Material({{0,3,7},{0,57,3},{0,40,2},{0,8,12}},5.1);
+		 case material::Nylon:	 return Material({{0,6,6},{0,1,11},{0,7,1},{0,8,1}},1.14);
             default:break;
              }
         return Material();

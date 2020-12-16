@@ -477,13 +477,26 @@ double energy_straggling_firsov(double z1,double energy, double z2, double m2){
     return factor*beta2/fine_structure/fine_structure;
     }
 
-double angular_scattering_variance(const Projectile &p, const Target &t){
+double angular_scattering_power(const Projectile &p, const Target &t, double Es2){
     if(p.T<=0)return 0.0;
     double e=p.T;
     double _p = p_from_T(e,p.A);
     double beta = _p/((e+atomic_mass_unit)*p.A);
     double lr = radiation_length(t.Z,t.A);
-    return 198.81 * pow(p.Z,2)/(lr*pow(_p*beta,2));
+    //constexpr double Es2 = 198.81;
+    //constexpr double Es2 =2*PI/fine_structure* electron_mass * electron_mass;
+    return Es2 * pow(p.Z,2)/(lr*pow(_p*beta,2));
+}
+
+double angular_scattering_power(const Projectile &p, const Material &mat, double Es2){
+    if(p.T<=0)return 0.0;
+    double e=p.T;
+    double _p = p_from_T(e,p.A);
+    double beta = _p/((e+atomic_mass_unit)*p.A);
+    double X0 = radiation_length(mat);
+    //constexpr double Es2 = 198.81;
+    //constexpr double Es2 =2*PI/fine_structure* electron_mass * electron_mass;
+    return Es2 * pow(p.Z,2)/(X0*pow(_p*beta,2));
 }
 
 /// radiation lengths are taken from Particle Data Group 2014
@@ -522,6 +535,16 @@ double radiation_length(int z, double m){
     double a6 = a4*a2;
     lr= 716.405*m/(z2* (log(184.15*z_13) + log(1194.0*z_23)/z - -1.202*a2 + 1.0369*a4 - 1.008*a6/(1+a2) ) );
     return lr;
+}
+
+double radiation_length(const Material &material){
+    double sum = 0;    
+    for(int i=0;i<material.ncomponents();i++){
+        auto t = material.get_element(i);
+        double w = material.weight_fraction(i);
+        sum += w/radiation_length(t.Z,t.A);
+    }
+    return 1/sum;
 }
 
 
@@ -613,6 +636,7 @@ double z_effective(const Projectile &p,const Target &t, const Config &c){
         return z_eff_Schiwietz(p.Z, beta, t.Z);
     }
     else{
+        assert("unknown effective charge config");
         return 0.0;
     }
 }

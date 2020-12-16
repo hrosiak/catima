@@ -150,7 +150,8 @@ namespace catima{
 		 Iodonaphthalene = 343,
 		 C21H24O4 = 344,
 		 CoRe_Alloy = 345,
-		 LLZO_electrolyte = 346
+		 LLZO_electrolyte = 346,
+		 Nylon = 347
         };
 
       Material get_compound(material m);

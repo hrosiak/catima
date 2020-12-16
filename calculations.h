@@ -100,8 +100,24 @@ namespace catima{
       */ 
     double sezi_dedx_e(const Projectile &p, const Material &mat, const Config &c=default_config);
 
-
-    double angular_scattering_variance(const Projectile &p, const Target &t);
+    //constexpr double Es2_FR =2*PI/fine_structure* electron_mass * electron_mass;
+    constexpr double Es2_FR = 198.81;
+    
+    /**
+     * angular scattering power in form of da^2/dx in units rad^2/ g/cm^2 
+     * @param p - Projectile class
+     * @param t - Target class
+     * @Es2 - energy constant squared, default is 14.1^2 = 198.81
+     */
+    double angular_scattering_power(const Projectile &p, const Target &t, double Es2=Es2_FR);
+    
+    /**
+     * angular scattering power in form of da^2/dx in units rad^2/ g/cm^2 
+     * @param p - Projectile class
+     * @param t - Material class
+     * @Es2 - energy constant squared, default is 14.1^2 = 198.81
+     */
+    double angular_scattering_power(const Projectile &p, const Material &material, double Es2=Es2_FR);
 
     /**
       * returns radiation length of the (M,Z) material
@@ -111,8 +127,20 @@ namespace catima{
       * @return radiation length in g/cm^2
       */
     double radiation_length(int z, double m);
+
+    /**
+      * returns radiation length of the Material class
+      * radiation length if calculated if not specified in Material
+      * or return specified radiation length      
+      * @param Material - Material class
+      * @return radiation length in g/cm^2
+      */
+    double radiation_length(const Material &material);
+
     
     /** returns effective Z of the projectile
+      * @param p - Projectile class
+      * @param t - Target class
       * @param c - Configuration, the z effective will be calculated according to c.z_effective value
       * @return - z effective
       */ 

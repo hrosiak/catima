@@ -73,6 +73,7 @@ namespace catima{
             double th=0;
             double molar_mass=0;
             double i_potential=0;
+            double _X0=0;
             std::vector<Target>atoms;
 
         public:
@@ -215,7 +216,7 @@ namespace catima{
             double number_density_cm2(int i)const{
               if(i>=atoms.size())return 0.0;
               return number_density_cm2()*molar_fraction(i);
-            }
+            }            
 
             friend bool operator==(const Material &a, const Material&b);
     };
