@@ -46,6 +46,14 @@ namespace catima{
     };
 
     /**
+      * enum to select angular scattering
+      */
+    enum scattering_types:unsigned char{
+        fermi_rossi = 0,
+        atima_scattering = 255,
+    };
+
+    /**
       * structure to store calculation configuration
       */
     struct Config{
@@ -57,7 +65,8 @@ namespace catima{
 
         unsigned char corrections = 0;
         unsigned char calculation = 1;
-        unsigned char low_energy = 0;
+        unsigned char low_energy = low_energy_types::srim_85;
+        unsigned char scattering = scattering_types::atima_scattering;
     };
 
 

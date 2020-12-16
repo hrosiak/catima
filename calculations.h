@@ -100,9 +100,9 @@ namespace catima{
       */ 
     double sezi_dedx_e(const Projectile &p, const Material &mat, const Config &c=default_config);
 
-
-    double angular_scattering_variance(const Projectile &p, const Target &t);
-    double angular_scattering_variance(const Projectile &p, const Material &material);
+    constexpr double Es2_FR =2*PI/fine_structure* electron_mass * electron_mass;
+    double angular_scattering_power(const Projectile &p, const Target &t, double Es2=Es2_FR);
+    double angular_scattering_power(const Projectile &p, const Material &material, double Es2=Es2_FR);
 
     /**
       * returns radiation length of the (M,Z) material
