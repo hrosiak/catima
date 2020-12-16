@@ -102,7 +102,21 @@ namespace catima{
 
     //constexpr double Es2_FR =2*PI/fine_structure* electron_mass * electron_mass;
     constexpr double Es2_FR = 198.81;
+    
+    /**
+     * angular scattering power in form of da^2/dx in units rad^2/ g/cm^2 
+     * @param p - Projectile class
+     * @param t - Target class
+     * @Es2 - energy constant squared, default is 14.1^2 = 198.81
+     */
     double angular_scattering_power(const Projectile &p, const Target &t, double Es2=Es2_FR);
+    
+    /**
+     * angular scattering power in form of da^2/dx in units rad^2/ g/cm^2 
+     * @param p - Projectile class
+     * @param t - Material class
+     * @Es2 - energy constant squared, default is 14.1^2 = 198.81
+     */
     double angular_scattering_power(const Projectile &p, const Material &material, double Es2=Es2_FR);
 
     /**
