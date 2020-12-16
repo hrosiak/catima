@@ -100,7 +100,8 @@ namespace catima{
       */ 
     double sezi_dedx_e(const Projectile &p, const Material &mat, const Config &c=default_config);
 
-    constexpr double Es2_FR =2*PI/fine_structure* electron_mass * electron_mass;
+    //constexpr double Es2_FR =2*PI/fine_structure* electron_mass * electron_mass;
+    constexpr double Es2_FR = 198.81;
     double angular_scattering_power(const Projectile &p, const Target &t, double Es2=Es2_FR);
     double angular_scattering_power(const Projectile &p, const Material &material, double Es2=Es2_FR);
 

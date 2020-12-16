@@ -57,11 +57,7 @@ double domega2dx(const Projectile &p, const Material &mat, const Config &c){
     return sum;
 }
 
-double da2dx(const Projectile &p, const Material &mat, const Config &c){
-    //double Es2 = Es2_FR;
-    //if(c.scattering == scattering_types::atima_scattering){        
-    //        Es2 = 198.81;
-    //}    
+double da2dx(const Projectile &p, const Material &mat, const Config &c){  
     const double Es2 = 198.81;
     return angular_scattering_power(p,mat, Es2);    
 }
