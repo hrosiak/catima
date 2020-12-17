@@ -636,7 +636,7 @@ double z_effective(const Projectile &p,const Target &t, const Config &c){
         return z_eff_Schiwietz(p.Z, beta, t.Z);
     }
     else{
-        assert("unknown effective charge config");
+        assert(false);
         return 0.0;
     }
 }
@@ -720,6 +720,9 @@ double z_eff_Winger(double pz, double beta, double tz){
 double z_eff_global(double pz, double E, double tz){
     if(E>2000)
         return pz;
+    else if(E<30.0 || pz<29){        
+        return z_eff_Pierce_Blann(pz, E);
+    }
     else
         #ifdef GLOBAL
         return global_qmean(pz, tz, E);
