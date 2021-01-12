@@ -57,16 +57,6 @@ double domega2dx(const Projectile &p, const Material &mat, const Config &c){
     return sum;
 }
 
-double da2dx(const Projectile &p, const Material &mat, const Config &c){  
-    const double Es2 = 198.81;
-    return angular_scattering_power(p,mat, Es2);    
-}
-
-double da2de(const Projectile &p, const Material &mat, const Config &c){
-    return da2dx(p,mat,c)/dedx(p,mat,c);    
-}
-
-
 double range(const Projectile &p, const Material &t, const Config &c){
     auto& data = _storage.Get(p,t,c);
     //Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
@@ -118,6 +108,14 @@ double domega2de(const Projectile &p, double T, const Material &t, const Config 
     spline_type range_straggling_spline = get_range_straggling_spline(data);
     return range_straggling_spline.derivative(T);
 }
+double da2dx(const Projectile &p, const Material &mat, const Config &c){  
+    double Es2 = 198.81;
+    double f = 1.0;    
+    if(c.scattering == scattering_types::dhighland)Es2 = 15*15;
+    if(c.scattering == scattering_types::fermi_rossi)Es2 = 15*15;
+    return f*angular_scattering_power(p,mat, Es2);
+}
+
 /*
 double da2de(const Projectile &p, double T, const Material &t, const Config &c){
     auto& data = _storage.Get(p,t,c);
@@ -127,21 +125,56 @@ double da2de(const Projectile &p, double T, const Material &t, const Config &c){
 }
 */
 
-double angular_variance(Projectile p, const Material &t, const Config &c){
+double da2de(const Projectile &p, const Material &mat, const Config &c){
+    return da2dx(p,mat,c)/dedx(p,mat,c);    
+}
+
+double Tfr(const Projectile &p, double X, double Es2){
+    if(p.T<=0)return 0.0;
+    double _p = p_from_T(p.T,p.A);
+    double beta = _p/((p.T+atomic_mass_unit)*p.A);
+    return Es2 /(X*pow(_p*beta,2));
+}
+
+double angular_variance(Projectile p, const Material &t, const Config &c, int order){
     const double T = p.T;
+    
+    const double p1 = p_from_T(T,p.A);
+    const double beta1 = p1/((T+atomic_mass_unit)*p.A);    
     auto& data = _storage.Get(p,t,c);    
     spline_type range_spline = get_range_spline(data);
-    auto fx0p = [&](double x)->double{         
-        double e =energy_out(T,x,range_spline);        
-        //double l = x/radiation_length(t);
-        //double f = 0.97*(1+log(l)/20.7) + (1+log(l)/22.7);
-        constexpr double f = 1;
-	    return f*da2dx(p(e), t, c);
-            };
-    double f = 1.0;  
     double range = range_spline(T);
-    double rrange = std::min(range, t.thickness());
-    return f*integrator.integrate(fx0p,0, rrange);
+    
+    double rrange = std::min(range/t.density(), t.thickness_cm()); // residual range, in case of stopping inside material
+    double X0 = radiation_length(t);
+    double Es2 = 198.81;
+    if(c.scattering == scattering_types::dhighland)Es2 = 15*15;
+    if(c.scattering == scattering_types::fermi_rossi)Es2 = 15*15;
+
+    auto fx0p = [&](double x)->double{         
+        double e =energy_out(T,x*t.density(),range_spline);
+        double d = std::pow((rrange-x),order);
+        double ff = 1;        
+        if(c.scattering == scattering_types::dhighland){
+            double l = x*t.density()/X0;
+            double lnl = log(l);
+            ff = 0.97*(1+lnl/20.7)*(1+lnl/22.7);
+        }
+	    //return d*ff*da2dx(p(e), t, c);
+        return d*ff*Tfr(p(e),1, 1.0);
+            };
+
+    auto fx0p_2 = [&](double x)->double{         
+        double e =energy_out(T,x*t.density(),range_spline);                
+        double d = std::pow((rrange-x),order);
+        return d*angular_scattering_power_xs(p(e),t,p1,beta1);
+            };
+    
+    // corrections      
+    if(c.scattering == scattering_types::gottschalk){
+        return integrator.integrate(fx0p_2,0, rrange)*t.density();
+    }
+    return integrator.integrate(fx0p,0, rrange)*t.density()*pow(p.Z,2)*Es2/X0;
 }
 
 double angular_straggling(Projectile p, const Material &t, const Config &c){
@@ -157,10 +190,7 @@ double angular_straggling_from_E(const Projectile &p, double T, double Tout, Mat
 }
 
 double energy_straggling_from_E(const Projectile &p, double T, double Tout,const Material &t, const Config &c){
-    auto& data = _storage.Get(p,t,c);
-
-    //Interpolator range_straggling_spline(energy_table.values,data.range_straggling.data(),energy_table.num);
-    //Interpolator range_spline(energy_table.values,data.range.data(),energy_table.num);
+    auto& data = _storage.Get(p,t,c);    
     spline_type range_spline = get_range_spline(data);
     spline_type range_straggling_spline = get_range_straggling_spline(data);
     double dEdxo = p.A/range_spline.derivative(Tout);
@@ -306,22 +336,25 @@ Result calculate(Projectile p, const Material &t, const Config &c){
             
     } //end of else for non stopped case
     
-    // position straggling in material
+    // position straggling in material    
     double rrange = std::min(res.range/t.density(), t.thickness_cm());
     auto fx2p = [&](double x)->double{ 
         double e =energy_out(T,x*t.density(),range_spline);
 	    return (rrange-x)*(rrange-x)*da2dx(p(e), t, c)*t.density();
             };           
     
-    res.sigma_x = integrator_adaptive.integrate(fx2p,0, rrange,1e-3,1e-6);    
+    res.sigma_x = integrator_adaptive.integrate(fx2p,0, rrange,1e-3,1e-6);
+    res.sigma_x = angular_variance(p(T),t,c,2);
     res.sigma_x = sqrt(res.sigma_x);
 
+    rrange = std::min(res.range/t.density(), t.thickness_cm());
     // position vs angle covariance, needed later for final position straggling
     auto fx1p = [&](double x)->double{ 
         double e =energy_out(T,x*t.density(),range_spline);        
 	    return (rrange-x)*da2dx(p(e), t, c)*t.density();
             };
     res.cov = integrator.integrate(fx1p,0, rrange);    
+    res.cov = angular_variance(p(T),t,c,1);
 
     #ifdef REACTIONS
     res.sp = nonreaction_rate(p,t,c);

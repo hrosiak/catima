@@ -239,6 +239,8 @@ PYBIND11_MODULE(pycatima,m){
             
     py::enum_<scattering_types>(m,"scattering_types")
             .value("fermi_rossi", scattering_types::fermi_rossi)
+            .value("dhighland", scattering_types::dhighland)
+            .value("gottschalk", scattering_types::gottschalk)
             .value("atima_scattering", scattering_types::atima_scattering);
             
 
@@ -304,6 +306,7 @@ PYBIND11_MODULE(pycatima,m){
     m.def("srim_dedx_e",&srim_dedx_e);
     m.def("sezi_dedx_e",&sezi_dedx_e, "sezi_dedx_e",  py::arg("projectile"), py::arg("material"), py::arg("config")=default_config);
     m.def("calculate",py::overload_cast<Projectile, const Material&, const Config&>(&calculate),"calculate",py::arg("projectile"), py::arg("material"), py::arg("config")=default_config);
+    m.def("calculate",py::overload_cast<const Projectile&, const Layers&, const Config&>(&calculate),"calculate",py::arg("projectile"), py::arg("layers"), py::arg("config")=default_config);
     m.def("calculate_layers",py::overload_cast<const Projectile&, const Layers&, const Config&>(&calculate),"calculate_layers",py::arg("projectile"), py::arg("material"), py::arg("config")=default_config);
     m.def("dedx_from_range",py::overload_cast<const Projectile&, const Material&, const Config&>(&dedx_from_range),"calculate",py::arg("projectile") ,py::arg("material"), py::arg("config")=default_config);
     m.def("dedx_from_range",py::overload_cast<const Projectile&, const std::vector<double>&, const Material&, const Config&>(&dedx_from_range),"calculate",py::arg("projectile"), py::arg("energy") ,py::arg("material"), py::arg("config")=default_config);

@@ -118,7 +118,7 @@ namespace catima{
      * @Es2 - energy constant squared, default is 14.1^2 = 198.81
      */
     double angular_scattering_power(const Projectile &p, const Material &material, double Es2=Es2_FR);
-
+    double angular_scattering_power_xs(const Projectile &p, const Material &mat, double p1, double beta1, double Es2=225.0);
     /**
       * returns radiation length of the (M,Z) material
       * for certain z the radiation length is tabulated, otherwise calculated
@@ -137,6 +137,14 @@ namespace catima{
       */
     double radiation_length(const Material &material);
 
+    /**
+      * returns radiation length of the Material class
+      * radiation length if calculated if not specified in Material
+      * or return specified radiation length      
+      * @param Material - Material class
+      * @return radiation length in g/cm^2
+      */
+    double scattering_length(const Material &material);
     
     /** returns effective Z of the projectile
       * @param p - Projectile class
