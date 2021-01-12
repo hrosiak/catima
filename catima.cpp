@@ -337,23 +337,12 @@ Result calculate(Projectile p, const Material &t, const Config &c){
     } //end of else for non stopped case
     
     // position straggling in material    
-    double rrange = std::min(res.range/t.density(), t.thickness_cm());
-    auto fx2p = [&](double x)->double{ 
-        double e =energy_out(T,x*t.density(),range_spline);
-	    return (rrange-x)*(rrange-x)*da2dx(p(e), t, c)*t.density();
-            };           
-    
-    res.sigma_x = integrator_adaptive.integrate(fx2p,0, rrange,1e-3,1e-6);
+    double rrange = std::min(res.range/t.density(), t.thickness_cm());   
     res.sigma_x = angular_variance(p(T),t,c,2);
     res.sigma_x = sqrt(res.sigma_x);
 
     rrange = std::min(res.range/t.density(), t.thickness_cm());
-    // position vs angle covariance, needed later for final position straggling
-    auto fx1p = [&](double x)->double{ 
-        double e =energy_out(T,x*t.density(),range_spline);        
-	    return (rrange-x)*da2dx(p(e), t, c)*t.density();
-            };
-    res.cov = integrator.integrate(fx1p,0, rrange);    
+    // position vs angle covariance, needed later for final position straggling    
     res.cov = angular_variance(p(T),t,c,1);
 
     #ifdef REACTIONS
