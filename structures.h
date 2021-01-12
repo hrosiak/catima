@@ -73,7 +73,6 @@ namespace catima{
             double th=0;
             double molar_mass=0;
             double i_potential=0;
-            double _X0=0;
             std::vector<Target>atoms;
 
         public:

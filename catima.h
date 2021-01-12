@@ -128,7 +128,7 @@ namespace catima{
       * @param c - Config class
       * @return angular RMS variance in rad
       */
-    double angular_variance(Projectile p, const Material &t, const Config &c=default_config);
+    double angular_variance(Projectile p, const Material &t, const Config &c=default_config, int order = 0);
 
     /**
       * calculates angular scattering in the material from difference of incoming a nd outgoing energies

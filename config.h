@@ -50,6 +50,8 @@ namespace catima{
       */
     enum scattering_types:unsigned char{
         fermi_rossi = 0,
+        dhighland = 1,
+        gottschalk = 2,
         atima_scattering = 255,
     };
 
@@ -66,7 +68,7 @@ namespace catima{
         unsigned char corrections = 0;
         unsigned char calculation = 1;
         unsigned char low_energy = low_energy_types::srim_85;
-        unsigned char scattering = scattering_types::atima_scattering;
+        unsigned char scattering = scattering_types::atima_scattering;        
     };
 
 

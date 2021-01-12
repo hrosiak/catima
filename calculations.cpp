@@ -499,6 +499,20 @@ double angular_scattering_power(const Projectile &p, const Material &mat, double
     return Es2 * pow(p.Z,2)/(X0*pow(_p*beta,2));
 }
 
+double angular_scattering_power_xs(const Projectile &p, const Material &mat, double p1, double beta1, double Es2){
+    if(p.T<=0)return 0.0;
+    double e=p.T;
+    double _p = p_from_T(e,p.A);
+    double beta = _p/((e+atomic_mass_unit)*p.A);
+    double pv = _p*beta;
+    double p1v1 = p1*beta1;
+    double Xs = scattering_length(mat);    
+    double cl1 = log10(1-std::pow(pv/p1v1,2));
+    double cl2 = log10(pv);
+    double f = 0.5244 + 0.1975*cl1 + 0.2320*cl2 - (0.0098*cl2*cl1);
+    return f*Es2 * pow(p.Z,2)/(Xs*pow(_p*beta,2));
+}
+
 /// radiation lengths are taken from Particle Data Group 2014
 double radiation_length(int z, double m){
     double lr = 0;
@@ -543,6 +557,21 @@ double radiation_length(const Material &material){
         auto t = material.get_element(i);
         double w = material.weight_fraction(i);
         sum += w/radiation_length(t.Z,t.A);
+    }
+    return 1/sum;
+}
+
+double scattering_length(int a, int z){
+    double c = 0.00034896*z*z*(2*std::log(33219*std::pow(a*z,-1.0/3.0))-1)/a;
+    return 1.0/c;
+}
+
+double scattering_length(const Material& material){
+    double sum = 0;    
+    for(int i=0;i<material.ncomponents();i++){
+        auto t = material.get_element(i);
+        double w = material.weight_fraction(i);
+        sum += w/scattering_length(t.A,t.Z);
     }
     return 1/sum;
 }

@@ -184,6 +184,86 @@ using namespace std;
       dif = res.tof - 0.038;
       CHECK( fabs(dif) < 0.01);
     }
+    TEST_CASE("scattering length"){
+      catima::Material be = catima::get_material(4);
+      double x0 = catima::radiation_length(be);
+      double xs = catima::scattering_length(be);
+      CHECK(xs/x0 == approx(1.4,0.1));
+      catima::Material pb = catima::get_material(82);
+      x0 = catima::radiation_length(pb);
+      xs = catima::scattering_length(pb);
+      CHECK(xs/x0 == approx(1.04,0.04));
+    }
+    TEST_CASE("scattering_kanematsu"){
+      catima::Config conf;      
+      catima::Projectile p{1,1,1,158.6};
+      
+      { //p->Be        
+        catima::Material be = catima::get_material(4);
+        double r0 = catima::range(p,be);
+
+        conf.scattering = catima::scattering_types::fermi_rossi; 
+        be.thickness(r0*0.01);        
+        auto r1 = catima::calculate(p,be,conf);
+        be.thickness(r0*0.1);
+        auto r10 = catima::calculate(p,be,conf);
+        CHECK(r1.sigma_a*1000 == approx(2.93,0.1));
+        CHECK(r10.sigma_a*1000 == approx(9.49,0.4));
+
+        conf.scattering = catima::scattering_types::dhighland; 
+        be.thickness(r0*0.01);        
+        r1 = catima::calculate(p,be,conf);
+        be.thickness(r0*0.1);
+        r10 = catima::calculate(p,be,conf);
+        CHECK(r1.sigma_a*1000 == approx(2.04,0.1));
+        CHECK(r10.sigma_a*1000 == approx(7.61,0.3));
+
+      }
+      { //p->Cu        
+        catima::Material cu = catima::get_material(29);
+        double r0 = catima::range(p,cu);
+
+        conf.scattering = catima::scattering_types::fermi_rossi; 
+        cu.thickness(r0*0.01);        
+        auto r1 = catima::calculate(p,cu,conf);
+        cu.thickness(r0*0.1);
+        auto r10 = catima::calculate(p,cu,conf);
+        CHECK(r1.sigma_a*1000 == approx(7.23,0.3));
+        CHECK(r10.sigma_a*1000 == approx(23.5,0.8));
+
+        conf.scattering = catima::scattering_types::dhighland; 
+        cu.thickness(r0*0.01);        
+        r1 = catima::calculate(p,cu,conf);
+        cu.thickness(r0*0.1);
+        r10 = catima::calculate(p,cu,conf);
+        CHECK(r1.sigma_a*1000 == approx(5.63,0.25));
+        CHECK(r10.sigma_a*1000 == approx(20.7,0.8));
+      }
+      { //p->Pb
+        catima::Material pb = catima::get_material(82);
+        pb.density(11.35);
+        pb.I(823);
+        double r0 = catima::range(p,pb);
+
+        conf.scattering = catima::scattering_types::fermi_rossi; 
+        pb.thickness(r0*0.01);        
+        auto r1 = catima::calculate(p,pb,conf);
+        pb.thickness(r0*0.1);
+        auto r10 = catima::calculate(p,pb,conf);
+        CHECK(r1.sigma_a*1000 == approx(11.88,0.5));
+        CHECK(r10.sigma_a*1000 == approx(38.6,1.2));
+
+        conf.scattering = catima::scattering_types::dhighland; 
+        pb.thickness(r0*0.01);        
+        r1 = catima::calculate(p,pb,conf);
+        pb.thickness(r0*0.1);
+        r10 = catima::calculate(p,pb,conf);
+        CHECK(r1.sigma_a*1000 == approx(9.75,0.25));
+        CHECK(r10.sigma_a*1000 == approx(35.8,1.2));
+      }
+
+
+    }
     TEST_CASE("angular scattering"){
       catima::Config conf;
       catima::Projectile p{1,1,1,158.6};
@@ -191,7 +271,7 @@ using namespace std;
       catima::Material water = catima::get_material(catima::material::Water);      
 
       p.T = 158.6;
-
+/*
       for(double th = 0.01;th<3;th+=0.02){
         cu.thickness(th);
         conf.scattering = catima::scattering_types::fermi_rossi;
@@ -200,7 +280,7 @@ using namespace std;
         auto r2= catima::calculate(p,cu, conf);  
         CHECK( r2.sigma_a == approx(r1.sigma_a).R(1e-3));
       }
-
+*/
       cu.thickness_cm(0.02963);
       auto res = catima::calculate(p,cu);
       CHECK( 1000*res.sigma_a == approx(7.2,0.5));
