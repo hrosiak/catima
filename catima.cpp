@@ -287,6 +287,7 @@ Result calculate(Projectile p, const Material &t, const Config &c){
 
     if(t.thickness()==0){
         res.dEdxo = res.dEdxi;
+	res.Eout = res.Ein;
         return res;
     }
     
