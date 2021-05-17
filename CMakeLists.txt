@@ -105,7 +105,14 @@ if(PYTHON_MODULE)
     endif(NOT Python_FOUND)
     find_package(pybind11 QUIET)
     if(NOT pybind11_FOUND)
-    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/pybind11)
+	    message(INFO "pybind11 not found, trying to dowload")
+	    include(FetchContent)
+	    FetchContent_Declare(
+		    pybind11
+		    GIT_REPOSITORY https://github.com/pybind/pybind11.git
+		    GIT_TAG v2.6.2
+		    )
+	    FetchContent_MakeAvailable(pybind11)
     endif(NOT pybind11_FOUND)
     
     #set(PYBIND11_CPP_STANDARD -std=c++14)
