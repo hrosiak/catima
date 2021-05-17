@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2.0)
+cmake_minimum_required(VERSION 3.12.0)
 project(catima)
 
 ############ options #############
@@ -95,14 +95,14 @@ FILE(COPY ${HEADERS} DESTINATION ${PROJECT_BINARY_DIR}/include/catima)
 MESSAGE( STATUS "CMAKE_CXX_COMPILER: " ${CMAKE_CXX_COMPILER} )
 
 ######## for python module
-find_package(PythonInterp)
-if(PYTHONINTERP_FOUND)
-    message(STATUS "Python found: ${PYTHON_EXECUTABLE}")
+find_package(Python COMPONENTS Interpreter Development)
+if(Python_FOUND)
+    message(STATUS "Python found: ${Python_EXECUTABLE}")
 endif()
 if(PYTHON_MODULE)
-    if(NOT PYTHONINTERP_FOUND)
+    if(NOT Python_FOUND)
         MESSAGE(SEND_ERROR "Python is required to build nurex python modules")
-    endif(NOT PYTHONINTERP_FOUND)
+    endif(NOT Python_FOUND)
     find_package(pybind11 QUIET)
     if(NOT pybind11_FOUND)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/pybind11)
