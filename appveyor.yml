@@ -9,6 +9,7 @@ environment:
       ARCH_ARG: "-A x64"
       PYTHON: "C:\\Python38-x64"
       PYTHON_ARCH: 64
+      MSVC_VERSION: "Visual Studio 14 Win64"
 
 build_script:
   - git submodule add -b stable ../../pybind/pybind11 extern/pybind11
