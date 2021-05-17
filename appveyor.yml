@@ -6,6 +6,7 @@ environment:
       GENERATOR: "Visual Studio 16 2019"
       CONFIG: Release
       ARCH_ARG: "-A x64"
+    - PYTHON: "C:\\Python38"
 
 build_script:
   - git submodule add -b stable ../../pybind/pybind11 extern/pybind11
