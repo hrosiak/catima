@@ -103,8 +103,12 @@ if(PYTHON_MODULE)
     if(NOT PYTHONINTERP_FOUND)
         MESSAGE(SEND_ERROR "Python is required to build nurex python modules")
     endif(NOT PYTHONINTERP_FOUND)
-    find_package(pybind11 REQUIRED)
-    set(PYBIND11_CPP_STANDARD -std=c++14)
+    find_package(pybind11 QUIET)
+    if(NOT pybind11_FOUND)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/extern/pybind11)
+    endif(NOT pybind11_FOUND)
+    
+    #set(PYBIND11_CPP_STANDARD -std=c++14)
     pybind11_add_module(pycatima pymodule/pycatima)
     target_include_directories(pycatima PUBLIC
                                     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
