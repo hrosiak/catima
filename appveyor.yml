@@ -14,5 +14,5 @@ build_script:
   - git submodule add -b stable ../../pybind/pybind11 extern/pybind11
   - git submodule update --init
   - mkdir build && cd build
-  - cmake -G "Visual Studio 16 2019" -A%PLATFORM%  -DPYTHON_MODULE=ON ../
+  - cmake -DPYTHON_EXECUTABLE=C:\\Python37-x64\python.exe -G "Visual Studio 16 2019" -A%PLATFORM%  -DPYTHON_MODULE=ON ../
   - cmake --build _builds --config "%CONFIG%" .
