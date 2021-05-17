@@ -11,5 +11,5 @@ environment:
 build_script:
   - git submodule add -b stable ../../pybind/pybind11 extern/pybind11
   - git submodule update --init
-  - cmake "-G%GENERATOR%" -H. -B_builds -DPYTHON_MODULE=ON
+  - cmake -G "Visual Studio 16 2019" -DPYTHON_MODULE=ON
   - cmake --build _builds --config "%CONFIG%"
