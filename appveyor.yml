@@ -8,12 +8,10 @@ environment:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       CONFIG: Release
       PYTHON: "C:\\Python37-x64"
-      PYTHON_EXE: "C:\\Python37-x64\\python.exe"
       PYTHON_ARCH: 64
 
 install:
   - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
-  - %PYTHON_EXE% --version
   - pip --version
   - pip install pybind11
   - pip install wheel
