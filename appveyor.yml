@@ -25,5 +25,5 @@ build_script:
   - python ../pymodule/setup.py bdist_wheel
 #  - cmake --build ./ --config "%CONFIG%" .
   
-#artifacts:
-#  - path: build\*
+artifacts:
+  - path: build\dist\*
