@@ -22,8 +22,8 @@ build_script:
 #  - git submodule update --init
   - mkdir build && cd build
   - cmake -DBUILD_SHARED_LIBS=OFF -DAPPS=OFF -G "Visual Studio 16 2019" -A%PLATFORM% -DPYTHON_EXECUTABLE=$(python -c "import sys; print(sys.executable)") ../
+  - cmake --build ./ --config "%CONFIG%" .
   - python ../pymodule/setup.py bdist_wheel
-#  - cmake --build ./ --config "%CONFIG%" .
   
 artifacts:
   - path: build\dist\*
