@@ -13,6 +13,7 @@ environment:
 
 install:
   - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
+  - %PYTHON_EXE% --version
   - pip --version
   - pip install pybind11
   - pip install wheel
@@ -22,7 +23,7 @@ build_script:
 #  - git submodule add -b stable ../../pybind/pybind11 extern/pybind11
 #  - git submodule update --init
   - mkdir build && cd build
-  - cmake -DBUILD_SHARED_LIBS=OFF -DAPPS=OFF -G "Visual Studio 16 2019" -A%PLATFORM%  -D-DPYTHON_EXECUTABLE:%PYTHON_EXE% -DPYTHON_WHEEL=ON ../
+  - cmake -DBUILD_SHARED_LIBS=OFF -DAPPS=OFF -G "Visual Studio 16 2019" -A%PLATFORM%  -DPYTHON_EXECUTABLE:%PYTHON_EXE% -DPYTHON_WHEEL=ON ../
 #  - cmake --build ./ --config "%CONFIG%" .
   
 artifacts:
