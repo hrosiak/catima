@@ -15,8 +15,9 @@ install:
   - set PATH=%Python_ROOT_DIR%;%PATH%
 
 build_script:
-  - git submodule add -b stable ../../pybind/pybind11 extern/pybind11
-  - git submodule update --init
+  - pip install pybind11
+#  - git submodule add -b stable ../../pybind/pybind11 extern/pybind11
+#  - git submodule update --init
   - mkdir build && cd build
   - cmake -DBUILD_SHARED_LIBS=OFF -DAPPS=OFF -G "Visual Studio 16 2019" -A%PLATFORM%  -DPYTHON_WHEEL=ON ../
 #  - cmake --build ./ --config "%CONFIG%" .
