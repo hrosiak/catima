@@ -13,7 +13,7 @@ example_module = Pybind11Extension(
     'pycatima',
     SRC,
     include_dirs=['../build/include','../global'],
-    library_dirs=['../build/lib','../build'],
+    library_dirs=['../build/lib','../build','../build/Release'],
     libraries=['catima']
 )
 
