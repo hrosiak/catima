@@ -22,7 +22,7 @@ build_script:
 #  - git submodule update --init
   - mkdir build && cd build
   - cmake -DBUILD_SHARED_LIBS=OFF -DAPPS=OFF -G "Visual Studio 16 2019" -A%PLATFORM% ../
-  - python setup.py bdist_wheel
+  - python ../pymodule/setup.py bdist_wheel
 #  - cmake --build ./ --config "%CONFIG%" .
   
 #artifacts:
