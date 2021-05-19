@@ -12,8 +12,7 @@ print (SRC)
 example_module = Pybind11Extension(
     'pycatima',
     SRC,
-    include_dirs=['../build/include','../global'],
-    extra_compile_args=['-O3']
+    include_dirs=['../build/include','../global']
 )
 
 setup(
