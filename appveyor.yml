@@ -9,6 +9,14 @@ environment:
       CONFIG: Release
       PYTHON: "C:\\Python37-x64"
       PYTHON_ARCH: 64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      CONFIG: Release
+      PYTHON: "C:\\Python38-x64"
+      PYTHON_ARCH: 64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      CONFIG: Release
+      PYTHON: "C:\\Python39-x64"
+      PYTHON_ARCH: 64
 
 install:
   - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
