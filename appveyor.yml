@@ -13,9 +13,9 @@ environment:
 
 install:
   - set PATH=%Python_ROOT_DIR%;%PATH%
+  - pip install pybind11
 
 build_script:
-  - pip install pybind11
 #  - git submodule add -b stable ../../pybind/pybind11 extern/pybind11
 #  - git submodule update --init
   - mkdir build && cd build
