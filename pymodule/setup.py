@@ -23,6 +23,7 @@ setup(
     author='Andrej Prochazka',
     author_email='hrocho@vodacionline.sk',
     description='python interface to catima library',
+    url='https://github.com/hrosiak/catima',
     ext_modules=[example_module],
     cmdclass={"build_ext": build_ext},
 )
