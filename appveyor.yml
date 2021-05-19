@@ -12,8 +12,9 @@ environment:
       PYTHON_ARCH: 64
 
 install:
-  - set PATH=%Python_ROOT_DIR%;%PATH%
+  - set PATH=%Python_ROOT_DIR%;%Python_ROOT_DIR%\Scripts%PATH%
   - pip install pybind11
+  - pip install wheel
 
 build_script:
 #  - git submodule add -b stable ../../pybind/pybind11 extern/pybind11
