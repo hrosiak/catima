@@ -14,7 +14,7 @@ option(GSL_INTEGRATION "use GSL integration" OFF)
 option(GSL_INTERPOLATION "use GSL inteRPOLATION" OFF)
 option(THIN_TARGET_APPROXIMATION "thin target approximation" ON)
 option(GENERATE_DATA "make data tables generator" OFF)
-
+option(PYTHON_WHEEL "make python wheel" OFF)
 ######## build type ############
 if(NOT CMAKE_BUILD_TYPE  STREQUAL "Debug")
     set(CMAKE_BUILD_TYPE "Release")
@@ -122,8 +122,10 @@ if(PYTHON_MODULE)
                                     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/libs>
                                     $<INSTALL_INTERFACE:include>)
     target_link_libraries(pycatima PRIVATE catima)
-
 endif(PYTHON_MODULE )
+if(PYTHON_WHEEL)
+	execute_process(COMMAND ${Python_EXECUTABLE} ${PROJECT_SOURCE_DIR}/pymodule/setup.py bdist_wheel)
+endif(PYTHON_WHEEL)
 
 ########## Sub Directories ###########
 if(EXAMPLES)
