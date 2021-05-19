@@ -8,20 +8,21 @@ environment:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       CONFIG: Release
       PYTHON: "C:\\Python37-x64"
+      PYTHON_EXE: "C:\\Python37-x64\python.exe"
       PYTHON_ARCH: 64
 
 install:
   - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
-  - echo %PATH%
   - pip --version
   - pip install pybind11
   - pip install wheel
 
 build_script:
+  - echo %PATH%
 #  - git submodule add -b stable ../../pybind/pybind11 extern/pybind11
 #  - git submodule update --init
   - mkdir build && cd build
-  - cmake -DBUILD_SHARED_LIBS=OFF -DAPPS=OFF -G "Visual Studio 16 2019" -A%PLATFORM%  -DPYTHON_WHEEL=ON ../
+  - cmake -DBUILD_SHARED_LIBS=OFF -DAPPS=OFF -G "Visual Studio 16 2019" -A%PLATFORM%  -D-DPYTHON_EXECUTABLE:%PYTHON_EXE% -DPYTHON_WHEEL=ON ../
 #  - cmake --build ./ --config "%CONFIG%" .
   
 artifacts:
