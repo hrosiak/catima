@@ -11,7 +11,9 @@ environment:
       PYTHON_ARCH: 64
 
 install:
-  - set PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%
+  - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
+  - echo %PATH%
+  - pip --version
   - pip install pybind11
   - pip install wheel
 
