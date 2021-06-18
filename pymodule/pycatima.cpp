@@ -12,7 +12,7 @@ namespace py = pybind11;
 using namespace catima;
 
 std::string catima_info(){
-    return "CATIMA version = 1.54\n";
+    return "CATIMA version = 1.6\n";
 }
 
 std::string  material_to_string(const Material &r){
