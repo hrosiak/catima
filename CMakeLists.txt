@@ -116,7 +116,7 @@ if(PYTHON_MODULE)
     endif(NOT pybind11_FOUND)
     
     #set(PYBIND11_CPP_STANDARD -std=c++14)
-    pybind11_add_module(pycatima pymodule/pycatima)
+    pybind11_add_module(pycatima pymodule/pycatima.cpp)
     target_include_directories(pycatima PUBLIC
                                     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
                                     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/libs>
