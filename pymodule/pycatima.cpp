@@ -175,7 +175,10 @@ PYBIND11_MODULE(pycatima,m){
              .def_readwrite("sigma_x", &Result::sigma_x)
              .def_readwrite("tof", &Result::tof)
              .def_readwrite("sp", &Result::sp)
-             .def("get_dict",&get_result_dict);
+             .def("get_dict",&get_result_dict)
+             .def("__repr__",[](const Result &self){
+                 return py::str(get_result_dict(self)); 
+             });
 
      py::class_<MultiResult>(m,"MultiResult")
              .def(py::init<>(),"constructor")
@@ -211,7 +214,17 @@ PYBIND11_MODULE(pycatima,m){
                     }
                 d["partial"] = p;
                 return d;
-                });
+                })
+             .def("__repr__",[](const MultiResult &r){
+                 py::dict d;
+                py::list p;
+                d["result"] = get_result_dict(r.total_result);
+                for(auto& entry:r.results){
+                    p.append(get_result_dict(entry));
+                    }
+                d["partial"] = p;
+                return py::str(d);
+             });
 
     py::enum_<z_eff_type>(m,"z_eff_type")
             .value("none", z_eff_type::none)
