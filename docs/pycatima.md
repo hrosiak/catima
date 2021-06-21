@@ -1,5 +1,13 @@
 Usage
 =====
+Installation
+------------
+Easiest way is to install pycatima on Linux and Windows is using pip:
+```
+pip install pycatima
+```
+note: python 3.7-3.9 is required
+
 
 Pojectile
 ---------
@@ -158,7 +166,7 @@ __Results__ class stores results for 1 layer of __Material__. It has following v
   * dEdxo - Stopping power at exit
   * range - range in the material in g/cm^2
   * sigma_E - Energy straggling in MeV/u
-  * sigma_a - Angular straggling in MeV/u
+  * sigma_a - Angular straggling in rad
   * sigma_r - range straggling in g/cm^2
   * sigma_x - position straggling in cm
   * sp - non-reaction probability

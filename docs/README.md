@@ -18,6 +18,12 @@ This can be done sourcing the init.sh file, which is generated in the build dire
 source init.sh
 ```
 
+Python Module
+-------------
+Python module can be installed also using pip:
+```
+pip install pycatima
+```
 
 cmake options
 -------------
