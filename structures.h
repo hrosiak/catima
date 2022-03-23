@@ -236,11 +236,17 @@ namespace catima{
         double sigma_a=0.0;
         double sigma_r=0.0;
         double sigma_x=0.0;
-	double cov = 0.0;
+	      double cov = 0.0; 
         double tof=0.0;
         #ifdef REACTIONS
         double sp = 1.0;
         #endif
+    };
+
+    struct Phasespace{
+      double sigma_x=0.0;
+      double sigma_a=0.0;
+      double cov_x=0.0;      
     };
 
     /**

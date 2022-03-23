@@ -19,7 +19,7 @@ example_module = Pybind11Extension(
 
 setup(
     name='pycatima',
-    version=1.61,
+    version=1.7,
     author='Andrej Prochazka',
     author_email='hrocho@vodacionline.sk',
     description='python interface to catima library',

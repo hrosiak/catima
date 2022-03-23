@@ -203,7 +203,16 @@ namespace catima{
       * @return results stored in MultiResult structure
       *
       */
-    MultiResult calculate(const Projectile &p, const Layers &layers, const Config &c=default_config);
+    MultiResult calculate(const Projectile &p, const Phasespace &ps, const Layers &layers, const Config &c=default_config);
+
+    /**
+      * calculate observables for multiple layers of material defined by Layers
+      * @return results stored in MultiResult structure
+      *
+      */
+    inline MultiResult calculate(const Projectile &p, const Layers &layers, const Config &c=default_config){
+      return calculate(p, {}, layers, c);
+    };
     inline MultiResult calculate(Projectile p, double T, const Layers &layers, const Config &c=default_config){
         return calculate(p(T), layers, c);
     }

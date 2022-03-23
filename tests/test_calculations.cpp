@@ -573,4 +573,23 @@ using namespace std;
         CHECK(0.1*hbar*c_light/atomic_mass_unit == approx(0.21183,0.0001));
         CHECK(16.0*dedx_constant*electron_mass*fine_structure/(atomic_mass_unit*3.0*4.0*PI) == approx(5.21721169334564e-7).R(1e-3));
         }
+
+    TEST_CASE("phasespace"){
+      using namespace catima;
+      catima::Projectile p{1,1,1,250};
+      catima::Material graphite;      
+      graphite.add_element(12,6,1);
+      graphite.density(2.0);
+      graphite.thickness_cm(1.0);
+
+      Phasespace ps;
+      ps.sigma_a = 0.01;
+
+      Layers l;
+      l.add(graphite);
+
+      auto res = calculate(p, ps, l);
+      CHECK(res.total_result.sigma_a == approx(0.012,0.002));
+      CHECK(res.total_result.cov == approx(1.23e-4,1e-5));
+    }
     
