@@ -17,6 +17,10 @@ environment:
       CONFIG: Release
       PYTHON: "C:\\Python39-x64"
       PYTHON_ARCH: 64
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      CONFIG: Release
+      PYTHON: "C:\\Python310-x64"
+      PYTHON_ARCH: 64
 
 install:
   - set PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
@@ -33,6 +37,6 @@ build_script:
   - cmake -DBUILD_SHARED_LIBS=OFF -DAPPS=OFF -G "Visual Studio 16 2019" -A%PLATFORM% ../
   - cmake --build ./ --config "%CONFIG%" .
   - python ../pymodule/setup.py bdist_wheel
-  
+
 artifacts:
   - path: build\dist\*

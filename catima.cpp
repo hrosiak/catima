@@ -352,10 +352,13 @@ Result calculate(Projectile p, const Material &t, const Config &c){
     return res;
 }
 
-MultiResult calculate(const Projectile &p, const Layers &layers, const Config &c){
+MultiResult calculate(const Projectile &p, const Phasespace &ps, const Layers &layers, const Config &c){
     MultiResult res;
     double e = p.T;
     res.total_result.Ein = e;
+    res.total_result.sigma_a = ps.sigma_a*ps.sigma_a;
+    res.total_result.sigma_x = ps.sigma_x*ps.sigma_x;
+    res.total_result.cov = ps.cov_x;
     res.results.reserve(layers.num());
     for(auto&m:layers.get_materials()){
         Result r = calculate(p,m,e,c);
@@ -368,7 +371,6 @@ MultiResult calculate(const Projectile &p, const Layers &layers, const Config &c
         res.total_result.sigma_x += (2*m.thickness_cm()*res.total_result.cov) 
                                  + (a2*m.thickness_cm()*m.thickness_cm()) 
                                  + r.sigma_x*r.sigma_x;
-        //res.total_result.sigma_x += (a2*m.thickness_cm()*m.thickness_cm()) + r.sigma_x*r.sigma_x;
         res.total_result.cov += a2*m.thickness_cm() + r.cov;
         res.total_result.sigma_a += r.sigma_a*r.sigma_a;
         #ifdef REACTIONS
@@ -379,13 +381,13 @@ MultiResult calculate(const Projectile &p, const Layers &layers, const Config &c
     if(e>Ezero){
         res.total_result.sigma_a = sqrt(res.total_result.sigma_a);
         res.total_result.sigma_E = sqrt(res.total_result.sigma_E);
-        res.total_result.sigma_x = sqrt(res.total_result.sigma_x);
+        res.total_result.sigma_x = sqrt(std::abs(res.total_result.sigma_x));
         
     }
     else{
         res.total_result.sigma_a = 0.0;
         res.total_result.sigma_E = 0.0;
-        res.total_result.sigma_x = sqrt(res.total_result.sigma_x);
+        res.total_result.sigma_x = sqrt(std::abs(res.total_result.sigma_x));
         }
     return res;
 }

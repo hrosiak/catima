@@ -12,7 +12,7 @@ namespace py = pybind11;
 using namespace catima;
 
 std::string catima_info(){
-    return "CATIMA version = 1.6\n";
+    return "CATIMA version = 1.7\n";
 }
 
 std::string  material_to_string(const Material &r){
@@ -98,6 +98,7 @@ py::dict get_result_dict(const Result& r){
                     d["sigma_r"] = r.sigma_r;
                     d["sigma_a"] = r.sigma_a;
                     d["sigma_x"] = r.sigma_x;
+                    d["cov"] = r.cov;
                     d["tof"] = r.tof;
                     d["sp"] = r.sp;
                     return d;
@@ -123,6 +124,12 @@ PYBIND11_MODULE(pycatima,m){
              .def_readwrite("A",&Target::A)
              .def_readwrite("Z",&Target::Z)
              .def_readwrite("stn",&Target::stn);
+
+     py::class_<Phasespace>(m, "Phasespace")
+             .def(py::init<>(),"constructor")
+             .def_readwrite("sigma_x", &Phasespace::sigma_x)
+             .def_readwrite("sigma_a", &Phasespace::sigma_a)
+             .def_readwrite("cov_x", &Phasespace::cov_x);
 
 
      py::class_<Material>(m,"Material")
@@ -173,6 +180,7 @@ PYBIND11_MODULE(pycatima,m){
              .def_readwrite("sigma_a", &Result::sigma_a)
              .def_readwrite("sigma_r", &Result::sigma_r)
              .def_readwrite("sigma_x", &Result::sigma_x)
+             .def_readwrite("cov", &Result::cov)
              .def_readwrite("tof", &Result::tof)
              .def_readwrite("sp", &Result::sp)
              .def("get_dict",&get_result_dict)
@@ -218,11 +226,11 @@ PYBIND11_MODULE(pycatima,m){
              .def("__repr__",[](const MultiResult &r){
                  py::dict d;
                 py::list p;
-                d["result"] = get_result_dict(r.total_result);
+                d["total_result"] = get_result_dict(r.total_result);
                 for(auto& entry:r.results){
                     p.append(get_result_dict(entry));
                     }
-                d["partial"] = p;
+                d["results"] = p;
                 return py::str(d);
              });
 
@@ -440,6 +448,7 @@ PYBIND11_MODULE(pycatima,m){
     m.def("sezi_dedx_e",&sezi_dedx_e, "sezi_dedx_e",  py::arg("projectile"), py::arg("material"), py::arg("config")=default_config);
     m.def("calculate",py::overload_cast<Projectile, const Material&, const Config&>(&calculate),"calculate",py::arg("projectile"), py::arg("material"), py::arg("config")=default_config);
     m.def("calculate",py::overload_cast<const Projectile&, const Layers&, const Config&>(&calculate),"calculate",py::arg("projectile"), py::arg("layers"), py::arg("config")=default_config);
+    m.def("calculate",py::overload_cast<const Projectile&, const Phasespace&, const Layers&, const Config&>(&calculate),"calculate",py::arg("projectile"), py::arg("phasespace"),py::arg("layers"), py::arg("config")=default_config);
     m.def("calculate_layers",py::overload_cast<const Projectile&, const Layers&, const Config&>(&calculate),"calculate_layers",py::arg("projectile"), py::arg("material"), py::arg("config")=default_config);
     m.def("dedx_from_range",py::overload_cast<const Projectile&, const Material&, const Config&>(&dedx_from_range),"calculate",py::arg("projectile") ,py::arg("material"), py::arg("config")=default_config);
     m.def("dedx_from_range",py::overload_cast<const Projectile&, const std::vector<double>&, const Material&, const Config&>(&dedx_from_range),"calculate",py::arg("projectile"), py::arg("energy") ,py::arg("material"), py::arg("config")=default_config);
