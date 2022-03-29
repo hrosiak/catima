@@ -32,7 +32,6 @@ MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
 ######### compiler flags ###########
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 MESSAGE(STATUS "install prefix: " ${CMAKE_INSTALL_PREFIX})
 
@@ -56,8 +55,20 @@ endif()
 #list(APPEND EXTRA_LIBS nurex::nurex)
 #endif(nurex_FOUND)
 
-find_package(fmt)
-list(APPEND EXTRA_LIBS fmt::fmt)
+find_package(fmt QUIET)
+#list(APPEND EXTRA_LIBS fmt::fmt-header-only)
+if(NOT fmt_FOUND)
+message("fmt library not found, trying to dowload")
+	    include(FetchContent)
+	    FetchContent_Declare(
+		    fmt
+		    GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+		    GIT_TAG 8.1.1
+		    )
+      set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+      set(FMT_INSTALL ON)
+	    FetchContent_MakeAvailable(fmt)
+endif(NOT fmt_FOUND)
 
 configure_file(
                     "${CMAKE_CURRENT_SOURCE_DIR}/build_config.in"
@@ -83,7 +94,7 @@ set_target_properties(catima PROPERTIES
                       )
 
 target_link_libraries(catima PUBLIC ${EXTRA_LIBS})
-
+target_compile_features(catima PRIVATE cxx_std_17)
 target_include_directories(catima
                            PUBLIC  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
                                    $<BUILD_INTERFACE:${GSL_INCLUDE_DIRS}>
@@ -107,7 +118,7 @@ if(PYTHON_MODULE)
     endif(NOT Python_FOUND)
     find_package(pybind11 QUIET)
     if(NOT pybind11_FOUND)
-	    message(INFO "pybind11 not found, trying to dowload")
+	    message("pybind11 not found, trying to dowload")
 	    include(FetchContent)
 	    FetchContent_Declare(
 		    pybind11
@@ -123,7 +134,7 @@ if(PYTHON_MODULE)
                                     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
                                     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/libs>
                                     $<INSTALL_INTERFACE:include>)
-    target_link_libraries(pycatima PRIVATE catima)
+    target_link_libraries(pycatima PRIVATE catima fmt::fmt)
 endif(PYTHON_MODULE )
 if(PYTHON_WHEEL)
 	execute_process(COMMAND ${Python_EXECUTABLE} ${PROJECT_SOURCE_DIR}/pymodule/setup.py bdist_wheel)
