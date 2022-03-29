@@ -138,7 +138,7 @@ namespace catima{
       * @param mat - Material
       * @return angular straggling
       */
-    double angular_straggling_from_E(const Projectile &p, double T, double Tout,Material t, const Config &c=default_config);
+    double angular_straggling_from_E(const Projectile &p, double Tout,Material t, const Config &c=default_config);
 
     /**
       * calculates Energy straggling in the material from difference of incoming a nd outgoing energies

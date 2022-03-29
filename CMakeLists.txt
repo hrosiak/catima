@@ -49,13 +49,15 @@ if(GSL_INTEGRATION OR GSL_INTERPOLATION)
     list(APPEND EXTRA_LIBS ${GSL_LIBRARIES} )
 endif()
 
-find_package(nurex QUIET)
-if(nurex_FOUND)
-message(STATUS "nurex library found")
-set(NUREX ON)
-list(APPEND EXTRA_LIBS nurex::nurex)
-endif(nurex_FOUND)
+#find_package(nurex QUIET)
+#if(nurex_FOUND)
+#message(STATUS "nurex library found")
+#set(NUREX ON)
+#list(APPEND EXTRA_LIBS nurex::nurex)
+#endif(nurex_FOUND)
 
+find_package(fmt)
+list(APPEND EXTRA_LIBS fmt::fmt)
 
 configure_file(
                     "${CMAKE_CURRENT_SOURCE_DIR}/build_config.in"
@@ -80,7 +82,7 @@ set_target_properties(catima PROPERTIES
                       LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
                       )
 
-target_link_libraries(catima ${EXTRA_LIBS})
+target_link_libraries(catima PUBLIC ${EXTRA_LIBS})
 
 target_include_directories(catima
                            PUBLIC  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
@@ -157,6 +159,10 @@ endif(APPS)
 ####### install part #######
 FILE(GLOB headers "*.h")
 include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+write_basic_package_version_file(catimaConfigVersion.cmake VERSION 1.7 COMPATIBILITY AnyNewerVersion)
+
 install (TARGETS catima
         EXPORT catimaConfig
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

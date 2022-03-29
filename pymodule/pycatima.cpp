@@ -6,8 +6,10 @@
 #include "catima/catima.h"
 #include "catima/srim.h"
 #include "catima/nucdata.h"
+#include "catima/convert.h"
 #include <iostream>
 #include <string>
+
 namespace py = pybind11;
 using namespace catima;
 
@@ -467,6 +469,7 @@ PYBIND11_MODULE(pycatima,m){
         l.append(r.second);
         return l;
     });
+    m.def("save_mocadi", &save_mocadi,py::arg("filename"),py::arg("projectile"),py::arg("layers"),py::arg("psx")=Phasespace(), py::arg("psy")=Phasespace());
     m.def("catima_info",&catima_info);
     m.def("storage_info",&storage_info);
     m.def("get_energy_table",&get_energy_table);

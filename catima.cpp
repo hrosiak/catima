@@ -137,14 +137,15 @@ double Tfr(const Projectile &p, double X, double Es2){
 }
 
 double angular_variance(Projectile p, const Material &t, const Config &c, int order){
-    const double T = p.T;
-    
+    const double T = p.T;    
     const double p1 = p_from_T(T,p.A);
     const double beta1 = p1/((T+atomic_mass_unit)*p.A);    
+    assert(T>0.0);
+    assert(t.density()>0.0);
+    assert(t.thickness()>0.0);    
     auto& data = _storage.Get(p,t,c);    
-    spline_type range_spline = get_range_spline(data);
-    double range = range_spline(T);
-    
+    spline_type range_spline = get_range_spline(data);    
+    double range = range_spline(T);    
     double rrange = std::min(range/t.density(), t.thickness_cm()); // residual range, in case of stopping inside material
     double X0 = radiation_length(t);
     double Es2 = 198.81;
@@ -181,11 +182,11 @@ double angular_straggling(Projectile p, const Material &t, const Config &c){
     return sqrt(angular_variance(p,t,c));
 }
 
-double angular_straggling_from_E(const Projectile &p, double T, double Tout, Material t, const Config &c){
+double angular_straggling_from_E(const Projectile &p, double Tout, Material t, const Config &c){
     auto& data = _storage.Get(p,t,c);
     spline_type range_spline = get_range_spline(data);    
-    double th = range_spline(T)-range_spline(Tout);
-    t.thickness(th);    
+    double th = range_spline(p.T)-range_spline(Tout);    
+    t.thickness(th);
     return angular_straggling(p,t,c);
 }
 
