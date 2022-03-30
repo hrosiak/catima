@@ -211,7 +211,7 @@ double energy_out(double T, double thickness, const Interpolator &range_spline){
     e = T - (thickness*dedx);
     while(1){
         r = range - range_spline(e) - thickness;
-        if(fabs(r)<Eout_epsilon)return e;
+        if(fabs(r)<Eout_th_epsilon)return e;
         double step = -r*dedx;
         e = e-step;
         if(e<Ezero)return 0.0;

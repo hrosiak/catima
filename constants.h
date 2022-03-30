@@ -11,7 +11,7 @@ constexpr double logEmax = 7.0;  // log of max energy
 constexpr int max_datapoints = 600; // how many datapoints between logEmin and logEmax
 constexpr int max_storage_data = 60; // number of datapoints which can be stored in cache
 constexpr double numeric_epsilon = 10*std::numeric_limits<double>::epsilon();
-constexpr double Eout_epsilon = 1e-5;  //
+constexpr double Eout_th_epsilon = 1e-5;  //
 
 constexpr double thin_target_limit = 1 - 1e-3;
 
