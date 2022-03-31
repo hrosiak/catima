@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12.0)
+cmake_minimum_required(VERSION 3.14)
 project(catima)
 
 ############ options #############
@@ -56,7 +56,6 @@ endif()
 #endif(nurex_FOUND)
 
 find_package(fmt QUIET)
-#list(APPEND EXTRA_LIBS fmt::fmt-header-only)
 if(NOT fmt_FOUND)
 message("fmt library not found, trying to dowload")
 	    include(FetchContent)
@@ -70,14 +69,11 @@ message("fmt library not found, trying to dowload")
 	    FetchContent_MakeAvailable(fmt)
 endif(NOT fmt_FOUND)
 
-configure_file(
-                    "${CMAKE_CURRENT_SOURCE_DIR}/build_config.in"
-                    "${CMAKE_CURRENT_BINARY_DIR}/include/catima/build_config.h"
-                    )
+configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/build_config.in"
+                "${CMAKE_CURRENT_BINARY_DIR}/include/catima/build_config.h")
 
 configure_file("${PROJECT_SOURCE_DIR}/init.sh.in"
-               "${PROJECT_BINARY_DIR}/init.sh"
-              )
+               "${PROJECT_BINARY_DIR}/init.sh")
 ############### main build ###########################
 
 file(GLOB SOURCES *.cpp)
@@ -107,7 +103,7 @@ FILE(COPY ${HEADERS} DESTINATION ${PROJECT_BINARY_DIR}/include/catima)
 # the compiler used for C++ files
 MESSAGE( STATUS "CMAKE_CXX_COMPILER: " ${CMAKE_CXX_COMPILER} )
 
-######## for python module
+######## for python module #########
 find_package(Python COMPONENTS Interpreter Development)
 if(Python_FOUND)
     message(STATUS "Python found: ${Python_EXECUTABLE}")
@@ -134,10 +130,12 @@ if(PYTHON_MODULE)
                                     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
                                     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/libs>
                                     $<INSTALL_INTERFACE:include>)
-    target_link_libraries(pycatima PRIVATE catima fmt::fmt)
+    target_link_libraries(pycatima PRIVATE catima fmt::fmt)    
 endif(PYTHON_MODULE )
+
+configure_file("${PROJECT_SOURCE_DIR}/pymodule/setup.py.in" "${PROJECT_BINARY_DIR}/setup.py")
 if(PYTHON_WHEEL)
-	execute_process(COMMAND ${Python_EXECUTABLE} ${PROJECT_SOURCE_DIR}/pymodule/setup.py bdist_wheel)
+	execute_process(COMMAND ${Python_EXECUTABLE} ${PROJECT_BINARY_DIR}/setup.py bdist_wheel)
 endif(PYTHON_WHEEL)
 
 ########## Sub Directories ###########
