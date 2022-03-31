@@ -34,9 +34,9 @@ build_script:
 #  - git submodule update --init
   - mkdir build && cd build
 #  - cmake -DBUILD_SHARED_LIBS=OFF -DAPPS=OFF -G "Visual Studio 16 2019" -A%PLATFORM% -DPYTHON_EXECUTABLE=$(python -c "import sys; print(sys.executable)") ../
-  - cmake -DBUILD_SHARED_LIBS=OFF -DAPPS=OFF -G "Visual Studio 16 2019" -A%PLATFORM% ../
+  - cmake -DBUILD_SHARED_LIBS=OFF -DAPPS=OFF -G -DPYTHON_WHEEL=ON "Visual Studio 16 2019" -A%PLATFORM% ../
   - cmake --build ./ --config "%CONFIG%"
-  - python ../pymodule/setup.py bdist_wheel
+#  - python ../pymodule/setup.py bdist_wheel
 
 artifacts:
   - path: build\dist\*
