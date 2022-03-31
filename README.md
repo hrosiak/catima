@@ -35,7 +35,7 @@ This can be done sourcing the init.sh file, which is generated in the build dire
 
 Python Module
 -------------
-Python module can be installed for Linux and Windows and python versions 3.7-3.9 using pip:
+Python module can be installed for Linux and Windows and python versions 3.7-3.10 using pip:
 ```
 pip install pycatima
 ```
