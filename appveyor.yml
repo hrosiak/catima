@@ -33,10 +33,10 @@ build_script:
 #  - git submodule add -b stable ../../pybind/pybind11 extern/pybind11
 #  - git submodule update --init
   - mkdir build && cd build
-#  - cmake -DBUILD_SHARED_LIBS=OFF -DAPPS=OFF -G "Visual Studio 16 2019" -A%PLATFORM% -DPYTHON_EXECUTABLE=$(python -c "import sys; print(sys.executable)") ../
-  - cmake -DBUILD_SHARED_LIBS=OFF -DAPPS=OFF -G "Visual Studio 16 2019" -A%PLATFORM% ../
+  - cmake -DBUILD_SHARED_LIBS=OFF -DAPPS=OFF -DPYTHON_WHEEL=OFF -G "Visual Studio 16 2019" -A%PLATFORM% ../
   - cmake --build ./ --config "%CONFIG%"
-  - python ../pymodule/setup.py bdist_wheel
+  - cmake -DBUILD_SHARED_LIBS=OFF -DAPPS=OFF -DPYTHON_WHEEL=ON -G "Visual Studio 16 2019" -A%PLATFORM% ../
+#  - python ../pymodule/setup.py bdist_wheel
 
 artifacts:
   - path: build\dist\*

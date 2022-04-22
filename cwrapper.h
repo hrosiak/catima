@@ -34,14 +34,18 @@ struct CatimaConfig {
         char z_effective;
 };
 
-struct CatimaConfig catima_defaults = {none};
+extern struct CatimaConfig catima_defaults;
 
 typedef struct CatimaResult CatimaResult;
 
 CatimaResult catima_calculate(double pa, int pz, double T, double ta, double tz, double thickness, double density);
+double catima_Eout(double pa, int pz, double T, double ta, double tz, double thickness, double density);
+double catima_range(double pa, int pz, double T, double ta, double tz);
+double catima_range_straggling(double pa, int pz, double T, double ta, double tz);
 double catima_angular_straggling_from_E(double pa, int pz, double Tin, double Tout,double ta, double tz);
 double catima_energy_straggling_from_E(double pa, int pz, double Tin, double Tout,double ta, double tz);
-
+double atomic_weight(int i);
+double catima_nonreaction_rate(double pa, int pz, double T, double ta, double tz, double thickness);
 
 #ifdef __cplusplus
 }

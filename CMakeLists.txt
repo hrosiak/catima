@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12.0)
+cmake_minimum_required(VERSION 3.14)
 project(catima)
 
 ############ options #############
@@ -32,7 +32,6 @@ MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 
 ######### compiler flags ###########
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 MESSAGE(STATUS "install prefix: " ${CMAKE_INSTALL_PREFIX})
 
@@ -49,22 +48,32 @@ if(GSL_INTEGRATION OR GSL_INTERPOLATION)
     list(APPEND EXTRA_LIBS ${GSL_LIBRARIES} )
 endif()
 
-find_package(nurex QUIET)
-if(nurex_FOUND)
-message(STATUS "nurex library found")
-set(NUREX ON)
-list(APPEND EXTRA_LIBS nurex::nurex)
-endif(nurex_FOUND)
+#find_package(nurex QUIET)
+#if(nurex_FOUND)
+#message(STATUS "nurex library found")
+#set(NUREX ON)
+#list(APPEND EXTRA_LIBS nurex::nurex)
+#endif(nurex_FOUND)
 
+find_package(fmt QUIET)
+if(NOT fmt_FOUND)
+message("fmt library not found, trying to dowload")
+	    include(FetchContent)
+	    FetchContent_Declare(
+		    fmt
+		    GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+		    GIT_TAG 8.1.1
+		    )
+      set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+      set(FMT_INSTALL ON)
+	    FetchContent_MakeAvailable(fmt)
+endif(NOT fmt_FOUND)
 
-configure_file(
-                    "${CMAKE_CURRENT_SOURCE_DIR}/build_config.in"
-                    "${CMAKE_CURRENT_BINARY_DIR}/include/catima/build_config.h"
-                    )
+configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/build_config.in"
+                "${CMAKE_CURRENT_BINARY_DIR}/include/catima/build_config.h")
 
 configure_file("${PROJECT_SOURCE_DIR}/init.sh.in"
-               "${PROJECT_BINARY_DIR}/init.sh"
-              )
+               "${PROJECT_BINARY_DIR}/init.sh")
 ############### main build ###########################
 
 file(GLOB SOURCES *.cpp)
@@ -80,8 +89,8 @@ set_target_properties(catima PROPERTIES
                       LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
                       )
 
-target_link_libraries(catima ${EXTRA_LIBS})
-
+target_link_libraries(catima PUBLIC ${EXTRA_LIBS})
+target_compile_features(catima PRIVATE cxx_std_17)
 target_include_directories(catima
                            PUBLIC  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
                                    $<BUILD_INTERFACE:${GSL_INCLUDE_DIRS}>
@@ -94,7 +103,7 @@ FILE(COPY ${HEADERS} DESTINATION ${PROJECT_BINARY_DIR}/include/catima)
 # the compiler used for C++ files
 MESSAGE( STATUS "CMAKE_CXX_COMPILER: " ${CMAKE_CXX_COMPILER} )
 
-######## for python module
+######## for python module #########
 find_package(Python COMPONENTS Interpreter Development)
 if(Python_FOUND)
     message(STATUS "Python found: ${Python_EXECUTABLE}")
@@ -105,7 +114,7 @@ if(PYTHON_MODULE)
     endif(NOT Python_FOUND)
     find_package(pybind11 QUIET)
     if(NOT pybind11_FOUND)
-	    message(INFO "pybind11 not found, trying to dowload")
+	    message("pybind11 not found, trying to dowload")
 	    include(FetchContent)
 	    FetchContent_Declare(
 		    pybind11
@@ -121,10 +130,12 @@ if(PYTHON_MODULE)
                                     $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
                                     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/libs>
                                     $<INSTALL_INTERFACE:include>)
-    target_link_libraries(pycatima PRIVATE catima)
+    target_link_libraries(pycatima PRIVATE catima fmt::fmt)    
 endif(PYTHON_MODULE )
+
+configure_file("${PROJECT_SOURCE_DIR}/pymodule/setup.py.in" "${PROJECT_BINARY_DIR}/setup.py")
 if(PYTHON_WHEEL)
-	execute_process(COMMAND ${Python_EXECUTABLE} ${PROJECT_SOURCE_DIR}/pymodule/setup.py bdist_wheel)
+	execute_process(COMMAND ${Python_EXECUTABLE} ${PROJECT_BINARY_DIR}/setup.py bdist_wheel)
 endif(PYTHON_WHEEL)
 
 ########## Sub Directories ###########
@@ -157,6 +168,10 @@ endif(APPS)
 ####### install part #######
 FILE(GLOB headers "*.h")
 include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+write_basic_package_version_file(catimaConfigVersion.cmake VERSION 1.7 COMPATIBILITY AnyNewerVersion)
+
 install (TARGETS catima
         EXPORT catimaConfig
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
