@@ -1,4 +1,4 @@
-#include <math.h>
+#include <cmath>
 #include <algorithm>
 #include <cassert>
 #include "catima/calculations.h"
@@ -21,7 +21,7 @@ extern "C"
 namespace catima{
 
 double reduced_energy_loss_unit(const Projectile &p, const Target &t){
-    double zpowers = pow(p.Z,0.23)+pow(t.Z,0.23);
+    double zpowers = std::pow(p.Z,0.23)+std::pow(t.Z,0.23);
     double asum = p.A + t.A;
     return 32.53*t.A*1000*p.T*p.A/(p.Z*t.Z*asum*zpowers); //projectile energy is converted from MeV/u to keV
 }
@@ -473,7 +473,7 @@ double p_from_T(double T, double M){
 double energy_straggling_firsov(double z1,double energy, double z2, double m2){
     double gamma = gamma_from_T(energy);
     double beta2=1.0-1.0/(gamma*gamma);
-    double factor=4.8184E-3*pow(z1+z2,8.0/3.0)/m2;
+    double factor=4.8184E-3*std::pow(z1+z2,8.0/3.0)/m2;
     return factor*beta2/fine_structure/fine_structure;
     }
 
@@ -485,7 +485,7 @@ double angular_scattering_power(const Projectile &p, const Target &t, double Es2
     double lr = radiation_length(t.Z,t.A);
     //constexpr double Es2 = 198.81;
     //constexpr double Es2 =2*PI/fine_structure* electron_mass * electron_mass;
-    return Es2 * pow(p.Z,2)/(lr*pow(_p*beta,2));
+    return Es2 * ipow(p.Z,2)/(lr*ipow(_p*beta,2));
 }
 
 double angular_scattering_power(const Projectile &p, const Material &mat, double Es2){
@@ -496,7 +496,7 @@ double angular_scattering_power(const Projectile &p, const Material &mat, double
     double X0 = radiation_length(mat);
     //constexpr double Es2 = 198.81;
     //constexpr double Es2 =2*PI/fine_structure* electron_mass * electron_mass;
-    return Es2 * pow(p.Z,2)/(X0*pow(_p*beta,2));
+    return Es2 * ipow(p.Z,2)/(X0*ipow(_p*beta,2));
 }
 
 double angular_scattering_power_xs(const Projectile &p, const Material &mat, double p1, double beta1, double Es2){
@@ -507,10 +507,10 @@ double angular_scattering_power_xs(const Projectile &p, const Material &mat, dou
     double pv = _p*beta;
     double p1v1 = p1*beta1;
     double Xs = scattering_length(mat);    
-    double cl1 = log10(1-std::pow(pv/p1v1,2));
+    double cl1 = log10(1-ipow(pv/p1v1,2));
     double cl2 = log10(pv);
     double f = 0.5244 + 0.1975*cl1 + 0.2320*cl2 - (0.0098*cl2*cl1);
-    return f*Es2 * pow(p.Z,2)/(Xs*pow(_p*beta,2));
+    return f*Es2 * ipow(p.Z,2)/(Xs*ipow(_p*beta,2));
 }
 
 /// radiation lengths are taken from Particle Data Group 2014
@@ -542,7 +542,7 @@ double radiation_length(int z, double m){
     if(z==92){return 6.00;}
 
     double z2 = z*z;
-    double z_13 = 1.0/pow(z,1./3.);
+    double z_13 = 1.0/std::pow(z,1./3.);
     double z_23 = z_13*z_13;
     double a2 = fine_structure*fine_structure*z2;
     double a4 = a2*a2;
@@ -619,11 +619,11 @@ double dedx_variance(const Projectile &p, const Target &t, const Config &c){
     double beta = beta_from_T(p.T);
     double beta2 = beta*beta;
     double zp_eff = z_effective(p,t,c);
-    double f = domega2dx_constant*pow(zp_eff,2)*t.Z/t.A;
+    double f = domega2dx_constant*ipow(zp_eff,2)*t.Z/t.A;
 
     if( (c.calculation == omega_types::atima) ){
-        cor = 24.89 * pow(t.Z,1.2324)/(electron_mass*1e6 * beta2)*
-			log( 2.0*electron_mass*1e6*beta2/(33.05*pow(t.Z,1.6364)));
+        cor = 24.89 * std::pow(t.Z,1.2324)/(electron_mass*1e6 * beta2)*
+			log( 2.0*electron_mass*1e6*beta2/(33.05*std::pow(t.Z,1.6364)));
 	    cor = std::max(cor, 0.0 );
     }
 	//double X = bethek_lindhard_X(p);
@@ -671,13 +671,13 @@ double z_effective(const Projectile &p,const Target &t, const Config &c){
 }
 
 double z_eff_Pierce_Blann(double z, double beta){
-    return z*(1.0-exp(-0.95*fine_structure_inverted*beta/pow(z,2.0/3.0)));
+    return z*(1.0-exp(-0.95*fine_structure_inverted*beta/std::pow(z,2.0/3.0)));
 }
 
 double z_eff_Anthony_Landford(double pz, double beta, double tz){
     double B = 1.18-tz*(7.5e-03 - 4.53e-05*tz);
     double A = 1.16-tz*(1.91e-03 - 1.26e-05*tz);
-    return pz*(1.0-(A*exp(-fine_structure_inverted*B*beta/pow(pz,2.0/3.0))));
+    return pz*(1.0-(A*exp(-fine_structure_inverted*B*beta/std::pow(pz,2.0/3.0))));
 }
 
 double z_eff_Hubert(double pz, double E, double tz){
@@ -705,7 +705,7 @@ double z_eff_Hubert(double pz, double E, double tz){
         x4 = 0.5218 + 0.02521*lntz;
     }
 
-    return pz*(1-x1*exp(-x2*catima::power(E,x3)*catima::power(pz,-x4)));
+    return pz*(1-x1*exp(-x2*std::pow(E,x3)*std::pow(pz,-x4)));
 }
 
 double z_eff_Winger(double pz, double beta, double tz){
@@ -733,7 +733,7 @@ double z_eff_Winger(double pz, double beta, double tz){
     if(tz==2){
         tz = 2.8;
     }
-	x = beta /0.012 /pow(pz,0.45);
+	x = beta /0.012 /std::pow(pz,0.45);
 	lnz =log(pz);
 	lnzt=log(tz);
 
@@ -752,13 +752,14 @@ double z_eff_global(double pz, double E, double tz){
     else if(E<30.0 || pz<29){        
         return z_eff_Pierce_Blann(pz, E);
     }
-    else
+    else{
         #ifdef GLOBAL
         return global_qmean(pz, tz, E);
         #else
         assert(false);
         return -1;
         #endif
+        }
 }
 
 double z_eff_Schiwietz(double pz, double beta, double tz){
@@ -766,10 +767,10 @@ double z_eff_Schiwietz(double pz, double beta, double tz){
     double c1, c2;
     double x;
 
-    scaled_velocity = catima::power(pz,-0.543)*beta/bohr_velocity;
+    scaled_velocity = std::pow(pz,-0.543)*beta/bohr_velocity;
     c1 = 1-0.26*exp(-tz/11.0)*exp(-(tz-pz)*(tz-pz)/9);
     c2 = 1+0.030*scaled_velocity*log(tz);
-    x = c1*catima::power(scaled_velocity/c2/1.54,1+(1.83/pz));
+    x = c1*std::pow(scaled_velocity/c2/1.54,1+(1.83/pz));
     return pz*((8.29*x) + (x*x*x*x))/((0.06/x) + 4 + (7.4*x) + (x*x*x*x) );
 
 }
@@ -789,17 +790,17 @@ double z_eff_atima14(double pz, double T, double tz){
         double c2 = 0.28;
         double c3 = 0.04;
         qglobal = z_eff_global(pz,T,tz);
-        qglobal = (qglobal - qpb)*c1/catima::power(tz+1,c2)*(1-exp(-c3*T)) + qpb;
+        qglobal = (qglobal - qpb)*c1/std::pow(tz+1,c2)*(1-exp(-c3*T)) + qpb;
     }
 
     emax = 1500.;
     emin = 1000.;
     if(T>emax){
-        qhigh = pz * (1.0-exp(-180.0*beta*catima::power(gamma,0.18)*catima::power(pz,-0.82)*catima::power(tz,0.1)));
+        qhigh = pz * (1.0-exp(-180.0*beta*std::pow(gamma,0.18)*std::pow(pz,-0.82)*std::pow(tz,0.1)));
         qmean = qhigh;
     }
     else if(T>=emin && T<=emax){
-        qhigh = pz * (1.0-exp(-180.0*beta*catima::power(gamma,0.18)*catima::power(pz,-0.82)*catima::power(tz,0.1)));
+        qhigh = pz * (1.0-exp(-180.0*beta*std::pow(gamma,0.18)*std::pow(pz,-0.82)*std::pow(tz,0.1)));
         if(pz<=28){
             qwinger = z_eff_Winger(pz,beta,tz);
             qmean = ((emax-T)*qwinger + (T-emin)*qhigh)/(emax-emin);

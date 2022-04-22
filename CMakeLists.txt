@@ -13,15 +13,16 @@ option(STORE_SPLINES "store splines, if disables splines are always recreated" O
 option(GSL_INTEGRATION "use GSL integration" OFF)
 option(GSL_INTERPOLATION "use GSL inteRPOLATION" OFF)
 option(THIN_TARGET_APPROXIMATION "thin target approximation" ON)
+option(ET_CALCULATED_INDEX "calculate energy table index, otherwise search" ON)
 option(GENERATE_DATA "make data tables generator" OFF)
 option(PYTHON_WHEEL "make python wheel" OFF)
 ######## build type ############
 if(NOT CMAKE_BUILD_TYPE  STREQUAL "Debug")
     set(CMAKE_BUILD_TYPE "Release")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+    #set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -ffast-math")
     MESSAGE(STATUS "Build type Release")
 else()
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+    #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
     if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang" OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
         set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra -Wfatal-errors -Wno-unused-parameter -Wno-sign-compare")
     endif()
@@ -56,18 +57,21 @@ endif()
 #endif(nurex_FOUND)
 
 find_package(fmt QUIET)
-if(NOT fmt_FOUND)
-message("fmt library not found, trying to dowload")
-	    include(FetchContent)
-	    FetchContent_Declare(
-		    fmt
-		    GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-		    GIT_TAG 8.1.1
-		    )
-      set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-      set(FMT_INSTALL ON)
-	    FetchContent_MakeAvailable(fmt)
-endif(NOT fmt_FOUND)
+function(check_fmt)
+    if(NOT fmt_FOUND)
+    message("fmt library not found, trying to dowload")
+    include(FetchContent)
+    FetchContent_Declare(
+        fmt
+        GIT_REPOSITORY https://github.com/fmtlib/fmt.git
+        GIT_TAG 8.1.1
+        )
+    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+    set(FMT_INSTALL ON)
+    FetchContent_MakeAvailable(fmt)
+    endif(NOT fmt_FOUND)
+endfunction(check_fmt)
+
 
 configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/build_config.in"
                 "${CMAKE_CURRENT_BINARY_DIR}/include/catima/build_config.h")
@@ -85,8 +89,9 @@ file(GLOB HEADERS *.h libs/*.h)
 
 add_library(catima ${SOURCES})
 set_target_properties(catima PROPERTIES
-		      POSITION_INDEPENDENT_CODE ON
-                      LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
+		    POSITION_INDEPENDENT_CODE ON
+            LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
+            ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
                       )
 
 target_link_libraries(catima PUBLIC ${EXTRA_LIBS})
@@ -124,6 +129,7 @@ if(PYTHON_MODULE)
 	    FetchContent_MakeAvailable(pybind11)
     endif(NOT pybind11_FOUND)
     
+    check_fmt()
     #set(PYBIND11_CPP_STANDARD -std=c++14)
     pybind11_add_module(pycatima pymodule/pycatima.cpp)
     target_include_directories(pycatima PUBLIC
@@ -135,6 +141,7 @@ endif(PYTHON_MODULE )
 
 configure_file("${PROJECT_SOURCE_DIR}/pymodule/setup.py.in" "${PROJECT_BINARY_DIR}/setup.py")
 if(PYTHON_WHEEL)
+    check_fmt()
 	execute_process(COMMAND ${Python_EXECUTABLE} ${PROJECT_BINARY_DIR}/setup.py bdist_wheel)
 endif(PYTHON_WHEEL)
 

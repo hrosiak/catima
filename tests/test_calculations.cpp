@@ -425,7 +425,7 @@ using namespace std;
         CHECK(res1.dEdxo == res2.dEdxo);
         CHECK(res1.tof == res2.tof);
 
-        auto ra = catima::angular_straggling_from_E(p,res1.Ein,res1.Eout,graphite);
+        auto ra = catima::angular_straggling_from_E(p(res1.Ein),res1.Eout,graphite);
         CHECK(res1.sigma_a == approx(ra).R(1e-3));
 
         auto re = catima::energy_straggling_from_E(p,res1.Ein,res1.Eout,graphite);

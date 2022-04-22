@@ -1,16 +1,12 @@
-from pathlib import Path
-
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 from setuptools import setup
 
-DIR = Path(__file__).parents[0]
-
-SRC = [str((DIR/'pycatima.cpp').resolve())]
+SRC = [str(('${PROJECT_SOURCE_DIR}/pymodule/pycatima.cpp').resolve())]
 example_module = Pybind11Extension(
     'pycatima',
     SRC,
-    include_dirs=['../build/include','../global'],
-    library_dirs=['../build/lib','../build','../build/Release'],
+    include_dirs=['${PROJECT_BINARY_DIR}/include','${PROJECT_SOURCE_DIR}/global'],
+    library_dirs=['${PROJECT_BINARY_DIR}/lib','${PROJECT_BINARY_DIR}','${PROJECT_BINARY_DIR}/Release'],
     libraries=['catima']
 )
 

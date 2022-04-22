@@ -114,27 +114,45 @@ using catima::LN10;
   
     }
     TEST_CASE("energy table"){
+      catima::LogVArray<catima::max_datapoints> etable(catima::logEmin,catima::logEmax);
+      catima::EnergyTable<catima::max_datapoints> energy_table(catima::logEmin,catima::logEmax);
       double step = (catima::logEmax - catima::logEmin)/(catima::max_datapoints-1);
-      CHECK(catima::energy_table.step==step);
-      CHECK(catima::energy_table.values[0]==approx(exp(LN10*(catima::logEmin))).R(1e-9));
-      CHECK(catima::energy_table.values[1]==approx(exp(LN10*(catima::logEmin+step))).R(1e-9));
-      CHECK(catima::energy_table.values[2]==approx(exp(LN10*(catima::logEmin+2.0*step))).R(1e-9));
-      CHECK(catima::energy_table.values[3]==approx(exp(LN10*(catima::logEmin+3.0*step))).R(1e-9));
-      CHECK(catima::energy_table.values[4]==approx(exp(LN10*(catima::logEmin+4.0*step))).R(1e-9));
-      CHECK(catima::energy_table.values[5]==approx(exp(LN10*(catima::logEmin+5.0*step))).R(1e-9));
-      CHECK(catima::energy_table.values[catima::max_datapoints-1]==approx(exp(LN10*(catima::logEmax))).epsilon(1e-6));
+      CHECK(energy_table.step==step);
+      CHECK(energy_table[0]==approx(exp(LN10*(catima::logEmin))).R(1e-9));
+      CHECK(energy_table[1]==approx(exp(LN10*(catima::logEmin+step))).R(1e-9));
+      CHECK(energy_table[2]==approx(exp(LN10*(catima::logEmin+2.0*step))).R(1e-9));
+      CHECK(energy_table[3]==approx(exp(LN10*(catima::logEmin+3.0*step))).R(1e-9));
+      CHECK(energy_table[4]==approx(exp(LN10*(catima::logEmin+4.0*step))).R(1e-9));
+      CHECK(energy_table[5]==approx(exp(LN10*(catima::logEmin+5.0*step))).R(1e-9));
+      CHECK(energy_table[catima::max_datapoints-1]==approx(exp(LN10*(catima::logEmax))).epsilon(1e-6));
+
+      CHECK(etable.step_size()==step);
+      CHECK(etable[0]==approx(exp(LN10*(catima::logEmin))).R(1e-9));
+      CHECK(etable[1]==approx(exp(LN10*(catima::logEmin+step))).R(1e-9));
+      CHECK(etable[2]==approx(exp(LN10*(catima::logEmin+2.0*step))).R(1e-9));
+      CHECK(etable[3]==approx(exp(LN10*(catima::logEmin+3.0*step))).R(1e-9));
+      CHECK(etable[4]==approx(exp(LN10*(catima::logEmin+4.0*step))).R(1e-9));
+      CHECK(etable[5]==approx(exp(LN10*(catima::logEmin+5.0*step))).R(1e-9));
+      CHECK(etable[catima::max_datapoints-1]==approx(exp(LN10*(catima::logEmax))).epsilon(1e-6));
     }
     TEST_CASE("indexing"){
       double val, dif;
+      catima::LogVArray<catima::max_datapoints> etable(catima::logEmin,catima::logEmax);
+      catima::EnergyTable<catima::max_datapoints> energy_table(catima::logEmin,catima::logEmax);
       
-      CHECK(EnergyTable_index(catima::energy_table, 0.0)==-1);
-
+      CHECK(energy_table.index(0.0)==-1);
       for(int i=0;i<catima::max_datapoints-1;i++){
-          val = catima::energy_table.values[i];
-          dif = catima::energy_table.values[i+1] - val;
-          CHECK(EnergyTable_index(catima::energy_table, val)==i);
-          CHECK(EnergyTable_index(catima::energy_table, val+0.5*dif)==i);
-          CHECK(catima::energy_table.index(val)==i);
-          CHECK(catima::energy_table.index(val+0.5*dif)==i);
+          val = energy_table[i];
+          dif = energy_table[i+1] - val;
+          CHECK(energy_table.index(val)==i);
+          CHECK(energy_table.index(val+0.5*dif)==i);
+          CHECK(energy_table.index(val)==i);
+          CHECK(energy_table.index(val+0.5*dif)==i);
+
+          CHECK(etable.index(val)==i);
+          CHECK(etable.index(val+0.5*dif)==i);
+          CHECK(etable.index(val+0.01*dif)==i);
+          CHECK(etable.index(val+0.99*dif)==i);
+          
       }
     }

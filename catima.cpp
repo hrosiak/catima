@@ -1,5 +1,5 @@
 #include <iostream>
-#include <math.h>
+#include <cmath>
 #include <algorithm>
 #include "catima/catima.h"
 #include "catima/constants.h"
@@ -133,7 +133,7 @@ double Tfr(const Projectile &p, double X, double Es2){
     if(p.T<=0)return 0.0;
     double _p = p_from_T(p.T,p.A);
     double beta = _p/((p.T+atomic_mass_unit)*p.A);
-    return Es2 /(X*pow(_p*beta,2));
+    return Es2 /(X*ipow(_p*beta,2));
 }
 
 double angular_variance(Projectile p, const Material &t, const Config &c, int order){
@@ -154,7 +154,7 @@ double angular_variance(Projectile p, const Material &t, const Config &c, int or
 
     auto fx0p = [&](double x)->double{         
         double e =energy_out(T,x*t.density(),range_spline);
-        double d = std::pow((rrange-x),order);
+        double d = ipow((rrange-x),order);
         double ff = 1;        
         if(c.scattering == scattering_types::dhighland){
             double l = x*t.density()/X0;
@@ -167,7 +167,7 @@ double angular_variance(Projectile p, const Material &t, const Config &c, int or
 
     auto fx0p_2 = [&](double x)->double{         
         double e =energy_out(T,x*t.density(),range_spline);                
-        double d = std::pow((rrange-x),order);
+        double d = ipow((rrange-x),order);
         return d*angular_scattering_power_xs(p(e),t,p1,beta1);
             };
     
@@ -175,7 +175,7 @@ double angular_variance(Projectile p, const Material &t, const Config &c, int or
     if(c.scattering == scattering_types::gottschalk){
         return integrator.integrate(fx0p_2,0, rrange)*t.density();
     }
-    return integrator.integrate(fx0p,0, rrange)*t.density()*pow(p.Z,2)*Es2/X0;
+    return integrator.integrate(fx0p,0, rrange)*t.density()*ipow(p.Z,2)*Es2/X0;
 }
 
 double angular_straggling(Projectile p, const Material &t, const Config &c){
