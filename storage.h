@@ -29,7 +29,7 @@
 
 #include "catima/spline.h"
 
-
+//#define VETABLE
 namespace catima{
 
     /**
@@ -48,42 +48,94 @@ namespace catima{
     static constexpr int size() {return N;};
 	double values[N];
 	double step;
-	double* begin(){return values;}
-    double* end(){return &values[num];}
-    int index(double v)const noexcept{
-        double lxval = (log(v/values[0])/LN10);
+	const double* begin()const{return values;}
+    const double* end()const{return &values[num];}
+    int index(double v)const noexcept{        
         if(v<values[0] || step==0.0)return -1;
         if(v>=values[N-1]-numeric_epsilon)return N-1;
+        
+        #ifdef ET_CALCULATED_INDEX
+        double lxval = (std::log(v/values[0])/LN10);
         int i = static_cast<int> (std::floor(lxval/step));
         if(v >= values[i+1]-numeric_epsilon)i++; // this is correction for floating point precision
         return i;
+        #else
+        auto it=std::upper_bound(begin(),end(),v);
+        return int(it-begin())-1;
+        #endif
     };
 	std::size_t num;
     };
 
-	extern EnergyTable<max_datapoints> energy_table;
-
-	template<int N>
-	int EnergyTable_index(const EnergyTable<N> &table, double val){
-		if(val<table.values[0] || val>table.values[table.num-1])return -1;
-		double lxval = (log(val/table.values[0])/LN10);
-        int i = static_cast<int>( std::floor(lxval/table.step));
-        if(val >= table.values[i+1]-numeric_epsilon)i++; // this is correction for floating point precision
-        return i;
-	}
-
-	template<int N>
-	double EnergyTable_interpolate(const EnergyTable<N> &table, double xval, double *y){
+	template<typename T>
+	double EnergyTable_interpolate(const T &table, double xval, double *y){
 	    double r;
-	    if(xval<table.values[0] || xval>table.values[table.num-1])return 0.0;
-	    if(xval==table.values[table.num-1])return y[table.num-1];
-        int i = EnergyTable_index(table, xval);
+	    if(xval<table.values[0] || xval>table.values[table.size()-1])return 0.0;
+	    if(xval==table.values[table.size()-1])return y[table.size()-1];
+        int i = table.index(xval);
 	    double linstep = table.values[i+1] - table.values[i];
         if(linstep == 0.0)return table.values[i];
 	    double x = 1.0 - ((xval - table.values[i])/linstep);
 	    r = (x*y[i]) + ((1-x)*y[i+1]);
 	    return r;
 	}
+
+    template <int N>
+    struct LogVArray{
+        LogVArray(double logmin, double logmax):logmin(logmin),logmax(logmax){
+            assert(logmax>logmin);
+            step = (logmax-logmin)/(N - 1.0);
+        }
+        double get_min()const noexcept{return logmin;}
+        double get_max()const noexcept{return logmax;}
+        constexpr static int size() noexcept{return N;}
+        constexpr double value(int i) const noexcept{return exp(LN10*(logmin + ((double)i)*step));}
+        double operator[](int i)const noexcept{return value(i);}
+        double operator()(int i)const noexcept{return value(i);}
+        double step_size()const noexcept{return step;}
+        int index(double v)const noexcept{
+            if(v<value(0) || step==0.0)return -1;
+            if(v>= (value(N-1)-numeric_epsilon))return N-1;
+            double lxval = (log(v/value(0))/LN10);
+            int i = static_cast<int> (std::floor(lxval/step));
+            if(v >= value(i+1)-numeric_epsilon)i++; // this is correction for floating point precision
+            return i;
+        }
+        double step=0.0;
+        private:            
+            double logmin;
+            double logmax;
+            static_assert (N>2, "N must be more than 2");
+        };    
+
+    template <int N>
+    struct LinearVArray{
+        LinearVArray(double min, double max):min(min),max(max){
+            if(max<=min)return;
+            step = (max-min)/(N-1);
+        }
+        double get_min()const noexcept{return min;}
+        double get_max()const noexcept{return max;}
+        constexpr static int size() noexcept{return N;}
+        double operator[](int i)const noexcept{return i*step + min;}
+        int index(double v)const noexcept{
+            if(v<min || step==0.0)return -1;
+            if(v>=max)return N-1;
+            assert(step>0.0);
+            return static_cast<int> (std::floor((v-min)/step));
+        }
+        private:
+            double step=0.0;
+            double min;
+            double max;
+            static_assert (N>2, "N must be more than 2");
+        };
+    
+    #ifdef VETABLE
+    extern LogVArray<max_datapoints> energy_table;
+    #else
+    extern EnergyTable<max_datapoints> energy_table;
+    #endif
 
     //////////////////////////////////////////////////////////////////////////////////////
     #ifdef GSL_INTERPOLATION
@@ -107,12 +159,13 @@ namespace catima{
         };
     #endif
 
+    template<typename xtype>    
     class InterpolatorCSpline{
     public:
-        using xtype = EnergyTable<max_datapoints>;
+        //using xtype = EnergyTable<max_datapoints>;
         InterpolatorCSpline()=default;
         InterpolatorCSpline(const xtype &table, const std::vector<double> &y):
-            min(table.values[0]), max(table.values[max_datapoints-1]), ss(table,y){}
+            min(table[0]), max(table[max_datapoints-1]), ss(table,y){}
         double operator()(double x)const{return eval(x);}
         double eval(double x)const{return ss.evaluate(x);}
         double derivative(double x)const{return ss.deriv(x);}
@@ -128,7 +181,14 @@ namespace catima{
 #ifdef GSL_INTERPOLATION
 using Interpolator = InterpolatorGSL;
 #else
-using Interpolator = InterpolatorCSpline;
+#ifdef VETABLE
+//using Interpolator = InterpolatorSplineT<LogVArray<max_datapoints>>;
+using Interpolator = InterpolatorCSpline<LogVArray<max_datapoints>>;
+#else 
+//using Interpolator = InterpolatorSplineT<EnergyTable<max_datapoints>>;
+using Interpolator = InterpolatorCSpline<EnergyTable<max_datapoints>>;
+#endif
+
 #endif
 
 #ifdef STORE_SPLINES

@@ -230,5 +230,13 @@ namespace catima{
     inline double power(double x, double y){
         return exp(log(x)*y);
     }
+
+    inline double ipow(double x, int y){
+      if(y==0)return 1.0;
+      else if(y==1) return x;      
+      else if(y==2) return x*x;      
+      else return std::pow(x,y);
+    }
+
 }
 #endif

@@ -111,7 +111,6 @@ struct cspline_special{
     cspline_special() = default;
 
     const T *table;
-    const double *m_x;
     const double *m_y;
     std::array<double,N> m_a,m_b,m_c;
     double  m_b0, m_c0;
@@ -120,7 +119,9 @@ struct cspline_special{
     double operator()(double x)const{return evaluate(x);}
     double evaluate(double x) const
     {
-        int idx=std::max( table->index(x), 0);
+        const T& m_x = *table;
+        int idx=std::max( table->index(x), 0);        
+
         double h=x-m_x[idx];
         double interpol;
         if(x<m_x[0]) {
@@ -139,6 +140,7 @@ struct cspline_special{
 
     double deriv(double x) const
     {
+        const T& m_x = *table;
         int idx=std::max( table->index(x), 0);
 
         double h=x-m_x[idx];
@@ -162,7 +164,7 @@ template<typename T>
 cspline_special<T>::cspline_special(const T &x,
                       const std::vector<double>& y,
                       bool boundary_second_deriv
-                      ):table(&x),m_y(y.data()),m_x(x.values)
+                      ):table(&x),m_y(y.data())
 {
     static_assert (N>2, "N must be > 2");
     tridiagonal_matrix<N> A{};

@@ -8,5 +8,6 @@
 #cmakedefine GLOBAL
 #cmakedefine REACTIONS
 #cmakedefine NUREX
+#cmakedefine ET_CALCULATED_INDEX
 
 #endif

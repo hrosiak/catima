@@ -49,9 +49,14 @@ py::list storage_info(){
 
 py::list get_energy_table(){
     py::list r;
-    for(auto e : energy_table){
-        r.append(e);
+    for (size_t i = 0; i < energy_table.size(); i++)
+    {
+        r.append(energy_table[i]);
     }
+    
+    //for(auto e : energy_table){
+        //r.append(e);
+    //}
     return r;
 }
 
