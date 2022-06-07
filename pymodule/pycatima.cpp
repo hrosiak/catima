@@ -155,7 +155,11 @@ PYBIND11_MODULE(pycatima,m){
              .def("thickness_cm",py::overload_cast<double>(&Material::thickness_cm),"set thickness in cm unit")
              .def("I",py::overload_cast<>(&Material::I, py::const_), "get I")
              .def("I",py::overload_cast<double>(&Material::I), "set I")
-             .def("__str__",&material_to_string);
+             .def("number_density",py::overload_cast<>(&Material::number_density, py::const_),"get number density of atoms in cm3 in 10^23 unit")
+             .def("number_density",py::overload_cast<int>(&Material::number_density, py::const_),"get number density of atoms of i-th element in cm3 in 10^23 unit")
+             .def("number_density_cm2",py::overload_cast<>(&Material::number_density_cm2, py::const_),"get number density of atoms in cm2 in 10^23 unit")
+             .def("number_density_cm2",py::overload_cast<int>(&Material::number_density_cm2, py::const_),"get number density of atoms of i-th element in cm2 in 10^23 unit")
+	     .def("__str__",&material_to_string);
 
      py::class_<Layers>(m,"Layers")
              .def(py::init<>(),"constructor")
