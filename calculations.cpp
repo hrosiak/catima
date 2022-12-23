@@ -127,7 +127,7 @@ double bethek_barkas(double zp_eff,double eta, double zt){
     double V2FVA[4]={0.33,0.30,0.26,0.23};
     double    VA[4]={1.,2.,3.,4.};
     double v1 = eta/(fine_structure*sqrt(zt));
-    double v2fv;
+    double v2fv = 0.0;
     if(v1 >= 4){
         v2fv = 0.45 / sqrt(v1);
         }
@@ -141,7 +141,7 @@ double bethek_barkas(double zp_eff,double eta, double zt){
           }
     }
     else{
-        v2fv=0;
+        v2fv=0.0;
     }
     return 1.0+2.0 * zp_eff * v2fv /(v1*v1*sqrt(zt));
 }
