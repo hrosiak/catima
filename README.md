@@ -1,5 +1,4 @@
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/dc251db65f7a4c06ae07380544ea08fc)](https://www.codacy.com/manual/hrosiak/catima?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=hrosiak/catima&amp;utm_campaign=Badge_Grade)
-[![Language grade: C/C++](https://img.shields.io/lgtm/grade/cpp/g/hrosiak/catima.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/hrosiak/catima/context:cpp)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/dc251db65f7a4c06ae07380544ea08fc)]()
 [![Build status](https://ci.appveyor.com/api/projects/status/39gva190iyyfrtym/branch/master?svg=true)](https://ci.appveyor.com/project/hrosiak/catima-09rdl/branch/master)
 [![Documentation Status](https://readthedocs.org/projects/catima/badge/?version=latest)](https://catima.readthedocs.io/en/latest/?badge=latest)
 
