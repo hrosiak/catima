@@ -1,4 +1,4 @@
-#include "srim.h"
+#include "catima/srim.h"
 #include <cmath>
 #include <algorithm>
 namespace catima{

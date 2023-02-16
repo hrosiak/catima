@@ -1,5 +1,7 @@
-cmake_minimum_required(VERSION 3.14)
-project(catima)
+cmake_minimum_required(VERSION 3.14...3.25)
+project(catima VERSION 1.0
+               DESCRIPTION "C++ library for calculation of energy loss, range, angular scattering and time of flight of the particle passing through matter. "
+               LANGUAGES CXX)
 
 ############ options #############
 option(BUILD_SHARED_LIBS "build as shared library" ON)
@@ -80,7 +82,7 @@ configure_file("${PROJECT_SOURCE_DIR}/init.sh.in"
                "${PROJECT_BINARY_DIR}/init.sh")
 ############### main build ###########################
 
-file(GLOB SOURCES *.cpp)
+file(GLOB SOURCES src/*.cpp)
 if(GLOBAL)
 file(GLOB GLOBAL_SOURCES global/*.c)
 LIST (APPEND SOURCES ${GLOBAL_SOURCES})

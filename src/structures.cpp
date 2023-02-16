@@ -1,4 +1,4 @@
-#include "structures.h"
+#include "catima/structures.h"
 #include "catima/nucdata.h"
 #include <algorithm>
 #include <cmath>
