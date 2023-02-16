@@ -9,7 +9,6 @@ option(PYTHON_MODULE "compile the Catima python module(requires numpy and cython
 option(TESTS "build tests" OFF)
 option(EXAMPLES "build examples" OFF)
 option(APPS "build catima applications" ON)
-option(GLOBAL "build with global, sources are required" OFF)
 option(REACTIONS "enable/disable nuclear reaction rate" ON)
 option(STORE_SPLINES "store splines, if disables splines are always recreated" ON)
 option(GSL_INTEGRATION "use GSL integration" OFF)
@@ -82,14 +81,19 @@ configure_file("${PROJECT_SOURCE_DIR}/init.sh.in"
                "${PROJECT_BINARY_DIR}/init.sh")
 ############### main build ###########################
 
-file(GLOB SOURCES src/*.cpp)
-if(GLOBAL)
-file(GLOB GLOBAL_SOURCES global/*.c)
-LIST (APPEND SOURCES ${GLOBAL_SOURCES})
-endif(GLOBAL)
-file(GLOB HEADERS *.h libs/*.h)
 
-add_library(catima ${SOURCES})
+add_library(catima src/abundance_database.cpp
+                   src/calculations.cpp
+                   src/catima.cpp
+                   src/cwrapper.cpp
+                   src/integrator.cpp
+                   src/material_database.cpp
+                   src/nucdata.cpp
+                   src/reactions.cpp
+                   src/spline.cpp
+                   src/srim.cpp
+                   src/storage.cpp
+                   src/structures.cpp)
 set_target_properties(catima PROPERTIES
 		    POSITION_INDEPENDENT_CODE ON
             LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
@@ -104,8 +108,6 @@ target_include_directories(catima
                           )
 
 add_library(catima::catima ALIAS catima)
-
-FILE(COPY ${HEADERS} DESTINATION ${PROJECT_BINARY_DIR}/include/catima)
 
 # the compiler used for C++ files
 MESSAGE( STATUS "CMAKE_CXX_COMPILER: " ${CMAKE_CXX_COMPILER} )
