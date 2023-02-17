@@ -15,3 +15,6 @@ authors = [
 maintainers = [
     {name = "Angus Hollands", email = "goosey15@gmail.com"},
 ]
+
+[tool.scikit-build]
+minimum-version = "0.2"
