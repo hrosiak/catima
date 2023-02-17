@@ -91,13 +91,7 @@ add_library(${LOCAL_PROJECT_NAMESPACE}::${LOCAL_PROJECT_NAME} ALIAS catima)
 MESSAGE(STATUS "CMAKE_CXX_COMPILER: " ${CMAKE_CXX_COMPILER})
 
 
-########## Sub Directories ###########
-if (EXAMPLES)
-    file(GLOB EXAMPLES examples/*.cpp)
-    FILE(COPY ${EXAMPLES} DESTINATION ${PROJECT_BINARY_DIR}/examples)
-    FILE(COPY examples/makefile DESTINATION ${PROJECT_BINARY_DIR}/examples)
-    #add_subdirectory("examples")
-endif (EXAMPLES)
+########## Tests ###########
 if (TESTS)
     enable_testing()
     add_subdirectory("tests")
@@ -141,6 +135,10 @@ install(TARGETS catima
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+if (EXAMPLES)
+    install(DIRECTORY examples DESTINATION ${CMAKE_INSTALL_DATADIR}/catima)
+endif (EXAMPLES)
 
 export(TARGETS catima NAMESPACE ${LOCAL_PROJECT_NAMESPACE}:: FILE ${LOCAL_PROJECT_NAME}Targets.cmake)
 export(PACKAGE ${LOCAL_PROJECT_NAME})
