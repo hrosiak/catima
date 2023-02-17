@@ -31,11 +31,11 @@ add_subdirectory(../ catima EXCLUDE_FROM_ALL)
 
 # Install python bindings
 find_package(pybind11 CONFIG REQUIRED)
-pybind11_add_module(pycatima pycatima.cpp)
-target_link_libraries(pycatima PRIVATE catima)
+pybind11_add_module(_ext src/_ext.cpp)
+target_link_libraries(_ext PRIVATE catima)
 
 install(
-  TARGETS pycatima catima
+  TARGETS _ext catima
   LIBRARY DESTINATION "${SKBUILD_PROJECT_NAME}/lib"
   RUNTIME DESTINATION "${SKBUILD_PROJECT_NAME}/lib"
   ARCHIVE DESTINATION "${SKBUILD_PROJECT_NAME}/lib")

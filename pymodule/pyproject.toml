@@ -6,7 +6,7 @@ requires = [
 build-backend = "scikit_build_core.build"
 
 [project]
-name = "catima"
+name = "pycatima"
 description = "Python interface to catima library"
 version = "1.71.0"
 authors = [
