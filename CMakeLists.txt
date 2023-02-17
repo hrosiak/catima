@@ -65,11 +65,7 @@ add_library(catima src/abundance_database.cpp
                    src/srim.cpp
                    src/storage.cpp
                    src/structures.cpp)
-set_target_properties(catima PROPERTIES
-		    POSITION_INDEPENDENT_CODE ON
-            LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
-            ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
-                      )
+set_target_properties(catima PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 target_link_libraries(catima PUBLIC ${EXTRA_LIBS})
 target_compile_features(catima PRIVATE cxx_std_17)
