@@ -48,21 +48,6 @@ if(GSL_INTEGRATION OR GSL_INTERPOLATION)
     list(APPEND EXTRA_LIBS ${GSL_LIBRARIES} )
 endif()
 
-#find_package(nurex QUIET)
-#if(nurex_FOUND)
-#message(STATUS "nurex library found")
-#set(NUREX ON)
-#list(APPEND EXTRA_LIBS nurex::nurex)
-#endif(nurex_FOUND)
-
-find_package(fmt QUIET)
-if(NOT fmt_FOUND)
-    # We want the `fmt::fmt` target
-    set(FMT_INSTALL ON)
-    add_subdirectory(extern/fmt EXCLUDE_FROM_ALL)
-    find_package(fmt QUIET)
-endif(NOT fmt_FOUND)
-
 
 configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/build_config.in"
                 "${CMAKE_CURRENT_BINARY_DIR}/generated/catima/build_config.h")
@@ -90,7 +75,7 @@ set_target_properties(catima PROPERTIES
             ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
                       )
 
-target_link_libraries(catima PUBLIC ${EXTRA_LIBS} fmt::fmt)
+target_link_libraries(catima PUBLIC ${EXTRA_LIBS})
 target_compile_features(catima PRIVATE cxx_std_17)
 target_include_directories(catima
                            PUBLIC  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
