@@ -110,6 +110,13 @@ endif(GENERATE_DATA)
 ###### subdirectories ######
 if(APPS)
 add_subdirectory("bin")
+find_package(nlohmann_json QUIET)
+if(NOT nlohmann_json_FOUND)
+#MESSAGE(STATUS "nlohmann_json looking ")
+add_subdirectory(extern/json)
+find_package(nlohmann_json QUIET)
+endif(NOT nlohmann_json_FOUND)
+
 endif(APPS)
 
 ####### install part #######
@@ -124,7 +131,7 @@ install (TARGETS catima
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-install (FILES ${HEADERS} DESTINATION include/catima)
+install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 install(EXPORT catimaConfig
         NAMESPACE catima::
