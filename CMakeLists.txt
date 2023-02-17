@@ -116,7 +116,6 @@ endif(NOT nlohmann_json_FOUND)
 endif(APPS)
 
 ####### install part #######
-FILE(GLOB HEADERS "include/**/*.h")
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
