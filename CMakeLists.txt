@@ -1,7 +1,17 @@
 cmake_minimum_required(VERSION 3.14...3.25)
-project(catima VERSION 1.0
-               DESCRIPTION "C++ library for calculation of energy loss, range, angular scattering and time of flight of the particle passing through matter. "
-               LANGUAGES CXX)
+
+set(LOCAL_PROJECT_VERSION     "1.0.0")
+set(LOCAL_PROJECT_VENDOR      "A. Prochazka")
+set(LOCAL_PROJECT_NAMESPACE   "catima")
+set(LOCAL_PROJECT_NAME        "catima")
+set(LOCAL_PROJECT_OUTPUT_NAME "catima")
+set(LOCAL_PROJECT_DESCRIPTION "C++ library for calculation of energy loss, range, angular scattering and time of flight of the particle passing through matter. ")
+
+
+project(${LOCAL_PROJECT_NAME}
+        VERSION ${LOCAL_PROJECT_VERSION}
+        DESCRIPTION ${LOCAL_PROJECT_DESCRIPTION}
+        LANGUAGES CXX)
 
 ############ options #############
 option(BUILD_SHARED_LIBS "build as shared library" ON)
@@ -74,8 +84,8 @@ target_include_directories(catima
                                    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/generated>
                                    $<BUILD_INTERFACE:${GSL_INCLUDE_DIRS}>
                           )
-
-add_library(catima::catima ALIAS catima)
+# Exported alias
+add_library(${LOCAL_PROJECT_NAMESPACE}::${LOCAL_PROJECT_NAME} ALIAS catima)
 
 # the compiler used for C++ files
 MESSAGE( STATUS "CMAKE_CXX_COMPILER: " ${CMAKE_CXX_COMPILER} )
@@ -105,44 +115,41 @@ endif(GENERATE_DATA)
 
 ###### subdirectories ######
 if(APPS)
-add_subdirectory("bin")
-find_package(nlohmann_json QUIET)
-if(NOT nlohmann_json_FOUND)
-#MESSAGE(STATUS "nlohmann_json looking ")
-add_subdirectory(extern/json)
-find_package(nlohmann_json QUIET)
-endif(NOT nlohmann_json_FOUND)
+    add_subdirectory("bin")
+    find_package(nlohmann_json QUIET)
+    if(NOT nlohmann_json_FOUND)
+        set(JSON_BuildTests OFF CACHE INTERNAL "")
+        add_subdirectory(extern/json)
+        find_package(nlohmann_json QUIET)
+    endif(NOT nlohmann_json_FOUND)
 
 endif(APPS)
 
 ####### install part #######
-include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+    ${LOCAL_PROJECT_NAME}ConfigVersion.cmake
+    VERSION ${PACKAGE_VERSION}
+    COMPATIBILITY AnyNewerVersion
+)
 
-write_basic_package_version_file(catimaConfigVersion.cmake VERSION 1.7 COMPATIBILITY AnyNewerVersion)
-
+include(GNUInstallDirs)
 install (TARGETS catima
-        EXPORT catimaConfig
+        EXPORT ${LOCAL_PROJECT_NAME}Targets
+        INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
-
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(DIRECTORY include DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-install(EXPORT catimaConfig
-        NAMESPACE catima::
-        DESTINATION lib/cmake/catima
-         )
+export(TARGETS catima NAMESPACE ${LOCAL_PROJECT_NAMESPACE}:: FILE ${LOCAL_PROJECT_NAME}Targets.cmake)
+export(PACKAGE ${LOCAL_PROJECT_NAME})
 
-export(TARGETS catima NAMESPACE catima:: FILE catimaConfig.cmake)
-export(PACKAGE catima)
-
-###### packaging #######
-set(CPACK_PACKAGE_NAME "catima")
-set(CPACK_PACKAGE_VENDOR "A. Prochazka")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "")
-set(CPACK_PACKAGE_VERSION "1.0.0")
-set(CPACK_PACKAGE_VERSION_MAJOR "1")
-set(CPACK_PACKAGE_VERSION_MINOR "0")
-set(CPACK_PACKAGE_VERSION_PATCH "0")
-set(CPACK_PACKAGE_INSTALL_DIRECTORY "catima")
-include(CPack)
+# Packaging
+set(CPACK_PACKAGE_VENDOR ${LOCAL_PROJECT_VENDOR})
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${LOCAL_PROJECT_DESCRIPTION})
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENCE")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
