@@ -1,0 +1,17 @@
+[build-system]
+requires = [
+    "scikit-build-core[pyproject]>=0.2.0",
+    "pybind11",
+]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "catima"
+description = "Python interface to catima library"
+version = "1.71.0"
+authors = [
+    {name = "Andrej Prochazka", email = "hrocho@vodacionline.sk"},
+]
+maintainers = [
+    {name = "Angus Hollands", email = "goosey15@gmail.com"},
+]

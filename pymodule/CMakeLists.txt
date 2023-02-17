@@ -1,0 +1,35 @@
+# BSD 3-Clause License; see https://github.com/scikit-hep/awkward-1.0/blob/main/LICENSE
+
+cmake_minimum_required(VERSION 3.15...3.24)
+
+# Project must be near the top
+project(
+  ${SKBUILD_PROJECT_NAME}
+  LANGUAGES CXX
+  VERSION ${SKBUILD_PROJECT_VERSION})
+
+message(STATUS "CMake version ${CMAKE_VERSION}")
+message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
+
+# Defaults for properties in this directory (and below)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+
+# Third tier: Python modules.
+find_package(pybind11 CONFIG REQUIRED)
+
+# Add main library
+set(APPS OFF)
+add_subdirectory(../ catima) 
+
+# Install python bindings
+pybind11_add_module(pycatima pycatima.cpp)
+target_link_libraries(pycatima PRIVATE catima)
+
+install(
+  TARGETS pycatima catima
+  LIBRARY DESTINATION "${SKBUILD_PROJECT_NAME}/lib"
+  RUNTIME DESTINATION "${SKBUILD_PROJECT_NAME}/lib"
+  ARCHIVE DESTINATION "${SKBUILD_PROJECT_NAME}/lib")

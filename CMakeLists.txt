@@ -5,18 +5,16 @@ project(catima VERSION 1.0
 
 ############ options #############
 option(BUILD_SHARED_LIBS "build as shared library" ON)
-option(PYTHON_MODULE "compile the Catima python module(requires numpy and cython installed)" OFF)
 option(TESTS "build tests" OFF)
 option(EXAMPLES "build examples" OFF)
 option(APPS "build catima applications" ON)
 option(REACTIONS "enable/disable nuclear reaction rate" ON)
 option(STORE_SPLINES "store splines, if disables splines are always recreated" ON)
 option(GSL_INTEGRATION "use GSL integration" OFF)
-option(GSL_INTERPOLATION "use GSL inteRPOLATION" OFF)
+option(GSL_INTERPOLATION "use GSL interpolation" OFF)
 option(THIN_TARGET_APPROXIMATION "thin target approximation" ON)
 option(ET_CALCULATED_INDEX "calculate energy table index, otherwise search" ON)
 option(GENERATE_DATA "make data tables generator" OFF)
-option(PYTHON_WHEEL "make python wheel" OFF)
 ######## build type ############
 if(NOT CMAKE_BUILD_TYPE  STREQUAL "Debug")
     set(CMAKE_BUILD_TYPE "Release")
@@ -58,24 +56,16 @@ endif()
 #endif(nurex_FOUND)
 
 find_package(fmt QUIET)
-function(check_fmt)
-    if(NOT fmt_FOUND)
-    message("fmt library not found, trying to dowload")
-    include(FetchContent)
-    FetchContent_Declare(
-        fmt
-        GIT_REPOSITORY https://github.com/fmtlib/fmt.git
-        GIT_TAG 8.1.1
-        )
-    set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+if(NOT fmt_FOUND)
+    # We want the `fmt::fmt` target
     set(FMT_INSTALL ON)
-    FetchContent_MakeAvailable(fmt)
-    endif(NOT fmt_FOUND)
-endfunction(check_fmt)
+    add_subdirectory(extern/fmt EXCLUDE_FROM_ALL)
+    find_package(fmt QUIET)
+endif(NOT fmt_FOUND)
 
 
 configure_file( "${CMAKE_CURRENT_SOURCE_DIR}/build_config.in"
-                "${CMAKE_CURRENT_BINARY_DIR}/include/catima/build_config.h")
+                "${CMAKE_CURRENT_BINARY_DIR}/generated/catima/build_config.h")
 
 configure_file("${PROJECT_SOURCE_DIR}/init.sh.in"
                "${PROJECT_BINARY_DIR}/init.sh")
@@ -100,10 +90,11 @@ set_target_properties(catima PROPERTIES
             ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib
                       )
 
-target_link_libraries(catima PUBLIC ${EXTRA_LIBS})
+target_link_libraries(catima PUBLIC ${EXTRA_LIBS} fmt::fmt)
 target_compile_features(catima PRIVATE cxx_std_17)
 target_include_directories(catima
-                           PUBLIC  $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
+                           PUBLIC  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                                   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/generated>
                                    $<BUILD_INTERFACE:${GSL_INCLUDE_DIRS}>
                           )
 
@@ -112,42 +103,6 @@ add_library(catima::catima ALIAS catima)
 # the compiler used for C++ files
 MESSAGE( STATUS "CMAKE_CXX_COMPILER: " ${CMAKE_CXX_COMPILER} )
 
-######## for python module #########
-find_package(Python COMPONENTS Interpreter Development)
-if(Python_FOUND)
-    message(STATUS "Python found: ${Python_EXECUTABLE}")
-endif()
-if(PYTHON_MODULE)
-    if(NOT Python_FOUND)
-        MESSAGE(SEND_ERROR "Python is required to build nurex python modules")
-    endif(NOT Python_FOUND)
-    find_package(pybind11 QUIET)
-    if(NOT pybind11_FOUND)
-	    message("pybind11 not found, trying to dowload")
-	    include(FetchContent)
-	    FetchContent_Declare(
-		    pybind11
-		    GIT_REPOSITORY https://github.com/pybind/pybind11.git
-		    GIT_TAG v2.6.2
-		    )
-	    FetchContent_MakeAvailable(pybind11)
-    endif(NOT pybind11_FOUND)
-    
-    check_fmt()
-    #set(PYBIND11_CPP_STANDARD -std=c++14)
-    pybind11_add_module(pycatima pymodule/pycatima.cpp)
-    target_include_directories(pycatima PUBLIC
-                                    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-                                    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/libs>
-                                    $<INSTALL_INTERFACE:include>)
-    target_link_libraries(pycatima PRIVATE catima fmt::fmt)    
-endif(PYTHON_MODULE )
-
-configure_file("${PROJECT_SOURCE_DIR}/pymodule/setup.py.in" "${PROJECT_BINARY_DIR}/setup.py")
-if(PYTHON_WHEEL)
-    check_fmt()
-	execute_process(COMMAND ${Python_EXECUTABLE} ${PROJECT_BINARY_DIR}/setup.py bdist_wheel)
-endif(PYTHON_WHEEL)
 
 ########## Sub Directories ###########
 if(EXAMPLES)
@@ -177,7 +132,7 @@ add_subdirectory("bin")
 endif(APPS)
 
 ####### install part #######
-FILE(GLOB headers "*.h")
+FILE(GLOB HEADERS "include/**/*.h")
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
@@ -188,7 +143,7 @@ install (TARGETS catima
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-install (FILES ${headers} DESTINATION include/catima)
+install (FILES ${HEADERS} DESTINATION include/catima)
 
 install(EXPORT catimaConfig
         NAMESPACE catima::
