@@ -15,24 +15,12 @@ message(STATUS "CMAKE_BUILD_TYPE = ${CMAKE_BUILD_TYPE}")
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Build a shared library?
+# Build a static library
 set(BUILD_SHARED_LIBS OFF)
 
-if (BUILD_SHARED_LIBS)
-  # Ensure we install catima
-  set(EXTRA_INSTALL_TARGETS "catima")
-else()
-  # Hide all unused symbols (remove this for shared library)
-  set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-  set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
-endif()
-
-# Set RPATH
-if(APPLE)
-  set(CMAKE_INSTALL_RPATH "@loader_path")
-else()
-  set(CMAKE_INSTALL_RPATH "\${ORIGIN}")
-endif()
+# Hide all unused symbols
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 
 # Add main library
 set(APPS OFF)
@@ -45,7 +33,7 @@ target_link_libraries(_ext PRIVATE catima)
 
 # Install python bindings
 install(
-  TARGETS _ext ${EXTRA_INSTALL_TARGETS}
+  TARGETS _ext
   LIBRARY DESTINATION "${SKBUILD_PROJECT_NAME}"
   RUNTIME DESTINATION "${SKBUILD_PROJECT_NAME}"
   ARCHIVE DESTINATION "${SKBUILD_PROJECT_NAME}")
