@@ -27,7 +27,7 @@ endif()
 
 # Add main library
 set(APPS OFF)
-add_subdirectory(../ catima) 
+add_subdirectory(../ catima EXCLUDE_FROM_ALL)
 
 # Install python bindings
 find_package(pybind11 CONFIG REQUIRED)
