@@ -17,14 +17,20 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
 
-# Third tier: Python modules.
-find_package(pybind11 CONFIG REQUIRED)
+# Set RPATH
+if(APPLE)
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+  set(CMAKE_INSTALL_RPATH "@loader_path")
+else()
+  set(CMAKE_BUILD_RPATH_USE_ORIGIN TRUE)
+endif()
 
 # Add main library
 set(APPS OFF)
 add_subdirectory(../ catima) 
 
 # Install python bindings
+find_package(pybind11 CONFIG REQUIRED)
 pybind11_add_module(pycatima pycatima.cpp)
 target_link_libraries(pycatima PRIVATE catima)
 

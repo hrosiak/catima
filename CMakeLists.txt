@@ -15,6 +15,7 @@ option(GSL_INTERPOLATION "use GSL interpolation" OFF)
 option(THIN_TARGET_APPROXIMATION "thin target approximation" ON)
 option(ET_CALCULATED_INDEX "calculate energy table index, otherwise search" ON)
 option(GENERATE_DATA "make data tables generator" OFF)
+
 ######## build type ############
 if(NOT CMAKE_BUILD_TYPE  STREQUAL "Debug")
     set(CMAKE_BUILD_TYPE "Release")
