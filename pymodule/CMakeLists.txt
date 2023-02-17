@@ -18,6 +18,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Build a static library
 set(BUILD_SHARED_LIBS OFF)
+# TODO: remove this once scikit-build-core supports changing the source-dir
+set(PYTHON_NO_INCLUDE_PYMODULE "")
 
 # Hide all unused symbols
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)

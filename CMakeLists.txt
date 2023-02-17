@@ -1,5 +1,13 @@
 cmake_minimum_required(VERSION 3.14...3.25)
 
+# TODO: remove this once scikit-build-core supports changing the source-dir
+# If we're actually building the Python extension, via this file
+if( CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR AND DEFINED SKBUILD AND NOT DEFINED PYTHON_NO_INCLUDE_PYMODULE)
+    message(STATUS "A build of pymodule was initiated from the root directory. Loading pymodule")
+    add_subdirectory(pymodule)
+    return()
+endif ()
+
 set(LOCAL_PROJECT_VERSION "1.0.0")
 set(LOCAL_PROJECT_VENDOR "A. Prochazka")
 set(LOCAL_PROJECT_NAMESPACE "catima")
