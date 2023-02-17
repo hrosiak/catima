@@ -39,8 +39,6 @@ jobs:
         env:
           CIBW_BUILD: ${{ matrix.build }}
           CIBW_ARCHS: ${{ matrix.arch }}
-        with:
-          package-dir: pymodule
 
       - uses: actions/upload-artifact@v3
         with:
