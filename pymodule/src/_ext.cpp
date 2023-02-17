@@ -53,7 +53,7 @@ py::list get_energy_table(){
     {
         r.append(energy_table[i]);
     }
-    
+
     //for(auto e : energy_table){
         //r.append(e);
     //}
@@ -111,7 +111,7 @@ py::dict get_result_dict(const Result& r){
                     return d;
                     }
 
-PYBIND11_MODULE(pycatima,m){
+PYBIND11_MODULE(_ext,m){
      py::class_<Projectile>(m,"Projectile")
              .def(py::init<>(),"constructor")
              .def(py::init<double, double, double, double>(), "constructor", py::arg("A"),py::arg("Z"),py::arg("Q")=0, py::arg("T")=0)
@@ -196,7 +196,7 @@ PYBIND11_MODULE(pycatima,m){
              .def_readwrite("sp", &Result::sp)
              .def("get_dict",&get_result_dict)
              .def("__repr__",[](const Result &self){
-                 return py::str(get_result_dict(self)); 
+                 return py::str(get_result_dict(self));
              });
 
      py::class_<MultiResult>(m,"MultiResult")
@@ -268,13 +268,13 @@ PYBIND11_MODULE(pycatima,m){
     py::enum_<low_energy_types>(m,"low_energy_types")
             .value("srim_85", low_energy_types::srim_85)
             .value("srim_95", low_energy_types::srim_95);
-            
+
     py::enum_<scattering_types>(m,"scattering_types")
             .value("fermi_rossi", scattering_types::fermi_rossi)
             .value("dhighland", scattering_types::dhighland)
             .value("gottschalk", scattering_types::gottschalk)
             .value("atima_scattering", scattering_types::atima_scattering);
-            
+
 
     py::enum_<material>(m,"material")
 		 .value("Plastics", material::Plastics)

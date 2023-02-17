@@ -18,3 +18,4 @@ maintainers = [
 
 [tool.scikit-build]
 minimum-version = "0.2"
+build-dir = "build/{cache_tag}"

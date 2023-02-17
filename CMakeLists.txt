@@ -58,8 +58,6 @@ endif ()
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/build_config.in"
         "${CMAKE_CURRENT_BINARY_DIR}/generated/catima/build_config.h")
 
-configure_file("${PROJECT_SOURCE_DIR}/init.sh.in"
-        "${PROJECT_BINARY_DIR}/init.sh")
 ############### main build ###########################
 
 

@@ -1,1 +1,1 @@
-from .lib._ext import *
+from ._ext import *
