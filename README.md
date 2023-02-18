@@ -1,5 +1,5 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/dc251db65f7a4c06ae07380544ea08fc)]()
-[![Build status](https://ci.appveyor.com/api/projects/status/39gva190iyyfrtym/branch/master?svg=true)](https://ci.appveyor.com/project/hrosiak/catima-09rdl/branch/master)
+[![Build](https://github.com/agoose77/catima/actions/workflows/build.yml/badge.svg)](https://github.com/agoose77/catima/actions/workflows/build.yml)
 [![Documentation Status](https://readthedocs.org/projects/catima/badge/?version=latest)](https://catima.readthedocs.io/en/latest/?badge=latest)
 
 CATima
