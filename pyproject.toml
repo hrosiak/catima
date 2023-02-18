@@ -21,4 +21,4 @@ requires-python = ">=3.7"
 [tool.scikit-build]
 minimum-version = "0.2"
 build-dir = "build/{cache_tag}"
-wheel.packages = ["pymodule/pycatima"]
+wheel.packages = ["pycatima"]
