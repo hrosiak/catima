@@ -1,1 +1,4 @@
 breathe
+recommonmark
+sphinx
+sphinx-rtd-theme
