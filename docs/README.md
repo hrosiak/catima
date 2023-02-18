@@ -1,8 +1,21 @@
-Installation
+Python Module
+-------------
+Python module can be installed directly from PyPI using pip:
+```
+pip install pycatima
+```
+
+Or installed from the local Git checkout with
+```
+pip install .
+```
+
+C++ Library
 ------------
 CMake is used to build the library. For a default build, first prepare the build location
 
 ```bash
+cd catima
 mkdir build
 cd build
 ```
@@ -27,19 +40,6 @@ Then, update the `PATH` and `LD_LIBRARY_PATH` variables:
 ```bash
 PATH="<PATH-TO-INSTALL>/bin:$PATH"
 LD_LIBRARY_PATH="<PATH-TO-INSTALL>/lib:$LD_LIBRARY_PATH"
-```
-
-
-Python Module
--------------
-Python module can be installed directly from PyPI using pip:
-```
-pip install pycatima
-```
-
-Or installed from the local Git checkout with
-```
-pip install ./pymodule
 ```
 
 
