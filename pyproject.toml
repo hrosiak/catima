@@ -7,7 +7,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "pycatima"
-description = "Python interface to catima library"
+description = "Python interface to CATIMA library"
 version = "1.71.0"
 
 authors = [
