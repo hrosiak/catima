@@ -17,7 +17,7 @@ project(${LOCAL_PROJECT_NAME}
 option(BUILD_SHARED_LIBS "build as shared library" ON)
 option(TESTS "build tests" OFF)
 option(EXAMPLES "build examples" OFF)
-option(APPS "build catima applications" ON)
+option(APPS "build catima applications" OFF)
 option(GLOBAL "build with global, sources are required" OFF)
 option(REACTIONS "enable/disable nuclear reaction rate" ON)
 option(STORE_SPLINES "store splines, if disables splines are always recreated" ON)
