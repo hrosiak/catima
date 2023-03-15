@@ -11,7 +11,7 @@ git clone https://github.com/hrosiak/pycatima.git
 ```
 and installing with pip
 ```bash
-pip install .
+pip install ./pycatima
 ```
 
 C++ Library
