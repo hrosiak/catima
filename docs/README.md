@@ -1,12 +1,16 @@
 Python Module
 -------------
 Python module can be installed directly from PyPI using pip:
-```
+```bash
 pip install pycatima
 ```
 
-Or installed from the local Git checkout with
+Or installed by cloning the Git repo
+```bash
+git clone https://github.com/hrosiak/pycatima.git
 ```
+and installing with pip
+```bash
 pip install .
 ```
 
@@ -15,7 +19,6 @@ C++ Library
 CMake is used to build the library. For a default build, first prepare the build location
 
 ```bash
-cd catima
 mkdir build
 cd build
 ```

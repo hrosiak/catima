@@ -1,5 +1,5 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/dc251db65f7a4c06ae07380544ea08fc)]()
-[![Build](https://github.com/agoose77/catima/actions/workflows/build.yml/badge.svg)](https://github.com/agoose77/catima/actions/workflows/build.yml)
+[![Build](https://github.com/catima/catima/actions/workflows/build.yml/badge.svg)](https://github.com/agoose77/catima/actions/workflows/build.yml)
 [![Documentation Status](https://readthedocs.org/projects/catima/badge/?version=latest)](https://catima.readthedocs.io/en/latest/?badge=latest)
 
 CATima
@@ -16,12 +16,16 @@ The WebAtima UI to this library can be found here:
 Python Module
 -------------
 Python module can be installed directly from PyPI using pip:
-```
+```bash
 pip install pycatima
 ```
 
-Or installed from the local Git checkout with
+Or installed by cloning the Git repo
+```bash
+git clone https://github.com/hrosiak/pycatima.git
 ```
+and installing with pip
+```bash
 pip install .
 ```
 
@@ -30,7 +34,6 @@ C++ Library
 CMake is used to build the library. For a default build, first prepare the build location
 
 ```bash
-cd catima
 mkdir build
 cd build
 ```
