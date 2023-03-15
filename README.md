@@ -1,5 +1,5 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/dc251db65f7a4c06ae07380544ea08fc)]()
-[![Build](https://github.com/catima/catima/actions/workflows/build.yml/badge.svg)](https://github.com/agoose77/catima/actions/workflows/build.yml)
+![Build](https://github.com/hrosiak/pycatima/actions/workflows/build.yml/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/catima/badge/?version=latest)](https://catima.readthedocs.io/en/latest/?badge=latest)
 
 CATima
@@ -12,22 +12,6 @@ The WebAtima UI to this library can be found here:
   * https://web-docs.gsi.de/~aprochaz/webatima (only inside GSI)
   * https://isotopea.com/webatima
 
-
-Python Module
--------------
-Python module can be installed directly from PyPI using pip:
-```bash
-pip install pycatima
-```
-
-Or installed by cloning the Git repo
-```bash
-git clone https://github.com/hrosiak/pycatima.git
-```
-and installing with pip
-```bash
-pip install ./pycatima
-```
 
 C++ Library
 ------------
@@ -60,6 +44,13 @@ PATH="<PATH-TO-INSTALL>/bin:$PATH"
 LD_LIBRARY_PATH="<PATH-TO-INSTALL>/lib:$LD_LIBRARY_PATH"
 ```
 
+Python Module
+-------------
+python module repository was moved here: https://github.com/hrosiak/pycatima.git
+Python module can be installed directly from PyPI using pip:
+```bash
+pip install pycatima
+```
 
 cmake options
 -------------
