@@ -13,22 +13,6 @@ The WebAtima UI to this library can be found here:
   * https://isotopea.com/webatima
 
 
-Python Module
--------------
-Python module can be installed directly from PyPI using pip:
-```bash
-pip install pycatima
-```
-
-Or installed by cloning the Git repo
-```bash
-git clone https://github.com/hrosiak/pycatima.git
-```
-and installing with pip
-```bash
-pip install ./pycatima
-```
-
 C++ Library
 ------------
 CMake is used to build the library. For a default build, first prepare the build location
@@ -60,6 +44,13 @@ PATH="<PATH-TO-INSTALL>/bin:$PATH"
 LD_LIBRARY_PATH="<PATH-TO-INSTALL>/lib:$LD_LIBRARY_PATH"
 ```
 
+Python Module
+-------------
+python module repository was moved here: https://github.com/hrosiak/pycatima.git
+Python module can be installed directly from PyPI using pip:
+```bash
+pip install pycatima
+```
 
 cmake options
 -------------
