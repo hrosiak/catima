@@ -1,11 +1,12 @@
 PROJECT_NAME           = catima
-INPUT                  = ../.
+INPUT                  = ../catima
 RECURSIVE              = NO
 
 GENERATE_HTML          = NO
 GENERATE_LATEX         = NO
 GENERATE_XML           = YES
-XML_OUTPUT             = build/doxygenxml
+OUTPUT_DIRECTORY       = $(DOXYGEN_OUTPUT_DIRECTORY)
+XML_OUTPUT             = doxygenxml
 XML_PROGRAMLISTING     = YES
 
 MACRO_EXPANSION        = YES

@@ -1,4 +1,4 @@
-#include "integrator.h"
+#include "catima/integrator.h"
 
 #ifdef GSL_INTEGRATION
 #include "gsl/gsl_integration.h"

@@ -20,4 +20,4 @@ help:
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 doxy:
-	doxygen
+	env DOXYGEN_OUTPUT_DIRECTORY=$(BUILDDIR) doxygen

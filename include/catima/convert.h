@@ -22,7 +22,6 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
-#include "fmt/format.h"
 
 using namespace catima;
 
@@ -52,7 +51,9 @@ bool save_mocadi(const char* filename, const Projectile p, const Layers &layers,
     fw.open(filename, std::ios::out);
     if (!fw.is_open()) { return false;}
     fw<<"epax 2\natima-1.0\noption listmode root\n";
-    std::string beam = fmt::format("BEAM\n100000\n{}, 0, {}, {}\n2\n{}, {}, 0, 0, 0\n2\n{}, {}, 0, 0, 0\n1\n0,  0, 0, 0, 0\n",p.T,p.A,p.Z,psx.sigma_x,1000*psx.sigma_a, psy.sigma_x,1000*psy.sigma_a);
+    std::string beam = "BEAM\n100000\n" + std::to_string(p.T) + ", 0, " + std::to_string(p.A) + ", " + std::to_string(p.Z) + "\n2\n" +
+                            std::to_string(psx.sigma_x) +  ", " + std::to_string(1000*psx.sigma_a) + ", 0, 0, 0\n2\n" +
+                            std::to_string(psy.sigma_x) + ", " + std::to_string(1000*psy.sigma_a) + ", 0, 0, 0\n1\n0,  0, 0, 0, 0";
     fw<<beam;
     int c = 0;
     for (auto& m: layers.get_materials()){
@@ -65,7 +66,8 @@ bool save_mocadi(const char* filename, const Projectile p, const Layers &layers,
         else{
             z = materialdb_id(m);
         }        
-        std::string mstr = fmt::format("*******\nMATTER\n{}, {}, {}\n2,{}\n0.\n0.,0.,0.\n1,1,0\n0,0,0,0\n",a,z,m.density()*1000,m.thickness_cm());
+        std::string mstr = "*******\nMATTER\n" + std::to_string(a) + ", " + std::to_string(z) + ", " + std::to_string(m.density()*1000.0) +
+                                    "\n" + "2,"+std::to_string(m.thickness_cm()) + "\n0.\n0.,0.,0.\n1,1,0\n0,0,0,0\n";
         fw<<mstr;        
         c++;
     }

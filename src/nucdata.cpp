@@ -1,4 +1,4 @@
-#include "nucdata.h"
+#include "catima/nucdata.h"
 
 namespace catima{
 double element_atomic_weights[110]={

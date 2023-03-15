@@ -1,6 +1,6 @@
-Catima Caluclator
+Catima Calculator
 ================
-Catima Caluclator is a command line application and interface to the catime library.
+Catima Calculator is a command line application and interface to the catime library.
 
 Usage
 -----
