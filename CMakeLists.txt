@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14...3.25)
 
-set(LOCAL_PROJECT_VERSION "1.0.0")
+set(LOCAL_PROJECT_VERSION "1.8.0")
 set(LOCAL_PROJECT_VENDOR "A. Prochazka")
 set(LOCAL_PROJECT_NAMESPACE "catima")
 set(LOCAL_PROJECT_NAME "catima")
@@ -39,21 +39,18 @@ else ()
     endif ()
     MESSAGE(STATUS "Build type Debug")
 endif ()
-MESSAGE(STATUS "Build type: " ${CMAKE_BUILD_TYPE})
 ################################
-
-######### compiler flags ###########
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-MESSAGE(STATUS "install prefix: " ${CMAKE_INSTALL_PREFIX})
 
 
 ############# Requirements ##################
 if (GSL_INTEGRATION OR GSL_INTERPOLATION)
     find_package(GSL REQUIRED)
-    MESSAGE(STATUS "GSL include dirs: " ${GSL_INCLUDE_DIRS})
-    list(APPEND EXTRA_LIBS ${GSL_LIBRARIES})
+    list(APPEND EXTRA_LIBS GSL::gsl)
 endif ()
+
+if (GLOBAL)
+    add_subdirectory("extern/global")
+endif (GLOBAL)
 
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/build_config.in"
@@ -76,23 +73,18 @@ add_library(catima src/abundance_database.cpp
         src/structures.cpp)
 set_target_properties(catima PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
+######### compiler flags ###########
 target_link_libraries(catima PUBLIC ${EXTRA_LIBS})
 target_compile_features(catima PRIVATE cxx_std_17)
+set_target_properties(catima PROPERTIES CXX_EXTENSIONS OFF)
 target_include_directories(catima
         PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/generated>
-        $<BUILD_INTERFACE:${GSL_INCLUDE_DIRS}>
+               $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/generated>
+               $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         )
+
 # Exported alias
 add_library(${LOCAL_PROJECT_NAMESPACE}::${LOCAL_PROJECT_NAME} ALIAS catima)
-
-# the compiler used for C++ files
-MESSAGE(STATUS "CMAKE_CXX_COMPILER: " ${CMAKE_CXX_COMPILER})
-
-
-if (GLOBAL)
-    add_subdirectory("extern/global")
-endif (GLOBAL)
 
 
 ########## Tests ###########
@@ -101,17 +93,13 @@ if (TESTS)
     add_subdirectory("tests")
 endif (TESTS)
 
-########## data generator ########
+########## Data generator ########
 if (GENERATE_DATA)
     add_executable(generate_ls_coeff utils/generator.cpp)
     target_link_libraries(generate_ls_coeff catima)
-    #add_custom_command(
-    #    OUTPUT ${CMAKE_CURRENT_BINARY_DIR/include/generated_LS_coeff.h}
-    #    COMMAND
-    #)
 endif (GENERATE_DATA)
 
-###### subdirectories ######
+###### Apps ######
 if (APPS)
     add_subdirectory("bin")
 endif (APPS)
@@ -119,27 +107,40 @@ endif (APPS)
 ####### install part #######
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
-        ${LOCAL_PROJECT_NAME}ConfigVersion.cmake
+        ${CMAKE_CURRENT_BINARY_DIR}/${LOCAL_PROJECT_NAME}ConfigVersion.cmake
         VERSION ${PACKAGE_VERSION}
         COMPATIBILITY AnyNewerVersion
 )
 
 include(GNUInstallDirs)
+
+# Generate targets 
 install(TARGETS catima
         EXPORT ${LOCAL_PROJECT_NAME}Targets
         INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
+# Install header files (TODO, this can be replaced with FILE_SET in cmake 3.23)
+install(DIRECTORY include/catima "${CMAKE_CURRENT_BINARY_DIR}/generated/catima" DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+# Install examples
 if (EXAMPLES)
     install(DIRECTORY examples DESTINATION ${CMAKE_INSTALL_DATADIR}/catima)
 endif (EXAMPLES)
 
-export(TARGETS catima NAMESPACE ${LOCAL_PROJECT_NAMESPACE}:: FILE ${LOCAL_PROJECT_NAME}Targets.cmake)
-export(PACKAGE ${LOCAL_PROJECT_NAME})
-
+# Generate CMake file into the install tree (rather than export(TARGETS) which installs into build tree)
+# Directly generate `Config` instead of `Targets`, as we have no additional configuration
+install(EXPORT ${LOCAL_PROJECT_NAME}Targets 
+        NAMESPACE ${LOCAL_PROJECT_NAMESPACE}:: 
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/${LOCAL_PROJECT_NAME}
+        FILE ${LOCAL_PROJECT_NAME}Config.cmake)
+# Install version
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${LOCAL_PROJECT_NAME}ConfigVersion.cmake"
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/${LOCAL_PROJECT_NAME}
+)
+        
 # Packaging
 set(CPACK_PACKAGE_VENDOR ${LOCAL_PROJECT_VENDOR})
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${LOCAL_PROJECT_DESCRIPTION})
