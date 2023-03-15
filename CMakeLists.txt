@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14...3.25)
 
-set(LOCAL_PROJECT_VERSION "1.0.0")
+set(LOCAL_PROJECT_VERSION "1.8.0")
 set(LOCAL_PROJECT_VENDOR "A. Prochazka")
 set(LOCAL_PROJECT_NAMESPACE "catima")
 set(LOCAL_PROJECT_NAME "catima")
