@@ -18,6 +18,7 @@ option(BUILD_SHARED_LIBS "build as shared library" ON)
 option(TESTS "build tests" OFF)
 option(EXAMPLES "build examples" OFF)
 option(APPS "build catima applications" ON)
+option(GLOBAL "build with global, sources are required" OFF)
 option(REACTIONS "enable/disable nuclear reaction rate" ON)
 option(STORE_SPLINES "store splines, if disables splines are always recreated" ON)
 option(GSL_INTEGRATION "use GSL integration" OFF)
@@ -89,6 +90,11 @@ add_library(${LOCAL_PROJECT_NAMESPACE}::${LOCAL_PROJECT_NAME} ALIAS catima)
 MESSAGE(STATUS "CMAKE_CXX_COMPILER: " ${CMAKE_CXX_COMPILER})
 
 
+if (GLOBAL)
+    add_subdirectory("extern/global")
+endif (GLOBAL)
+
+
 ########## Tests ###########
 if (TESTS)
     enable_testing()
@@ -108,13 +114,6 @@ endif (GENERATE_DATA)
 ###### subdirectories ######
 if (APPS)
     add_subdirectory("bin")
-    find_package(nlohmann_json QUIET)
-    if (NOT nlohmann_json_FOUND)
-        set(JSON_BuildTests OFF CACHE INTERNAL "")
-        add_subdirectory(extern/json)
-        find_package(nlohmann_json QUIET)
-    endif (NOT nlohmann_json_FOUND)
-
 endif (APPS)
 
 ####### install part #######
