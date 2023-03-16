@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14...3.25)
+cmake_minimum_required(VERSION 3.23...3.25)
 
 set(LOCAL_PROJECT_VERSION "1.8.0")
 set(LOCAL_PROJECT_VENDOR "A. Prochazka")
@@ -11,7 +11,7 @@ set(LOCAL_PROJECT_DESCRIPTION "C++ library for calculation of energy loss, range
 project(${LOCAL_PROJECT_NAME}
         VERSION ${LOCAL_PROJECT_VERSION}
         DESCRIPTION ${LOCAL_PROJECT_DESCRIPTION}
-        LANGUAGES CXX)
+        )
 
 ############ options #############
 option(BUILD_SHARED_LIBS "build as shared library" ON)
@@ -39,25 +39,20 @@ else ()
     endif ()
     MESSAGE(STATUS "Build type Debug")
 endif ()
-################################
-
 
 ############# Requirements ##################
 if (GSL_INTEGRATION OR GSL_INTERPOLATION)
-    find_package(GSL REQUIRED)
-    list(APPEND EXTRA_LIBS GSL::gsl)
+    find_package(GSL REQUIRED)    
 endif ()
 
 if (GLOBAL)
-    add_subdirectory("extern/global")
+    add_subdirectory("global" EXCLUDE_FROM_ALL)
 endif (GLOBAL)
-
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/build_config.in"
         "${CMAKE_CURRENT_BINARY_DIR}/generated/catima/build_config.h")
 
 ############### main build ###########################
-
 
 add_library(catima src/abundance_database.cpp
         src/calculations.cpp
@@ -71,10 +66,9 @@ add_library(catima src/abundance_database.cpp
         src/srim.cpp
         src/storage.cpp
         src/structures.cpp)
-set_target_properties(catima PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 ######### compiler flags ###########
-target_link_libraries(catima PUBLIC ${EXTRA_LIBS})
+set_target_properties(catima PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_compile_features(catima PRIVATE cxx_std_17)
 set_target_properties(catima PROPERTIES CXX_EXTENSIONS OFF)
 target_include_directories(catima
@@ -82,6 +76,13 @@ target_include_directories(catima
                $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/generated>
                $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         )
+
+if (GSL_INTEGRATION OR GSL_INTERPOLATION)
+    target_link_libraries(catima PUBLIC GSL::gsl)
+endif ()
+if (GLOBAL)
+    target_link_libraries(catima PRIVATE global)
+endif (GLOBAL)
 
 # Exported alias
 add_library(${LOCAL_PROJECT_NAMESPACE}::${LOCAL_PROJECT_NAME} ALIAS catima)
