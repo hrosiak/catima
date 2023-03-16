@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.23...3.25)
+cmake_minimum_required(VERSION 3.14...3.25)
 
 set(LOCAL_PROJECT_VERSION "1.8.0")
 set(LOCAL_PROJECT_VENDOR "A. Prochazka")
