@@ -13,7 +13,7 @@
 #ifdef GLOBAL
 extern "C"
 {
-    #include "global/globallib.h"
+    #include "globallib.h"
 }
 #endif
 
