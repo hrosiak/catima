@@ -152,7 +152,8 @@ namespace catima{
 		 CoRe_Alloy = 345,
 		 LLZO_electrolyte = 346,
 		 Nylon = 347,
-		 Brass = 348
+		 Brass = 348,
+		 RW3 = 349
         };
 
       Material get_compound(material m);
