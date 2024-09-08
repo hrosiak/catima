@@ -34,7 +34,7 @@ constexpr double fine_structure_inverted = 1/fine_structure;
 constexpr double c_light = 299.792458; //Mm/s
 constexpr double bohr_velocity = 2.19 / c_light; // in c unit
 constexpr double hbar = 6.582119514; // in eV*s * 10^-16
-
+constexpr double Es_squared = 2.0*PI*fine_structure_inverted*electron_mass*electron_mass; 
 constexpr double dedx_constant = 0.3070749187;  //4*pi*Na*me*c^2*r_e^2  //MeV cm^2
 constexpr double domega2dx_constant = dedx_constant*electron_mass;  //4*pi*Na*me*c^2*r_e^2  //MeV^2 cm^2
 
