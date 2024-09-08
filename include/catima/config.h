@@ -69,6 +69,7 @@ namespace catima{
         unsigned char calculation = 1;
         unsigned char low_energy = low_energy_types::srim_85;
         unsigned char scattering = scattering_types::atima_scattering;        
+        double scattering_factor = 1.0;
     };
 
 

@@ -110,10 +110,10 @@ double domega2de(const Projectile &p, double T, const Material &t, const Config 
 }
 double da2dx(const Projectile &p, const Material &mat, const Config &c){  
     double Es2 = 198.81;
-    double f = 1.0;    
-    if(c.scattering == scattering_types::dhighland)Es2 = 15*15;
-    if(c.scattering == scattering_types::fermi_rossi)Es2 = 15*15;
-    return f*angular_scattering_power(p,mat, Es2);
+    //double f = 1.0;    
+    if(c.scattering == scattering_types::dhighland)Es2 = Es_squared;
+    if(c.scattering == scattering_types::fermi_rossi)Es2 = Es_squared;
+    return c.scattering_factor*angular_scattering_power(p,mat, Es2);
 }
 
 /*
