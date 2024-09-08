@@ -145,10 +145,20 @@ using namespace std;
       catima::Config c2;
       catima::Config c3{catima::z_eff_type::none};
       catima::Config c4;
+      
       CHECK(c1.z_effective == catima::default_config.z_effective);
+      CHECK(c2.z_effective == catima::default_config.z_effective);
+      CHECK(c3.z_effective != catima::default_config.z_effective);
+      CHECK(c4.z_effective == catima::default_config.z_effective);
+
 
       CHECK(c1==c2);
       CHECK( !(c1==c3));
+      CHECK(c1==c4);
+
+      c4.scattering_factor = 0.8;
+      CHECK(!(c1==c4));    
+      c4.scattering_factor = 1.0;
       CHECK(c1==c4);
 
       c4.z_effective = catima::z_eff_type::global;
