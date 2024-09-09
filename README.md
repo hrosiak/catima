@@ -1,6 +1,5 @@
 ![Linux build](https://github.com/hrosiak/catima/actions/workflows/build_linux.yaml/badge.svg)]
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/dc251db65f7a4c06ae07380544ea08fc)]()
-![Build](https://github.com/hrosiak/pycatima/actions/workflows/build.yml/badge.svg)
 [![Documentation Status](https://readthedocs.org/projects/catima/badge/?version=latest)](https://catima.readthedocs.io/en/latest/?badge=latest)
 
 CATima
