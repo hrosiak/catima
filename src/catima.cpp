@@ -151,8 +151,8 @@ double angular_variance(Projectile p, const Material &t, const Config &c, int or
     double rrange = std::min(range/t.density(), t.thickness_cm()); // residual range, in case of stopping inside material
     double X0 = radiation_length(t);
     double Es2 = 198.81;
-    if(c.scattering == scattering_types::dhighland)Es2 = 15*15;
-    if(c.scattering == scattering_types::fermi_rossi)Es2 = 15*15;
+    if(c.scattering == scattering_types::dhighland)Es2 = Es_squared;
+    if(c.scattering == scattering_types::fermi_rossi)Es2 = Es_squared;
 
     auto fx0p = [&](double x)->double{         
         double e =energy_out(T,x*t.density(),range_spline);
