@@ -55,7 +55,7 @@ jobs:
 
           mkdir build
           cd build
-          cmake .. -TESTS=ON
+          cmake .. -DTESTS=ON
       - name: Compile
         run: cmake --build build
       - name: Test
