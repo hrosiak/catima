@@ -18,11 +18,13 @@ namespace catima{
 Config default_config;
 
 bool operator==(const Config &a, const Config&b){
-    if(std::memcmp(&a,&b,sizeof(Config)) == 0){
-        return true;
-        }
-    else
-        return false;
+    if(a.scattering != b.scattering)return false;
+    if(a.z_effective != b.z_effective)return false;
+    if(a.corrections != b.corrections)return false;
+    if(a.calculation != b.calculation)return false;
+    if(a.low_energy != b.low_energy)return false;
+    if(fabs(a.scattering_factor-b.scattering_factor)>1e-3) return false;
+    return true;
     }
 
 
