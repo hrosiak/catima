@@ -1,0 +1,61 @@
+name: Build and test on Linux
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - doc/**
+      - '**/*.yml'
+      - '*.md'
+      - '*.toml'
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - doc/**
+      - '**/*.yml'
+      - '*.md'
+      - '*.toml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      fail-fast: true
+      matrix:
+        os:
+          - ubuntu-24.04
+        compiler:
+          - clang
+          - gcc
+    runs-on: ${{ matrix.os }}
+    steps:
+      - run: sudo apt-get -qq update
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -yqq --no-install-recommends \
+            cmake \
+            doctest-dev
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configure with CMake
+        run: |
+          set -x # show the commands we're running
+          [[ "${{ matrix.compiler }}" == "clang"* ]] && CC=clang
+          [[ "${{ matrix.compiler }}" == "clang"* ]] && CXX=clang++
+
+          [[ "${{ matrix.compiler }}" == "gcc"* ]] && CC=gcc
+          [[ "${{ matrix.compiler }}" == "gcc"* ]] && CXX=g++
+
+          mkdir build
+          cd build
+          cmake .. -TESTS=ON
+      - name: Compile
+        run: cmake --build build
+      - name: Test
+        working-directory: build
+        run: ctest
