@@ -2,8 +2,8 @@ include(FetchContent)
 set(DOCTEST_VERSION v2.4.11)
 FetchContent_Declare(
   doctest
-  GIT_REPOSITORY https://github.com
-  GIT_TAG        v2.4.11 # Replace with the latest stable version
+  GIT_REPOSITORY https://github.com/doctest/doctest.git
+  GIT_TAG        v2.4.11 
 )
 FetchContent_MakeAvailable(doctest)
 find_package(doctest REQUIRED)
