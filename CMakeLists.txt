@@ -1,15 +1,12 @@
-cmake_minimum_required(VERSION 3.14...3.25)
+cmake_minimum_required(VERSION 3.15)
 
-set(LOCAL_PROJECT_VERSION "1.8.0")
 set(LOCAL_PROJECT_VENDOR "A. Prochazka")
 set(LOCAL_PROJECT_NAMESPACE "catima")
 set(LOCAL_PROJECT_NAME "catima")
 set(LOCAL_PROJECT_OUTPUT_NAME "catima")
 set(LOCAL_PROJECT_DESCRIPTION "C++ library for calculation of energy loss, range, angular scattering and time of flight of the particle passing through matter. ")
 
-
-project(${LOCAL_PROJECT_NAME}
-        VERSION ${LOCAL_PROJECT_VERSION}
+project(${LOCAL_PROJECT_NAME}        
         DESCRIPTION ${LOCAL_PROJECT_DESCRIPTION}
         )
 
