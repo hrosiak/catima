@@ -1,3 +1,11 @@
+
+set(DOCTEST_VERSION v2.4.11)
+FetchContent_Declare(
+  doctest
+  GIT_REPOSITORY https://github.com
+  GIT_TAG        v2.4.11 # Replace with the latest stable version
+)
+FetchContent_MakeAvailable(doctest)
 find_package(doctest REQUIRED)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
