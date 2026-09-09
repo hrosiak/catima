@@ -1,0 +1,53 @@
+name: Build and test on Linux
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - doc/**
+      - '**/*.yml'
+      - '**/*.yaml'
+      - '*.md'
+      - '*.toml'
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - doc/**
+      - '**/*.yml'
+      - '**/*.yaml'
+      - '*.md'
+      - '*.toml'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      fail-fast: true
+      matrix:
+        os:
+          - windows-latest        
+    runs-on: ${{ matrix.os }}
+    steps:
+      - run: sudo apt-get -qq update
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -yqq --no-install-recommends \
+            cmake \
+            doctest-dev
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Configure with CMake
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DTESTS=ON
+      - name: Compile
+        run: cmake --build build
+      - name: Test
+        working-directory: build
+        run: ctest
