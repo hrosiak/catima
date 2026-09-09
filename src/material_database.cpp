@@ -27,7 +27,7 @@ namespace catima{
 		 case material::Kapton:	 return Material({{0,1,0.026362},{0,6,0.691133},{0,7,0.07327},{0,8,0.209235}},1.42);
 		 case material::Mylar:	 return Material({{0,6,10},{0,1,8},{0,8,4}},1.38);
 		 case material::NaF:	 return Material({{0,11,1},{0,9,1}},2.56);
-		 case material::P10:	 return Material({{0,18,9},{0,6,1},{0,1,4}},0.00166);
+		 case material::P10:	 return Material({{0,18,0.9},{0,6,0.1},{0,1,0.4}},0.00166);
 		 case material::Polyolefin:	 return Material({{0,8,8},{0,1,16}},0.9);
 		 case material::CmO2:	 return Material({{0,96,1},{0,8,2}},12);
 		 case material::Suprasil:	 return Material({{0,14,0.37722},{0,8,0.539562},{0,5,0.040064},{0,11,0.028191},{0,13,0.011644},{0,19,0.003321}},2.2);
