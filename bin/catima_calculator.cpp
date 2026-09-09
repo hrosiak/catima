@@ -82,7 +82,7 @@ int main( int argc, char * argv[] )
                         double emax = e["max"].get<double>();
                         int num=0;
                         if(e.count("step")){
-                            num = 1+(emax-emin)/e["step"].get<int>();
+                            num = 1+(emax-emin)/e["step"].get<double>();
                         }
                         if(e.count("num")){
                             num = e["num"].get<int>();
