@@ -33,12 +33,6 @@ jobs:
           - windows-latest        
     runs-on: ${{ matrix.os }}
     steps:
-      - run: sudo apt-get -qq update
-      - name: Install dependencies
-        run: |
-          sudo apt-get install -yqq --no-install-recommends \
-            cmake \
-            doctest-dev
       - name: Checkout
         uses: actions/checkout@v7
       - name: Configure with CMake
