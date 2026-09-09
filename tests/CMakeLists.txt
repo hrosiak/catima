@@ -1,4 +1,4 @@
-
+include(FetchContent)
 set(DOCTEST_VERSION v2.4.11)
 FetchContent_Declare(
   doctest
