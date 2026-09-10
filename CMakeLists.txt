@@ -8,6 +8,7 @@ set(LOCAL_PROJECT_DESCRIPTION "C++ library for calculation of energy loss, range
 
 project(${LOCAL_PROJECT_NAME}        
         DESCRIPTION ${LOCAL_PROJECT_DESCRIPTION}
+        VERSION 1.9
         )
 
 ############ options #############
