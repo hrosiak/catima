@@ -53,9 +53,6 @@ namespace catima{
     
 #ifndef NUREX
 double SigmaR_Kox(int Ap, int Zp, double E, int At, int Zt);
-inline double p_from_T(double T, double M=1.0){
-    return M*sqrt(T*T + 2*T*atomic_mass_unit);
-}
 
 /// calculates Ecm fom T, return in MeV units
 inline double Ecm_from_T(double T, double Ap, double At){
