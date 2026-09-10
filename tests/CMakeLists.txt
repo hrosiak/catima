@@ -1,14 +1,3 @@
-include(FetchContent)
-set(DOCTEST_VERSION v2.4.11)
-FetchContent_Declare(
-  doctest
-  GIT_REPOSITORY https://github.com/doctest/doctest.git
-  GIT_TAG        v2.4.11 
-)
-FetchContent_MakeAvailable(doctest)
-find_package(doctest REQUIRED)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/tests)
-
 set(CATIMA_TESTS test_calculations test_generated test_storage test_structures test_dedx_range test_abundances)
 
 foreach(entry ${CATIMA_TESTS})
