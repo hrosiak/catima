@@ -18,12 +18,6 @@
 #include "catima/storage.h"
 #include "catima/catima.h"
 namespace catima {
-    Data _storage;
-    #ifdef VETABLE    
-    LogVArray<max_datapoints> energy_table(logEmin,logEmax);
-    #else
-    EnergyTable<max_datapoints> energy_table(logEmin,logEmax);
-    #endif
     
     bool operator==(const DataPoint &a, const DataPoint &b){
 	if( (a.m == b.m) && (a.p == b.p) && (a.config == b.config)){
@@ -84,19 +78,19 @@ double InterpolatorGSL::derivative(double x)const{
     Interpolator get_range_spline(const DataPoint &data){
         //return Interpolator(energy_table.values,data.range);
         //return data.range_spline;
-        return Interpolator(energy_table,data.range);
+        return Interpolator(get_energy_table(),data.range);
     }
 
     Interpolator get_range_straggling_spline(const DataPoint &data){
         //return Interpolator(energy_table.values,data.range_straggling);
         //return data.range_straggling_spline;
-        return Interpolator(energy_table,data.range_straggling);
+        return Interpolator(get_energy_table(),data.range_straggling);
     }
 
     Interpolator get_angular_variance_spline(const DataPoint &data){
         //return Interpolator(energy_table.values,data.angular_variance);
         //return data.angular_variance_spline;
-        return Interpolator(energy_table,data.angular_variance);
+        return Interpolator(get_energy_table(),data.angular_variance);
     }
 #endif
     Data::Data(){
@@ -117,12 +111,12 @@ void Data::Add(const Projectile &p, const Material &t, const Config &c){
     if(index==storage.end())index=storage.begin();
     *index = calculate_DataPoint(p,t,c);
 #ifdef STORE_SPLINES
-    //index->range_spline = Interpolator(energy_table.values,index->range);
-    //index->range_straggling_spline = Interpolator(energy_table.values,index->range_straggling);
-    //index->angular_variance_spline = Interpolator(energy_table.values,index->angular_variance);
-    index->range_spline = Interpolator(energy_table, index->range);
-    index->range_straggling_spline = Interpolator(energy_table, index->range_straggling);
-    index->angular_variance_spline = Interpolator(energy_table, index->angular_variance);
+    //index->range_spline = Interpolator(get_energy_table().values,index->range);
+    //index->range_straggling_spline = Interpolator(get_energy_table().values,index->range_straggling);
+    //index->angular_variance_spline = Interpolator(get_energy_table().values,index->angular_variance);
+    index->range_spline = Interpolator(get_energy_table(), index->range);
+    index->range_straggling_spline = Interpolator(get_energy_table(), index->range_straggling);
+    index->angular_variance_spline = Interpolator(get_energy_table(), index->angular_variance);
 #endif
     index++;
     }

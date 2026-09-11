@@ -2,161 +2,6 @@
 #include <cmath>
 #include <algorithm>
 namespace catima{
-/**
-  * return SRIM proton stopping power
-  * @param Z - proton number of material
-  * @param energy - energy per nuclein in MeV/u
-  */
-
-double p_se(int Z, double energy){
-    double sp = -1;
-    double e = 1000*energy; //e in keV/u
-    int i = Z - 1;
-    if(Z>92){  // dealing with trans-U where no Srim data
-        i = 91;
-        }
-    if(e<=25)e=25;
-    double sl = (pse_95[i][0]*std::pow(e,pse_95[i][1])) + (pse_95[i][2]*std::pow(e,pse_95[i][3]));
-    double sh = pse_95[i][4]/std::pow(e,pse_95[i][5]) * std::log( (pse_95[i][6]/e) + (pse_95[i][7]*e));
-    sp = sl*sh/(sl+sh);
-    e=1000*energy;
-    if(e<=25){
-        sp *=(Z>6)?std::pow(e/25.0,0.45):std::pow(e/25.0,0.25);
-    }
-
-    return sp;
-};
-/**
-  * return SRIM proton stopping power
-  * @param Z - proton number of material
-  * @param energy - energy per nuclein in MeV/u
-  */
-double p_se85(int Z, double energy){
-    double sp = -1;
-    double e = 1000*energy; //e in keV/u
-    int i = Z - 1;
-    if(Z>92){  // dealing with trans-U where no Srim data
-        i = 91;
-        }
-    if(e<=25)e=25;
-    double sl = (proton_stopping_coef[i][0]*std::pow(e,proton_stopping_coef[i][1])) + (proton_stopping_coef[i][2]*std::pow(e,proton_stopping_coef[i][3]));
-    double sh = proton_stopping_coef[i][4]/std::pow(e,proton_stopping_coef[i][5]) * std::log( (proton_stopping_coef[i][6]/e) + (proton_stopping_coef[i][7]*e));
-    sp = sl*sh/(sl+sh);
-    e=1000*energy;
-    if(e<=25){
-        sp *=(Z>6)?std::pow(e/25.0,0.45):std::pow(e/25.0,0.25);
-    }
-
-    return sp;
-};
-
-/**
-  * return srim stopping power
-  * @param pZ - projectile Z
-  * @param pZ - material Z
-  * @param energy - projectile energy in MeV/u unit
-  */
-double srim_dedx_e(int pZ, int tZ, double energy, bool use_new){
-    double e=energy*1000; // e in keV/u
-    double se = 0;
-    double (*const fp_se)(int, double) = (use_new)?p_se:p_se85;
-//    double (*const fp_se)(int, double) = p_se85;
-    if(pZ==1){
-        return (*fp_se)(tZ, energy);
-    }
-    else if(pZ == 2){
-        double a=0;
-        double b=0;
-
-        if(e<=1)e=1;
-        // He Zeff
-        b = log(e);
-        a = 0.2865 + b*(0.1266+ b*(-0.001429+ b*(0.02402 + b*(-0.01135 + b*0.001475))));
-        double heh = 1.0 - exp(-std::min(30.,a));
-        b = 7.6 - std::max(0., b);
-        a = (1.0 + (0.007 + 0.00005*tZ)*exp(- b*b ));
-        heh *= a*a;
-        //zeta = sqrt(heh);
-        se = (*fp_se)(tZ, energy)*heh*4.0; //scale proton stopping
-        if(e==1)se*= sqrt(e);  //vel proportional
-        return se;
-    }
-    else{ // heavy ion
-        double a,q,b;
-        double l1,l0,l;
-        double YRmin = 0.130; //  YRmin = VR / ZP**0.67 <= 0.13 OR VR <= 1.0
-        double VRmin = 1.0;
-        double v=0;
-        double vfermi;
-        double yr=0;
-        double zeta = 0;
-        double se;
-        int i;
-        double pZ13_inv = 1.0/std::pow(pZ,1.0/3.0);
-        double pZ23_inv = pZ13_inv*pZ13_inv;
-
-        i = tZ - 1;
-        if(tZ>92){
-            i = 91;
-            }
-        vfermi = atima_vfermi[i];
-
-        v = sqrt(e/25.0)/vfermi;
-        double v2=v*v;
-
-        double vr = (v >= 1)? v*vfermi*(1.+ 0.2/v2) : 3.0*vfermi/4.0*(1.0+v2*(2.0/3.0-v2/15.0));
-
-        yr = std::max(YRmin,vr * pZ23_inv);
-        yr = std::max(yr,VRmin * pZ23_inv);
-
-        //--  CALCULATE ZEFF
-        a = -0.803*std::pow(yr,0.3) + 1.3167*std::pow(yr,0.6) + 0.38157*yr + 0.008983*yr*yr;
-        q = std::min(1.0, std::max(0.0 , (1.0 - exp(-std::min(a, 50.0))))); //-- Q = IONIZATION LEVEL OF THE ION AT RELATIVE VELOCITY YR
-
-        //-- IONIZATION LEVEL TO EFFECTIVE CHARGE
-        b = (std::min(0.43, std::max(0.32,0.12 + 0.025*pZ)))*pZ13_inv;
-        l0 = (.8 - q * std::min(1.2,0.6 +pZ/30.0))*pZ13_inv;
-        if(q < 0.2){
-            l1 = 0;
-            }
-        else{
-            if (q < std::max(0.0,0.9-0.025*pZ)){
-                l1 = b*(q-0.2)/fabs(std::max(0.0,0.9-0.025*pZ)-0.2000001);
-                }
-	     	 else{
-             	if(q < std::max(0.0,1.0 - 0.025*std::min(16.,(double)pZ))) l1 = b;
-                else l1 = b*(1.0 - q)/(0.025*std::min(16.,(double)pZ));
-                }
-        }
-        // calculate screening
-        i = (pZ>92)?91:pZ-1;
-        l = std::max(l1,l0*atima_lambda_screening[i]);
-        double h1 =4.0*l*vfermi/1.919;
-        zeta = q + (1./(2.*(vfermi*vfermi)))*(1. - q)* log1p(h1*h1);
-         // ZP**3 EFFECT AS IN REF. 779?
-        a = 7.6 - std::max(0.0, log(e));
-        zeta = zeta*(1. + (1./(pZ*pZ))*(0.18 + .0015*tZ)*exp(-a*a));
-        double c1 = zeta *pZ;
-        if (yr <= ( std::max(YRmin, VRmin * pZ23_inv))){
-            VRmin=std::max(VRmin, YRmin/pZ23_inv);
-            //--C        ..CALCULATE VELOCITY STOPPING FOR YR < YRmin
-            double vmin =.5*(VRmin + sqrt(std::max(0.0,VRmin*VRmin - .8*vfermi*vfermi)));
-            double eee = 25.0*vmin*vmin;
-            double eval = 1;
-//              if((tZ == 6) || (((tZ == 14) || (tZ == 32)) &&  (pZ <= 19))) eval = 0.375;
-            if((tZ == 6) || (((tZ == 14) || (tZ == 32)) &&  (pZ <= 19))) eval = 0.35;
-            else eval = 0.5;
-
-            double h4 = std::pow(e / eee,eval);
-            se = (*fp_se)(tZ, eee*0.001) * c1*c1*h4;
-            return se;
-        }
-        else {
-            return (*fp_se)(tZ,energy)*std::pow(c1,2.0);
-        }
-        return 0;
-    }
-};
 
 const double pse_95[92][8] = {
 //H
@@ -645,5 +490,163 @@ const double  atima_vfermi[92] = {
 0.81065,
 1.9578,
 1.0257};
+
+
+/**
+  * return SRIM proton stopping power
+  * @param Z - proton number of material
+  * @param energy - energy per nuclein in MeV/u
+  */
+
+double p_se(int Z, double energy){
+    double sp = -1;
+    double e = 1000*energy; //e in keV/u
+    int i = Z - 1;
+    if(Z>92){  // dealing with trans-U where no Srim data
+        i = 91;
+        }
+    if(e<=25)e=25;
+    double sl = (pse_95[i][0]*std::pow(e,pse_95[i][1])) + (pse_95[i][2]*std::pow(e,pse_95[i][3]));
+    double sh = pse_95[i][4]/std::pow(e,pse_95[i][5]) * std::log( (pse_95[i][6]/e) + (pse_95[i][7]*e));
+    sp = sl*sh/(sl+sh);
+    e=1000*energy;
+    if(e<=25){
+        sp *=(Z>6)?std::pow(e/25.0,0.45):std::pow(e/25.0,0.25);
+    }
+
+    return sp;
+};
+/**
+  * return SRIM proton stopping power
+  * @param Z - proton number of material
+  * @param energy - energy per nuclein in MeV/u
+  */
+double p_se85(int Z, double energy){
+    double sp = -1;
+    double e = 1000*energy; //e in keV/u
+    int i = Z - 1;
+    if(Z>92){  // dealing with trans-U where no Srim data
+        i = 91;
+        }
+    if(e<=25)e=25;
+    double sl = (proton_stopping_coef[i][0]*std::pow(e,proton_stopping_coef[i][1])) + (proton_stopping_coef[i][2]*std::pow(e,proton_stopping_coef[i][3]));
+    double sh = proton_stopping_coef[i][4]/std::pow(e,proton_stopping_coef[i][5]) * std::log( (proton_stopping_coef[i][6]/e) + (proton_stopping_coef[i][7]*e));
+    sp = sl*sh/(sl+sh);
+    e=1000*energy;
+    if(e<=25){
+        sp *=(Z>6)?std::pow(e/25.0,0.45):std::pow(e/25.0,0.25);
+    }
+
+    return sp;
+};
+
+/**
+  * return srim stopping power
+  * @param pZ - projectile Z
+  * @param pZ - material Z
+  * @param energy - projectile energy in MeV/u unit
+  */
+double srim_dedx_e(int pZ, int tZ, double energy, bool use_new){
+    double e=energy*1000; // e in keV/u
+    double se = 0;
+    double (*const fp_se)(int, double) = (use_new)?p_se:p_se85;
+//    double (*const fp_se)(int, double) = p_se85;
+    if(pZ==1){
+        return (*fp_se)(tZ, energy);
+    }
+    else if(pZ == 2){
+        double a=0;
+        double b=0;
+
+        if(e<=1)e=1;
+        // He Zeff
+        b = log(e);
+        a = 0.2865 + b*(0.1266+ b*(-0.001429+ b*(0.02402 + b*(-0.01135 + b*0.001475))));
+        double heh = 1.0 - exp(-std::min(30.,a));
+        b = 7.6 - std::max(0., b);
+        a = (1.0 + (0.007 + 0.00005*tZ)*exp(- b*b ));
+        heh *= a*a;
+        //zeta = sqrt(heh);
+        se = (*fp_se)(tZ, energy)*heh*4.0; //scale proton stopping
+        if(e==1)se*= sqrt(e);  //vel proportional
+        return se;
+    }
+    else{ // heavy ion
+        double a,q,b;
+        double l1,l0,l;
+        double YRmin = 0.130; //  YRmin = VR / ZP**0.67 <= 0.13 OR VR <= 1.0
+        double VRmin = 1.0;
+        double v=0;
+        double vfermi;
+        double yr=0;
+        double zeta = 0;
+        double se;
+        int i;
+        double pZ13_inv = 1.0/std::pow(pZ,1.0/3.0);
+        double pZ23_inv = pZ13_inv*pZ13_inv;
+
+        i = tZ - 1;
+        if(tZ>92){
+            i = 91;
+            }
+        vfermi = atima_vfermi[i];
+
+        v = sqrt(e/25.0)/vfermi;
+        double v2=v*v;
+
+        double vr = (v >= 1)? v*vfermi*(1.+ 0.2/v2) : 3.0*vfermi/4.0*(1.0+v2*(2.0/3.0-v2/15.0));
+
+        yr = std::max(YRmin,vr * pZ23_inv);
+        yr = std::max(yr,VRmin * pZ23_inv);
+
+        //--  CALCULATE ZEFF
+        a = -0.803*std::pow(yr,0.3) + 1.3167*std::pow(yr,0.6) + 0.38157*yr + 0.008983*yr*yr;
+        q = std::min(1.0, std::max(0.0 , (1.0 - exp(-std::min(a, 50.0))))); //-- Q = IONIZATION LEVEL OF THE ION AT RELATIVE VELOCITY YR
+
+        //-- IONIZATION LEVEL TO EFFECTIVE CHARGE
+        b = (std::min(0.43, std::max(0.32,0.12 + 0.025*pZ)))*pZ13_inv;
+        l0 = (.8 - q * std::min(1.2,0.6 +pZ/30.0))*pZ13_inv;
+        if(q < 0.2){
+            l1 = 0;
+            }
+        else{
+            if (q < std::max(0.0,0.9-0.025*pZ)){
+                l1 = b*(q-0.2)/fabs(std::max(0.0,0.9-0.025*pZ)-0.2000001);
+                }
+	     	 else{
+             	if(q < std::max(0.0,1.0 - 0.025*std::min(16.,(double)pZ))) l1 = b;
+                else l1 = b*(1.0 - q)/(0.025*std::min(16.,(double)pZ));
+                }
+        }
+        // calculate screening
+        i = (pZ>92)?91:pZ-1;
+        l = std::max(l1,l0*atima_lambda_screening[i]);
+        double h1 =4.0*l*vfermi/1.919;
+        zeta = q + (1./(2.*(vfermi*vfermi)))*(1. - q)* log1p(h1*h1);
+         // ZP**3 EFFECT AS IN REF. 779?
+        a = 7.6 - std::max(0.0, log(e));
+        zeta = zeta*(1. + (1./(pZ*pZ))*(0.18 + .0015*tZ)*exp(-a*a));
+        double c1 = zeta *pZ;
+        if (yr <= ( std::max(YRmin, VRmin * pZ23_inv))){
+            VRmin=std::max(VRmin, YRmin/pZ23_inv);
+            //--C        ..CALCULATE VELOCITY STOPPING FOR YR < YRmin
+            double vmin =.5*(VRmin + sqrt(std::max(0.0,VRmin*VRmin - .8*vfermi*vfermi)));
+            double eee = 25.0*vmin*vmin;
+            double eval = 1;
+//              if((tZ == 6) || (((tZ == 14) || (tZ == 32)) &&  (pZ <= 19))) eval = 0.375;
+            if((tZ == 6) || (((tZ == 14) || (tZ == 32)) &&  (pZ <= 19))) eval = 0.35;
+            else eval = 0.5;
+
+            double h4 = std::pow(e / eee,eval);
+            se = (*fp_se)(tZ, eee*0.001) * c1*c1*h4;
+            return se;
+        }
+        else {
+            return (*fp_se)(tZ,energy)*std::pow(c1,2.0);
+        }
+        return 0;
+    }
+};
+
 
 }  // namespace catima

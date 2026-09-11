@@ -48,40 +48,40 @@ using catima::LN10;
                 {12,6,1}
                 });
             
-      catima::_storage.Reset();
-      CHECK(catima::_storage.get_index()==0);
+      catima::get_storage().Reset();
+      CHECK(catima::get_storage().get_index()==0);
       
-      catima::_storage.Add(p,water);
-      auto& dp = catima::_storage.Get(0);
-      CHECK(catima::_storage.get_index()==1);
+      catima::get_storage().Add(p,water);
+      auto& dp = catima::get_storage().Get(0);
+      CHECK(catima::get_storage().get_index()==1);
       CHECK(dp.p.A==12);
       CHECK(dp.m.ncomponents()==2);
-      catima::_storage.Add(p,water);
-      auto& dp2 = catima::_storage.Get(1);
-      CHECK(catima::_storage.get_index()==1);
+      catima::get_storage().Add(p,water);
+      auto& dp2 = catima::get_storage().Get(1);
+      CHECK(catima::get_storage().get_index()==1);
       CHECK(dp2.p.A==0);
       CHECK(dp2.m.ncomponents()==0);
       
-      catima::_storage.Add(p,graphite);
-      auto&  dp3 = catima::_storage.Get(1);
-      CHECK(catima::_storage.get_index()==2);
+      catima::get_storage().Add(p,graphite);
+      auto&  dp3 = catima::get_storage().Get(1);
+      CHECK(catima::get_storage().get_index()==2);
       CHECK(dp3.p.A==12);
       CHECK(dp3.m.ncomponents()==1);
       
-      catima::_storage.Add(p,graphite);
-      CHECK(catima::_storage.get_index()==2);
+      catima::get_storage().Add(p,graphite);
+      CHECK(catima::get_storage().get_index()==2);
       
       catima::Config c1;
       c1.z_effective = catima::z_eff_type::global;
 
-      catima::_storage.Add(p,graphite, c1);
-      CHECK(catima::_storage.get_index()==3);
+      catima::get_storage().Add(p,graphite, c1);
+      CHECK(catima::get_storage().get_index()==3);
       
-      catima::_storage.Add(p,graphite);
-      CHECK(catima::_storage.get_index()==3);
+      catima::get_storage().Add(p,graphite);
+      CHECK(catima::get_storage().get_index()==3);
       c1.z_effective = catima::z_eff_type::hubert;
-      catima::_storage.Add(p,graphite ,c1);
-      CHECK(catima::_storage.get_index()==4);
+      catima::get_storage().Add(p,graphite ,c1);
+      CHECK(catima::get_storage().get_index()==4);
       
     }
     TEST_CASE("test maximum storage"){
@@ -95,20 +95,20 @@ using catima::LN10;
       catima::Material graphite({
                 {12,6,1}
                 });
-      catima::_storage.Reset();      
-      CHECK(catima::_storage.get_index()==0);
+      catima::get_storage().Reset();      
+      CHECK(catima::get_storage().get_index()==0);
       for(int i=1;i<maxdata+1;i++){
           catima::Projectile p1{2.0*i,(double)i,(double)i,1000};
-          catima::_storage.Add(p1,graphite);
-          CHECK(catima::_storage.get_index()==i);
-          CHECK(catima::_storage.GetN()==maxdata);
+          catima::get_storage().Add(p1,graphite);
+          CHECK(catima::get_storage().get_index()==i);
+          CHECK(catima::get_storage().GetN()==maxdata);
       }
-      CHECK(catima::_storage.get_index()==maxdata);
+      CHECK(catima::get_storage().get_index()==maxdata);
       for(int i=1;i<maxdata-1;i++){
           catima::Projectile p1{2.0*i,(double)i,(double)i,1000};
-          catima::_storage.Add(p1,water);
-          CHECK(catima::_storage.get_index()==i);
-          CHECK(catima::_storage.GetN()==maxdata);
+          catima::get_storage().Add(p1,water);
+          CHECK(catima::get_storage().get_index()==i);
+          CHECK(catima::get_storage().GetN()==maxdata);
       }
 
   

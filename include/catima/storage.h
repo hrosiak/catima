@@ -132,11 +132,16 @@ namespace catima{
         };
     
     #ifdef VETABLE
+    using table_type = LogVArray<max_datapoints>;
     extern LogVArray<max_datapoints> energy_table;
     #else
-    extern EnergyTable<max_datapoints> energy_table;
+    using table_type = EnergyTable<max_datapoints>;
+    //extern EnergyTable<max_datapoints> energy_table;
     #endif
-
+    inline const table_type& get_energy_table(){
+        static table_type instance(logEmin,logEmax);
+        return instance;
+    }
     //////////////////////////////////////////////////////////////////////////////////////
     #ifdef GSL_INTERPOLATION
     /// Interpolation class, to store interpolated values
@@ -217,7 +222,7 @@ class DataPoint{
     Interpolator angular_variance_spline;
 #endif
     DataPoint()=default;
-    DataPoint(const Projectile _p, const Material _m,const Config &_c=default_config):p(_p),m(_m),config(_c){}
+    DataPoint(const Projectile _p, const Material _m,const Config &_c=get_default_config()):p(_p),m(_m),config(_c){}
     DataPoint(const DataPoint&)=delete;
     DataPoint(DataPoint&&)=default;
     DataPoint& operator=(const DataPoint&)=default;
@@ -249,7 +254,7 @@ class DataPoint{
          * @param t - Material
          * @param c - Config
          */
-        void Add(const Projectile &p, const Material &t, const Config &c=default_config);
+        void Add(const Projectile &p, const Material &t, const Config &c=get_default_config());
 
         int GetN() const {return storage.size();};
         void Reset(){storage.clear();storage.resize(max_storage_data);index=storage.begin();};
@@ -261,7 +266,7 @@ class DataPoint{
          * @param c - Config
          * @return reference to DataPoint
          */
-        DataPoint& Get(const Projectile &p, const Material &t, const Config &c=default_config);
+        DataPoint& Get(const Projectile &p, const Material &t, const Config &c=get_default_config());
         DataPoint& Get(unsigned int i){return storage[i];};
         int get_index() {return std::distance(storage.begin(),index);}
 
@@ -270,7 +275,10 @@ class DataPoint{
         std::vector<DataPoint>::iterator index;
     };
 
-    extern Data _storage;
+    inline Data& get_storage(){
+        static Data instance;
+        return instance;
+    }
 
     /**
      * @brief get_data - Get DataPoint from the global storage class
@@ -279,8 +287,8 @@ class DataPoint{
      * @param c - Config
      * @return const reference to DataPoint
      */
-    inline const DataPoint& get_data(const Projectile &p, const Material &t, const Config &c=default_config){
-		return _storage.Get(p, t, c);
+    inline const DataPoint& get_data(const Projectile &p, const Material &t, const Config &c=get_default_config()){
+		return get_storage().Get(p, t, c);
 	}
 
     bool operator==(const DataPoint &a, const DataPoint &b);

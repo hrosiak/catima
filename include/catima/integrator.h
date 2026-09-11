@@ -64,8 +64,16 @@ using integrator_type = GaussLegendreIntegration<8>;
 #endif
 using integrator_adaptive_type = GaussKronrodIntegration<21>;
 
-extern integrator_type integrator;
-extern integrator_adaptive_type integrator_adaptive;
+inline const integrator_type& integrator(){
+    static integrator_type instance;
+    return instance;
+}
+
+inline const integrator_adaptive_type& integrator_adaptive(){
+    static integrator_adaptive_type instance;
+    return instance;
+}
+
 }
 
 #endif

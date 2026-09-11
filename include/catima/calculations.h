@@ -31,7 +31,7 @@ namespace catima{
     /**
       * returns energy loss straggling
       */
-    double dedx_variance(const Projectile &p, const Target &t, const Config &c=default_config);
+    double dedx_variance(const Projectile &p, const Target &t, const Config &c=get_default_config());
 
     /**
       * returns reduced energy loss unit for projectile-target combination
@@ -43,8 +43,8 @@ namespace catima{
      * @brief bethek_dedx_e - electronics stopping power
      * @return stopping power
      */
-    double bethek_dedx_e(const Projectile &p,const Target &t, const Config &c=default_config, double I=0.0);
-    double bethek_dedx_e(const Projectile &p,const Material &mat, const Config &c=default_config);
+    double bethek_dedx_e(const Projectile &p,const Target &t, const Config &c=get_default_config(), double I=0.0);
+    double bethek_dedx_e(const Projectile &p,const Material &mat, const Config &c=get_default_config());
 
     /** 
       * calculates barkas effect
@@ -98,7 +98,7 @@ namespace catima{
     /**
       * electronic energy loss for low energy, should be like SRIM
       */ 
-    double sezi_dedx_e(const Projectile &p, const Material &mat, const Config &c=default_config);
+    double sezi_dedx_e(const Projectile &p, const Material &mat, const Config &c=get_default_config());
 
     //constexpr double Es2_FR =2*PI/fine_structure* electron_mass * electron_mass;
     constexpr double Es2_FR = 198.81;
@@ -152,7 +152,7 @@ namespace catima{
       * @param c - Configuration, the z effective will be calculated according to c.z_effective value
       * @return - z effective
       */ 
-    double z_effective(const Projectile &p, const Target &t, const Config &c=default_config);
+    double z_effective(const Projectile &p, const Target &t, const Config &c=get_default_config());
 
     /**
       * calculates effective charge

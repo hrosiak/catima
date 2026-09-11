@@ -25,8 +25,8 @@ extern "C" {
     }
 
     CatimaResult catima_calculate(double pa, int pz, double T, double ta, double tz, double thickness, double density){
-        catima::default_config.z_effective = catima_defaults.z_effective;
-        catima::default_config.scattering = 255;
+        catima::get_default_config().z_effective = catima_defaults.z_effective;
+        catima::get_default_config().scattering = 255;
         catima::Projectile p(pa,pz);
         catima::Material mat = make_material(ta,tz, thickness, density);
         catima::Result r =  catima::calculate(p(T),mat);    
@@ -46,31 +46,31 @@ extern "C" {
     }
 
     double catima_Eout(double pa, int pz, double T, double ta, double tz, double thickness, double density){
-        catima::default_config.z_effective = catima_defaults.z_effective;
-        catima::default_config.scattering = 255;
+        catima::get_default_config().z_effective = catima_defaults.z_effective;
+        catima::get_default_config().scattering = 255;
         catima::Projectile p(pa,pz);
         catima::Material mat = make_material(ta,tz, thickness, density);          
         return energy_out(p(T), mat);
     }
 
     double catima_range(double pa, int pz, double T, double ta, double tz){
-        catima::default_config.z_effective = catima_defaults.z_effective;
-        catima::default_config.scattering = 255;
+        catima::get_default_config().z_effective = catima_defaults.z_effective;
+        catima::get_default_config().scattering = 255;
         catima::Projectile p(pa,pz);
         catima::Material mat = make_material(ta,tz, 0, -1);
         return range(p, mat);
     }
 
     double catima_range_straggling(double pa, int pz, double T, double ta, double tz){
-        catima::default_config.z_effective = catima_defaults.z_effective;
-        catima::default_config.scattering = 255;
+        catima::get_default_config().z_effective = catima_defaults.z_effective;
+        catima::get_default_config().scattering = 255;
         catima::Projectile p(pa,pz);
         catima::Material mat = make_material(ta,tz, 0, -1);
         return range_straggling(p, T, mat);
     }
 
     double catima_angular_straggling_from_E(double pa, int pz, double Tin, double Tout,double ta, double tz){
-        catima::default_config.scattering = 255;
+        catima::get_default_config().scattering = 255;
         catima::Projectile p(pa,pz);        
         catima::Material mat = make_material(ta,tz, 0, -1);
 
@@ -78,7 +78,7 @@ extern "C" {
     }
 
     double catima_energy_straggling_from_E(double pa, int pz, double Tin, double Tout,double ta, double tz){
-        catima::default_config.scattering = 255;
+        catima::get_default_config().scattering = 255;
         catima::Projectile p(pa,pz);
         catima::Material mat = make_material(ta,tz, 0, -1);
         return catima::energy_straggling_from_E(p,Tin,Tout,mat);

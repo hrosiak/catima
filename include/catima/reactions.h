@@ -48,8 +48,8 @@ namespace catima{
         double i = ii.integrate(f,0,t);
         return 1.0 - std::exp(-i*0.0001);
     }
-    double nonreaction_rate(Projectile &projectile, const Material &target, const Config &c=default_config);
-    double production_rate(double cs, double rcs_projectile, double rcs_product, const Material &target, const Config &c=default_config);
+    double nonreaction_rate(Projectile &projectile, const Material &target, const Config &c=get_default_config());
+    double production_rate(double cs, double rcs_projectile, double rcs_product, const Material &target, const Config &c=get_default_config());
     
 #ifndef NUREX
 double SigmaR_Kox(int Ap, int Zp, double E, int At, int Zt);
