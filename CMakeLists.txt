@@ -67,6 +67,7 @@ add_library(catima src/abundance_database.cpp
 
 ######### compiler flags ###########
 set_target_properties(catima PROPERTIES POSITION_INDEPENDENT_CODE ON)
+set_target_properties(catima PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 target_compile_features(catima PRIVATE cxx_std_17)
 set_target_properties(catima PROPERTIES CXX_EXTENSIONS OFF)
 target_include_directories(catima
