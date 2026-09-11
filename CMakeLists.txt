@@ -58,7 +58,6 @@ add_library(catima src/abundance_database.cpp
         src/cwrapper.cpp
         src/integrator.cpp
         src/material_database.cpp
-        src/nucdata.cpp
         src/reactions.cpp
         src/spline.cpp
         src/srim.cpp

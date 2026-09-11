@@ -23,7 +23,7 @@ double nonreaction_rate(Projectile &projectile, const Material &target, const Co
     int ap = lround(projectile.A);
     int zp = lround(projectile.Z);
 
-    auto& data = _storage.Get(projectile,target,c);
+    auto& data = get_storage().Get(projectile,target,c);
     spline_type range_spline = get_range_spline(data);
     if(energy_out(projectile.T, target.thickness(), range_spline) < emin_reaction)return -1.0;
     
@@ -51,7 +51,7 @@ double nonreaction_rate(Projectile &projectile, const Material &target, const Co
         cs = target.number_density_cm2()*(cs0 + cs1)/2.0;
     }
     else{
-        cs = Avogadro*catima::integrator.integrate(sigma_r,0,target.thickness())/target.M();
+        cs = Avogadro*catima::integrator().integrate(sigma_r,0,target.thickness())/target.M();
     }
     return exp(-cs*0.0001);
     }

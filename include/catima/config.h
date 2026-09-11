@@ -72,8 +72,9 @@ namespace catima{
         double scattering_factor = 1.0;
     };
 
-
-    extern Config default_config;
+    inline Config& get_default_config() {
+        static Config instance;
+        return instance;
+    }
 }
-
 #endif

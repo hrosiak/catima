@@ -146,10 +146,10 @@ using namespace std;
       catima::Config c3{catima::z_eff_type::none};
       catima::Config c4;
       
-      CHECK(c1.z_effective == catima::default_config.z_effective);
-      CHECK(c2.z_effective == catima::default_config.z_effective);
-      CHECK(c3.z_effective != catima::default_config.z_effective);
-      CHECK(c4.z_effective == catima::default_config.z_effective);
+      CHECK(c1.z_effective == catima::get_default_config().z_effective);
+      CHECK(c2.z_effective == catima::get_default_config().z_effective);
+      CHECK(c3.z_effective != catima::get_default_config().z_effective);
+      CHECK(c4.z_effective == catima::get_default_config().z_effective);
 
 
       CHECK(c1==c2);
@@ -169,7 +169,7 @@ using namespace std;
       c4.z_effective = catima::z_eff_type::hubert;
       CHECK(!(c4==c5) );
       CHECK(!(c4==c1));
-      c4.z_effective = catima::default_config.z_effective;
+      c4.z_effective = catima::get_default_config().z_effective;
       CHECK(!(c5==c4));
       CHECK((c1==c4));
     }

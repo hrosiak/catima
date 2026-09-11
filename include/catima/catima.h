@@ -28,6 +28,7 @@
 #include "catima/calculations.h"
 #include "catima/material_database.h"
 #include "catima/storage.h"
+#include "config.h"
 
 namespace catima{
     
@@ -37,7 +38,7 @@ namespace catima{
       * @param mat - Material
       * @return dEdx
       */
-    double dedx(const Projectile &p, const Material &mat, const Config &c=default_config);
+    double dedx(const Projectile &p, const Material &mat, const Config &c=get_default_config());
     
     /**
       * calculate energy loss straggling variance for projectile-Material combination
@@ -45,12 +46,12 @@ namespace catima{
       * @param t - Material
       * @return dOmega^2/dx
       */
-    double domega2dx(const Projectile &p, const Material &t, const Config &c=default_config);
+    double domega2dx(const Projectile &p, const Material &t, const Config &c=get_default_config());
 
     /**
       * calculates variance of angular scattering of Projectile p on Material m
       */
-    double da2dx(const Projectile &p, const Material &m, const Config &c=default_config);
+    double da2dx(const Projectile &p, const Material &m, const Config &c=get_default_config());
 
     /**
       * returns the range of the Projectile in Material calculated from range spline
@@ -58,7 +59,7 @@ namespace catima{
       * @param t - Material
       * @return range
       */
-    double range(const Projectile &p, const Material &t, const Config &c=default_config);
+    double range(const Projectile &p, const Material &t, const Config &c=get_default_config());
 
     /**
       * returns the dEdx calculated from range spline as derivative
@@ -66,7 +67,7 @@ namespace catima{
       * @param t - Material
       * @return range
       */
-    double dedx_from_range(const Projectile &p, const Material &t, const Config &c=default_config);
+    double dedx_from_range(const Projectile &p, const Material &t, const Config &c=get_default_config());
 
     /**
       * returns the dEdx calculated from range spline as derivative
@@ -75,7 +76,7 @@ namespace catima{
       * @param mat - Material
       * @return range
       */
-    std::vector<double> dedx_from_range(const Projectile &p, const std::vector<double> &T, const Material &t, const Config &c=default_config);
+    std::vector<double> dedx_from_range(const Projectile &p, const std::vector<double> &T, const Material &t, const Config &c=get_default_config());
 
     /**
       * returns the  range straggling of the Projectile in Material from spline
@@ -84,7 +85,7 @@ namespace catima{
       * @param mat - Material
       * @return range straggling
       */
-    double range_straggling(const Projectile &p, double T, const Material &t, const Config &c=default_config);
+    double range_straggling(const Projectile &p, double T, const Material &t, const Config &c=get_default_config());
 
     /**
       * returns the  range variance of the Projectile in Material from spline
@@ -93,7 +94,7 @@ namespace catima{
       * @param mat - Material
       * @return range straggling
       */
-    double range_variance(const Projectile &p, double T, const Material &t, const Config &c=default_config);
+    double range_variance(const Projectile &p, double T, const Material &t, const Config &c=get_default_config());
 
     /**
       * returns the  range variance per dE, calculated as derivative of range variance spline
@@ -102,7 +103,7 @@ namespace catima{
       * @param mat - Material
       * @return range variance / dE
       */
-    double domega2de(const Projectile &p, double T, const Material &t, const Config &c=default_config);
+    double domega2de(const Projectile &p, double T, const Material &t, const Config &c=get_default_config());
 
     /**
       * returns the  angular variance per dE, calculated as derivative of angular variance spline
@@ -111,7 +112,7 @@ namespace catima{
       * @param mat - Material
       * @return angular variance / dE
       */
-    double da2de(const Projectile &p, double T, const Material &t, const Config &c=default_config);
+    double da2de(const Projectile &p, double T, const Material &t, const Config &c=get_default_config());
 
     /**
       * returns the planar RMS angular straggling in rad
@@ -120,7 +121,7 @@ namespace catima{
       * @param c - Config class
       * @return angular RMS straggling in rad
       */
-    double angular_straggling(Projectile p, const Material &t, const Config &c=default_config);
+    double angular_straggling(Projectile p, const Material &t, const Config &c=get_default_config());
     /**
       * returns the planar RMS angular variance in rad
       * @param p - Projectile
@@ -128,7 +129,7 @@ namespace catima{
       * @param c - Config class
       * @return angular RMS variance in rad
       */
-    double angular_variance(Projectile p, const Material &t, const Config &c=default_config, int order = 0);
+    double angular_variance(Projectile p, const Material &t, const Config &c=get_default_config(), int order = 0);
 
     /**
       * calculates angular scattering in the material from difference of incoming a nd outgoing energies
@@ -138,7 +139,7 @@ namespace catima{
       * @param mat - Material
       * @return angular straggling
       */
-    double angular_straggling_from_E(const Projectile &p, double Tout,Material t, const Config &c=default_config);
+    double angular_straggling_from_E(const Projectile &p, double Tout,Material t, const Config &c=get_default_config());
 
     /**
       * calculates Energy straggling in the material from difference of incoming a nd outgoing energies
@@ -148,7 +149,7 @@ namespace catima{
       * @param mat - Material
       * @return angular straggling
       */
-    double energy_straggling_from_E(const Projectile &p, double T, double Tout,const Material &t, const Config &c=default_config);
+    double energy_straggling_from_E(const Projectile &p, double T, double Tout,const Material &t, const Config &c=get_default_config());
     
     /**
       * calculates outcoming energy from range spline
@@ -166,7 +167,7 @@ namespace catima{
       * @param T - incoming energy
       * @return outcoming energy after the material in Mev/u
       */
-    double energy_out(const Projectile &p, const Material &t, const Config &c=default_config);
+    double energy_out(const Projectile &p, const Material &t, const Config &c=get_default_config());
 
     /**
       * calculates outcoming energy 
@@ -175,7 +176,7 @@ namespace catima{
       * @param T - incoming energy vector
       * @return outcoming energy after the material in Mev/u
       */
-    std::vector<double> energy_out(const Projectile &p, const std::vector<double> &T, const Material &t, const Config &c=default_config);
+    std::vector<double> energy_out(const Projectile &p, const std::vector<double> &T, const Material &t, const Config &c=get_default_config());
 
     /**
       * calculates all observables for projectile passing material
@@ -183,8 +184,8 @@ namespace catima{
       * @param mat - Material
       * @return structure of Result
       */
-    Result calculate(Projectile p, const Material &t, const Config &c=default_config);
-    inline Result calculate(Projectile p, const Material &t, double T, const Config &c=default_config){
+    Result calculate(Projectile p, const Material &t, const Config &c=get_default_config());
+    inline Result calculate(Projectile p, const Material &t, double T, const Config &c=get_default_config()){
         p.T = T;
         return calculate(p, t, c);
     }
@@ -203,35 +204,35 @@ namespace catima{
       * @return results stored in MultiResult structure
       *
       */
-    MultiResult calculate(const Projectile &p, const Phasespace &ps, const Layers &layers, const Config &c=default_config);
+    MultiResult calculate(const Projectile &p, const Phasespace &ps, const Layers &layers, const Config &c=get_default_config());
 
     /**
       * calculate observables for multiple layers of material defined by Layers
       * @return results stored in MultiResult structure
       *
       */
-    inline MultiResult calculate(const Projectile &p, const Layers &layers, const Config &c=default_config){
+    inline MultiResult calculate(const Projectile &p, const Layers &layers, const Config &c=get_default_config()){
       return calculate(p, {}, layers, c);
     };
-    inline MultiResult calculate(Projectile p, double T, const Layers &layers, const Config &c=default_config){
+    inline MultiResult calculate(Projectile p, double T, const Layers &layers, const Config &c=get_default_config()){
         return calculate(p(T), layers, c);
     }
 
  
     /// this calculate tof spline, at the moment it is not used
-    std::vector<double> calculate_tof(const Projectile p, const Material &t, const Config &c=default_config);
+    std::vector<double> calculate_tof(const Projectile p, const Material &t, const Config &c=get_default_config());
     
     /**
       * calculates TOF of the Projectile in Material
       * this is used instead of precalculated TOF spline
       * @return TOF in ns
       */
-    double calculate_tof_from_E(Projectile p, double Eout, const Material &t, const Config &c=default_config);
+    double calculate_tof_from_E(Projectile p, double Eout, const Material &t, const Config &c=get_default_config());
     
     /**
      * returns energy magnification after passing material t
      */
-    std::pair<double,double> w_magnification(const Projectile &p, double Ein, const Material &t, const Config &c=default_config);
+    std::pair<double,double> w_magnification(const Projectile &p, double Ein, const Material &t, const Config &c=get_default_config());
 
     class DataPoint;
     /**
@@ -240,7 +241,7 @@ namespace catima{
       * they are all combined here in 1 single function
       * it has a perfomance gain to call this function if all splines are to be caclulated
       */
-    DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c=default_config);
+    DataPoint calculate_DataPoint(Projectile p, const Material &t, const Config &c=get_default_config());
 
     bool operator==(const Config &a, const Config&b);
 }

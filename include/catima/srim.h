@@ -17,9 +17,4 @@ double srim_dedx_e(int pZ, int tZ, double energy, bool use_v95=1);
   */
 double p_se(int Z, double energy);
 double p_se95(int Z, double energy);
-
-extern const double pse_95[92][8];
-extern const double atima_lambda_screening[92];
-extern const double atima_vfermi[92];
-extern const double proton_stopping_coef[92][8];
 }
